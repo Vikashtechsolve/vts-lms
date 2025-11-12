@@ -11,9 +11,15 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
+<<<<<<< HEAD
     "lucide-react": "^0.553.0",
+=======
+    "framer-motion": "^12.23.24",
+>>>>>>> 9bc9e1bc9db1327f6c1fb400ef744343abea4129
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "react-icons": "^5.5.0",
+    "tailwindcss": "^4.1.17"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
