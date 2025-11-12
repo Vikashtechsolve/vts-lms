@@ -7,37 +7,37 @@ export const NavbarMenu = [
   {
     id: 2,
     title: "Playlists",
-    link: "#",
+    link: "/playlists",
   },
   {
     id: 3,
     title: "Master Classes",
-    link: "#",
+    link: "/master-classes",
   },
   {
     id: 4,
     title: "Programs",
-    link: "#",
+    link: "/programs",
   },
   {
     id: 5,
     title: "Blogs",
-    link: "#",
+    link: "/blogs",
   },
   {
     id: 6,
     title: "News",
-    link: "#",
+    link: "/news",
   },
   {
     id: 7,
     title: "Interviews",
-    link: "#",
+    link: "/interviews",
   },
   {
     id: 8,
     title: "Reels",
-    link: "#",
+    link: "/reels",
   },
 ];
 
