@@ -1,7 +1,7 @@
 import './App.css'
 import Sample from './components/Sample.jsx'
 import LandingPage from './components/LandingPage.jsx'
-
+import Navbar from './components/Navbar/Navbar.jsx'
 
 function App() {
   return (
@@ -12,5 +12,5 @@ function App() {
   )
 }
 
-export default App
+export default App;
 
