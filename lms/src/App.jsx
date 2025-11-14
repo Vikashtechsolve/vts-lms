@@ -1,5 +1,4 @@
 import './App.css'
-import Sample from './components/Sample.jsx'
 import LandingPage from './components/LandingPage/LandingPage.jsx'
 import Navbar from './components/Navbar/Navbar.jsx'
 
