@@ -12,7 +12,7 @@ import App from "./App.jsx";
 import LandingPage from "./components/LandingPage/LandingPage.jsx";
 import Playlist from "./components/LandingPage/Playlist.jsx";
 import MasterClass from "./components/MasterClass/MasterClass.jsx";
-import Blogs from "./Pages/blogs.jsx";
+import Blogs from "./Pages/Blogs.jsx";
 
 // create router with nested routes (App is the layout)
 const router = createBrowserRouter([
