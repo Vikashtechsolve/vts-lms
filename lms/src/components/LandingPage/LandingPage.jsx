@@ -7,7 +7,7 @@ import pic2 from '../../assets/pic2.png'
 import pic3 from '../../assets/pic3.png'
 import Playlist from "./Playlist";
 import MasterClass from "../MasterClass/MasterClass";
-import Blogs from "../../Pages/blogs";
+import Blogs from "../../Pages/Blogs";
 
 const INTERVAL_MS = 3500; // 3.5 seconds, change as needed
 
