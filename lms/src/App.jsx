@@ -1,16 +1,17 @@
-import './App.css'
-import Sample from './components/Sample.jsx'
-import LandingPage from './components/LandingPage.jsx'
+// src/App.jsx
+import React from "react";
+import Navbar from "./components/Navbar/Navbar.jsx";
+import { Outlet } from "react-router-dom";
+import "./App.css";
 
-
-function App() {
+export default function App() {
   return (
-    <>
-    <Navbar />
-    <LandingPage/>
-    </>     
-  )
+    <div>
+      <Navbar />
+      <main>
+        {/* Routed pages will render here */}
+        <Outlet />
+      </main>
+    </div>
+  );
 }
-
-export default App
-
