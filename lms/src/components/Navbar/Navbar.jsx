@@ -7,7 +7,7 @@ import useOnClickOutside from "../../hooks/useOnClickOutside";
 
 const MENU = [
   { id: 1, title: "Home", to: "/" },
-  { id: 2, title: "Playlists", to: "/playlists" },
+  { id: 2, title: "Playlists", to: "/Playlist" },
   { id: 3, title: "Master Classes", to: "/master-classes" },
   { id: 4, title: "Programs", to: "/programs" },
   { id: 5, title: "Blogs", to: "/blogs" },

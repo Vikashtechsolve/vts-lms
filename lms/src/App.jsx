@@ -1,6 +1,7 @@
 import './App.css'
-import LandingPage from './components/LandingPage/LandingPage.jsx'
+// import LandingPage from './components/LandingPage/LandingPage.jsx'
 import Navbar from './components/Navbar/Navbar.jsx'
+import { Outlet } from "react-router-dom";
 
 function App() {
   return (
@@ -8,7 +9,7 @@ function App() {
       <Navbar />
       <main>
         {/* Routed pages will render here */}
-        <LandingPage />
+        <Outlet />
       </main>
     </div>
   );

@@ -10,21 +10,24 @@ import "./index.css";
 
 import App from "./App.jsx";
 import LandingPage from "./components/LandingPage/LandingPage.jsx";
-import Playlist from "./components/LandingPage/Playlist.jsx";
-import MasterClass from "./components/MasterClass/MasterClass.jsx";
-import Blogs from "./Pages/Blogs.jsx";
+import Blogs from "./Pages/blogs.jsx";
+import Playlist from "./Pages/playlist.jsx";
+import PlaylistDetail from "./Pages/PlaylistDetails.jsx";
+
 
 // create router with nested routes (App is the layout)
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />, // App contains <Outlet />
+    element: <App />, 
     children: [
-      { index: true, element: <LandingPage /> },               // renders at "/"
-      { path: "playlists", element: <Playlist /> },            // "/playlists"
-      { path: "master-classes", element: <MasterClass /> },    // "/master-classes"
-      { path: "blogs", element: <Blogs /> },                   // "/blogs"
-      // add more routes here (programs, news, interviews, reels...)
+      { index: true, element: <LandingPage /> },                
+      { path: "playlist", element: <Playlist/> },
+      { path: "Blogs", element: <Blogs/> },
+      { path: "/playlist/:id", element: <PlaylistDetail /> },
+
+
+                
     ],
   },
 ]);
