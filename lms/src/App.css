@@ -4,3 +4,12 @@
   /* padding: 2rem; */
   text-align: center;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+

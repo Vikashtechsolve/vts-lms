@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "title": "DSA Mastery",
+    "category": "Programming",
+    "thumbnail": "/images/dsa-thumb.jpg",
+    "videoUrl": "https://www.youtube.com/embed/zOjov-2OZ0E",
+    "description": "Full DSA Mastery Course Playlist.",
+    "released": "10 November, 2025",
+    "free": true
+  },
+  {
+    "id": 2,
+    "title": "Machine Learning Bootcamp",
+    "category": "AI & Data",
+    "thumbnail": "/images/ml-thumb.jpg",
+    "videoUrl": "https://www.youtube.com/embed/GwIo3gDZCVQ",
+    "description": "Complete ML Bootcamp from basics.",
+    "released": "12 November, 2025",
+    "free": false
+  }
+]

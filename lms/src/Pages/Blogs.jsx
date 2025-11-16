@@ -5,7 +5,7 @@ import { CircleArrowLeft, CircleArrowRight, Play } from "lucide-react";
 function Blogs() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const containerRef = useRef(null); // <-- local ref for this component
+  const containerRef = useRef(null); 
 
   useEffect(() => {
     const url = "/masterClass.json"; // ensure this path is correct in public/
@@ -47,7 +47,7 @@ function Blogs() {
   return (
     <div className="bg-black text-white py-8 px-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">Blogs</h2>
+        <h2 className="text-xl font-semibold">Blog</h2>
         <button className="text-sm text-gray-400 hover:text-white transition">
           View All &rarr;
         </button>
@@ -60,8 +60,8 @@ function Blogs() {
           className="flex space-x-4 overflow-x-auto scroll-smooth px-1 py-2"
           style={{
             WebkitOverflowScrolling: "touch",
-            scrollbarWidth: "none", // Firefox
-            msOverflowStyle: "none", // IE and Edge
+            scrollbarWidth: "none", 
+            msOverflowStyle: "none", 
           }}
         >
           <style>{`
