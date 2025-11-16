@@ -10,7 +10,7 @@ import "./index.css";
 
 import App from "./App.jsx";
 import LandingPage from "./components/LandingPage/LandingPage.jsx";
-import Blogs from "./Pages/blogs.jsx";
+import Blogs from "./Pages/Blogs.jsx";
 import Playlist from "./Pages/playlist.jsx";
 import PlaylistDetail from "./Pages/PlaylistDetails.jsx";
 
