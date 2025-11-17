@@ -1,158 +1,114 @@
-import React, { useState } from "react";
-import { NavbarMenu } from "../Data/data";
-import { CiSearch, CiUser } from "react-icons/ci";
-import { IoMdArrowDropdown } from "react-icons/io";
-import { FiMenu, FiX } from "react-icons/fi";
-import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { Search, User } from "lucide-react";
+import { useState, useRef } from "react";
+import useOnClickOutside from "../../hooks/useOnClickOutside";
 
-const Navbar = () => {
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const MENU = [
+  { id: 1, title: "Home", to: "/" },
+  { id: 2, title: "Playlists", to: "/Playlist" },
+  { id: 3, title: "Master Classes", to: "/master-classes" },
+  { id: 4, title: "Programs", to: "/programs" },
+  { id: 5, title: "Blogs", to: "/blogs" },
+  { id: 6, title: "News", to: "/news" },
+  { id: 7, title: "Interviews", to: "/interviews" },
+  { id: 8, title: "Reels", to: "/reels" },
+];
+
+export default function Navbar() {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchText, setSearchText] = useState("");
+
+  const dropdownRef = useRef(null);
+  useOnClickOutside(dropdownRef, () => setDropdownOpen(false));
 
   return (
-    <nav className="bg-[#121212] text-white w-full py-4 px-6 md:px-10 flex items-center justify-between shadow-md relative">
-      {/*  Logo */}
-      <div className="flex items-center space-x-2 z-50">
-        <img src="/logo.png" alt="VTS Logo" className="h-12 w-auto" />
+    <header className="w-full bg-[#0F0F0F] h-20 flex items-center px-12">
 
-        {/* <span className="text-xl font-semibold tracking-wide">VTS</span> */}
+      {/* LOGO */}
+      <div className="flex items-center">
+        <img src="/logo.png" className="w-35" />
       </div>
 
-      {/* Center: Menu Links (Desktop Only) */}
-      <ul className="hidden md:flex items-center space-x-8">
-        {NavbarMenu.map((item) => (
-          <li
+      {/* CENTER MENU */}
+      <nav className="hidden md:flex items-center gap-10 mx-auto">
+        {MENU.map((item) => (
+          <NavLink
             key={item.id}
-            className="cursor-pointer text-gray-300 hover:text-white transition"
+            to={item.to}
+            className={({ isActive }) =>
+              `text-white text-[15px] font-medium hover:text-red-500 transition ${
+                isActive ? "text-red-500" : ""
+              }`
+            }
           >
-            <Link to={item.link}>{item.title}</Link>
-          </li>
+            {item.title}
+          </NavLink>
         ))}
-      </ul>
+      </nav>
 
-      {/* Right: Search + Profile + Mobile Menu Button */}
-      <div className="flex items-center space-x-5 z-50">
-        {/* Search Icon */}
-        <CiSearch
-          size={22}
-          className="cursor-pointer hover:text-gray-300 transition"
-        />
+      {/* RIGHT SIDE */}
+      <div className="flex items-center gap-6">
 
-        {/* Profile Dropdown (Desktop Only) */}
-        <div
-          className="hidden md:flex items-center space-x-1 bg-[#1E1E1E] px-3 py-2 rounded-full cursor-pointer hover:bg-[#2A2A2A] transition relative"
-          onClick={() => setIsProfileOpen(!isProfileOpen)}
+        {/* SEARCH ICON (opens search bar) */}
+        <button
+          onClick={() => setShowSearch(!showSearch)}
+          className="text-white text-xl hover:text-red-500 transition"
         >
-          <CiUser size={20} />
-          <IoMdArrowDropdown
-            size={18}
-            className={`transition-transform duration-300 ${
-              isProfileOpen ? "rotate-180" : ""
-            }`}
-          />
+          <Search size={22} />
+        </button>
 
-          <AnimatePresence>
-            {isProfileOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-                className="absolute right-0 top-12 bg-[#1E1E1E] rounded-lg shadow-lg w-40 py-2 z-50"
-              >
-                <ul className="flex flex-col text-gray-300">
-                  <li className="px-4 py-2 hover:bg-[#2A2A2A] cursor-pointer">
-                    Profile
-                  </li>
-                  <li className="px-4 py-2 hover:bg-[#2A2A2A] cursor-pointer">
-                    Settings
-                  </li>
-                  <li className="px-4 py-2 hover:bg-[#2A2A2A] cursor-pointer">
-                    Logout
-                  </li>
-                </ul>
-              </motion.div>
-            )}
-          </AnimatePresence>
+        {/* SEARCH BAR (shows on icon click) */}
+        {showSearch && (
+          <div className="flex items-center bg-[#1A1A1A] border border-gray-700 
+          rounded-full px-4 py-2 w-64 transition">
+            <Search size={18} className="text-gray-400" />
+
+            <input
+              type="text"
+              placeholder="Search here..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              className="bg-transparent text-white ml-3 w-full focus:outline-none"
+            />
+
+            <button
+              onClick={() => setShowSearch(false)}
+              className="text-gray-400 hover:text-red-500 ml-2"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
+        {/* PROFILE DROPDOWN */}
+        <div className="relative" ref={dropdownRef}>
+          <button
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center hover:bg-red-700 transition text-white"
+          >
+            <User size={20} />
+          </button>
+
+          {dropdownOpen && (
+            <div className="absolute right-0 mt-3 w-44 bg-white text-gray-800 rounded-lg shadow-lg overflow-hidden z-50">
+              <button className="w-full text-left px-4 py-3 hover:bg-gray-100">
+                Profile
+              </button>
+              <button className="w-full text-left px-4 py-3 hover:bg-gray-100">
+                Certification
+              </button>
+              <button className="w-full text-left px-4 py-3 hover:bg-gray-100">
+                Badges
+              </button>
+              <button className="w-full text-left px-4 py-3 hover:bg-gray-100">
+                Dashboard
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden focus:outline-none"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-        </button>
       </div>
-
-      {/* 📱 Mobile Menu (Animated) */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="absolute top-16 left-0 w-full bg-[#1A1A1A] flex flex-col items-start px-6 py-4 md:hidden border-t border-gray-800"
-          >
-            {NavbarMenu.map((item) => (
-              <Link
-                key={item.id}
-                to={item.link}
-                className="w-full text-gray-300 py-2 border-b border-gray-700 hover:text-white transition"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.title}
-              </Link>
-            ))}
-
-            {/* Profile Dropdown in Mobile Menu */}
-            <div className="mt-4 w-full">
-              <div
-                className="flex items-center space-x-2 bg-[#1E1E1E] px-3 py-2 rounded-md cursor-pointer hover:bg-[#2A2A2A] transition"
-                onClick={() => setIsProfileOpen(!isProfileOpen)}
-              >
-                <CiUser size={20} />
-                <span>Account</span>
-                <IoMdArrowDropdown
-                  size={18}
-                  className={`transition-transform duration-300 ${
-                    isProfileOpen ? "rotate-180" : ""
-                  }`}
-                />
-              </div>
-
-              <AnimatePresence>
-                {isProfileOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="overflow-hidden mt-2 bg-[#1E1E1E] rounded-md"
-                  >
-                    <ul className="flex flex-col text-gray-300">
-                      <li className="px-4 py-2 hover:bg-[#2A2A2A] cursor-pointer">
-                        Profile
-                      </li>
-                      <li className="px-4 py-2 hover:bg-[#2A2A2A] cursor-pointer">
-                        Settings
-                      </li>
-                      <li className="px-4 py-2 hover:bg-[#2A2A2A] cursor-pointer">
-                        Logout
-                      </li>
-                    </ul>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </nav>
+    </header>
   );
-};
-
-export default Navbar;
-
+}

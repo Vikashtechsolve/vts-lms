@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "title": "DSA Mastery",
+    "category": "Interview",
+    "thumbnail": "/Lms1.png"
+  },
+  {
+    "id": 2,
+    "title": "Java Programming Essentials",
+    "category": "Programming",
+    "thumbnail": "/lms2.jpg"
+  },
+  {
+    "id": 3,
+    "title": "React Frontend Development",
+    "category": "Frontend",
+    "thumbnail": "/lms3.jpg"
+  },
+  {
+    "id": 4,
+    "title": "Cybersecurity Essentials",
+    "category": "Security",
+    "thumbnail": "/lms4.jpg"
+  },
+  {
+    "id": 5,
+    "title": "Machine Learning Basics",
+    "category": "ML",
+    "thumbnail": "/lms5.jpg"
+  }
+]
