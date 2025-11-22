@@ -8,12 +8,12 @@ import useOnClickOutside from "../../hooks/useOnClickOutside";
 const MENU = [
   { id: 1, title: "Home", to: "/" },
   { id: 2, title: "Playlists", to: "/Playlist" },
-  { id: 3, title: "Master Classes", to: "/master-classes" },
-  { id: 4, title: "Programs", to: "/programs" },
-  { id: 5, title: "Blogs", to: "/blogs" },
-  { id: 6, title: "News", to: "/news" },
+  { id: 3, title: "Master Classes", to: "/MasterClass" },
+  { id: 4, title: "Programs", to: "/Programs" },
+  { id: 5, title: "Blogs", to: "/Blogs" },
+  { id: 6, title: "News", to: "/News" },
   { id: 7, title: "Interviews", to: "/interviews" },
-  { id: 8, title: "Reels", to: "/reels" },
+  { id: 8, title: "Reels", to: "/Reels" },
 ];
 
 const DROPDOWN = [
