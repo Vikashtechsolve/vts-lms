@@ -9,10 +9,10 @@ import {
 import "./index.css";
 
 import App from "./App.jsx";
-import LandingPage from "./components/LandingPage/LandingPage.jsx";
-import Blogs from "./Pages/Blogs.jsx";
-import Playlist from "./Pages/playlist.jsx";
-import PlaylistDetail from "./Pages/PlaylistDetails.jsx";
+import LandingPage from "./Pages/LandingPage/LandingPage.jsx";
+import Blogs from "./Pages/blogs/Blogs.jsx";
+import Playlist from "./Pages/playlist/playlist.jsx";
+import PlaylistDetail from "./Pages/playlist/PlaylistDetails.jsx";
 
 
 // create router with nested routes (App is the layout)
