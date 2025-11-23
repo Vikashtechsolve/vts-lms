@@ -10,9 +10,17 @@ import "./index.css";
 
 import App from "./App.jsx";
 import LandingPage from "./Pages/LandingPage/LandingPage.jsx";
-import Blogs from "./Pages/blogs/Blogs.jsx";
+import Blogs from "./Pages/Blogs/Blogs.jsx";
 import Playlist from "./Pages/playlist/playlist.jsx";
 import PlaylistDetail from "./Pages/playlist/PlaylistDetails.jsx";
+import Notes from "./Pages/playlist/playlistDetailsTabs/Notes/Notes.jsx";
+import Video from "./Pages/playlist/playlistDetailsTabs/Videos/Videos.jsx";
+import MasterClass from "./Pages/MasterClass/MasterClass.jsx";
+import Programs from "./Pages/Programs/Programs.jsx";
+import News from "./Pages/News/News.jsx";
+import Interview from "./Pages/Interviews/Interview.jsx";
+import Reels from "./Pages/Reels/Reels.jsx";
+
 
 
 // create router with nested routes (App is the layout)
@@ -23,8 +31,14 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <LandingPage /> },                
       { path: "playlist", element: <Playlist/> },
-      { path: "Blogs", element: <Blogs/> },
       { path: "/playlist/:id", element: <PlaylistDetail /> },
+      { path: "/MasterClass", element: <MasterClass /> },
+      { path: "/Programs", element: <Programs /> },
+      { path: "/Blogs", element: <Blogs/> },
+      { path: "/News", element: <News/> },
+      { path: "/Interviews", element: <Interview/> },
+      { path: "/Reels", element: <Reels/> },
+      
 
 
                 

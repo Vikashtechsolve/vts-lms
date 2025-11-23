@@ -1,4 +1,3 @@
-// src/components/LandingPage/LandingPage.jsx
 import React, { useEffect, useRef, useState } from "react";
 import {
   Play,
@@ -293,8 +292,7 @@ function LandingPage() {
               {playlists.map((item) => (
                 <div key={item.id} className="w-80 flex-shrink-0 relative">
                   <div
-                    className="group relative rounded-2xl transition-all duration-500 transform-gpu hover:scale-125 hover:z-50
-    "
+                    className="group relative rounded-2xl transition-all duration-500 transform-gpu hover:scale-125 hover:z-50"
                     style={{ overflow: "visible" }}
                   >
                     {/* IMAGE WRAPPER */}
@@ -315,7 +313,7 @@ function LandingPage() {
                       <Play size={18} className="text-white" />
                     </div>
 
-                    {/* TITLE (Default Ki Zindagi) */}
+                    {/* TITLE */}
                     <p className="text-white mt-3 font-semibold text-sm px-1">
                       {item.title}
                     </p>
@@ -559,9 +557,6 @@ function LandingPage() {
                             Math.random() * 50
                           )}m`}
                       </div>
-
-                    
-                      
 
                       <div className="absolute inset-0  rounded-2xl bg-grey-700 backdrop-blur-xl opacity-0 group-hover:opacity-100 rounded-2x transition-all duration-00 p-3 flex flex-col justify-center h-72">
                         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-linear w-full h-full flex items-end justify-center pointer-events-auto">
