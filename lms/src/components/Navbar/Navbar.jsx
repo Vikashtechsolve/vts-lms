@@ -1,5 +1,5 @@
-import { NavLink } from "react-router-dom";
-import { Search, User } from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { Search, User, FileBadge, Award, LayoutDashboard, LogOut } from "lucide-react";
 import { useState, useRef } from "react";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 
@@ -14,10 +14,21 @@ const MENU = [
   { id: 8, title: "Reels", to: "/reels" },
 ];
 
+// Figma style icons + labels
+const userMenu = [
+  { id: 1, label: "Profile", icon: <User size={18} /> },
+  { id: 2, label: "Certification", icon: <FileBadge size={18} /> },
+  { id: 3, label: "Badges", icon: <Award size={18} /> },
+  { id: 4, label: "Dashboard", icon: <LayoutDashboard size={18} /> },
+   
+  { id: 5, label: "Sign In", icon: <LogOut size={18} />, route: "/signin" },
+];
+
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const navigate = useNavigate();
 
   const dropdownRef = useRef(null);
   useOnClickOutside(dropdownRef, () => setDropdownOpen(false));
@@ -50,7 +61,7 @@ export default function Navbar() {
       {/* RIGHT SIDE */}
       <div className="flex items-center gap-6">
 
-        {/* SEARCH ICON (opens search bar) */}
+        {/* SEARCH ICON */}
         <button
           onClick={() => setShowSearch(!showSearch)}
           className="text-white text-xl hover:text-red-500 transition"
@@ -58,7 +69,7 @@ export default function Navbar() {
           <Search size={22} />
         </button>
 
-        {/* SEARCH BAR (shows on icon click) */}
+        {/* SEARCH BAR */}
         {showSearch && (
           <div className="flex items-center bg-[#1A1A1A] border border-gray-700 
           rounded-full px-4 py-2 w-64 transition">
@@ -91,19 +102,21 @@ export default function Navbar() {
           </button>
 
           {dropdownOpen && (
-            <div className="absolute right-0 mt-3 w-44 bg-white text-gray-800 rounded-lg shadow-lg overflow-hidden z-50">
-              <button className="w-full text-left px-4 py-3 hover:bg-gray-100">
-                Profile
-              </button>
-              <button className="w-full text-left px-4 py-3 hover:bg-gray-100">
-                Certification
-              </button>
-              <button className="w-full text-left px-4 py-3 hover:bg-gray-100">
-                Badges
-              </button>
-              <button className="w-full text-left px-4 py-3 hover:bg-gray-100">
-                Dashboard
-              </button>
+          <div className="absolute right-0 mt-3 w-52 bg-[#111111] text-white rounded-xl shadow-xl z-50 py-2">
+
+              {userMenu.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    if (item.route) navigate(item.route);
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition text-left"
+                >
+                  {item.icon}
+                  <span className="text-[15px]">{item.label}</span>
+                </button>
+              ))}
+
             </div>
           )}
         </div>
