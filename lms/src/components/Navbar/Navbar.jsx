@@ -14,6 +14,14 @@ const MENU = [
   { id: 8, title: "Reels", to: "/Reels" },
 ];
 
+const DROPDOWN = [
+  { id: "profile", label: "Profile", to: "/profile" },
+  { id: "cert", label: "Certification", to: "/certification" },
+  { id: "badges", label: "Badges", to: "/badges" },
+  { id: "dash", label: "Dashboard", to: "/dashboard" },
+  
+];
+
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);

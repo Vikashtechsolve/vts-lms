@@ -46,7 +46,7 @@ function Playlist() {
   }
 
   return (
-    <div className="bg-neutral-900 text-white min-h-screen pb-20">
+    <div className="bg-zinc-900 text-white min-h-screen pb-20">
       <div className="max-w-6xl mx-auto px-6 pt-12">
         <h1 className="text-3xl font-semibold text-center mb-10">Playlists</h1>
         <div

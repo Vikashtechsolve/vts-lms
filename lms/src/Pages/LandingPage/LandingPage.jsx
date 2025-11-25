@@ -139,7 +139,8 @@ function LandingPage() {
   const scrollRefByAmt = (ref, direction, amt = 320) => {
     const el = ref && ref.current;
     if (!el) return;
-    el.scrollLeft += direction === "left" ? -amt : amt;
+    // use smooth programmatic scrolling; user scroll (wheel/touch) is prevented on the container
+    el.scrollBy({ left: direction === "left" ? -amt : amt, behavior: "smooth" });
   };
 
   if (loading) {
@@ -268,9 +269,9 @@ function LandingPage() {
       </section>
 
       {/* Playlists */}
-      <div className="bg-black text-white py-8 px-6">
+      <div className="bg-black text-white px-6">
         <div className="flex justify-between items-center bg-black mb-12">
-          <h2 className="text-xl font-semibold">Playlists</h2>
+          <h2 className="text-xl mt-8 font-semibold">Playlists</h2>
           <button
             onClick={() => navigate("/Playlist")}
             className="text-sm text-gray-400 hover:text-white transition cursor-pointer"
@@ -287,7 +288,9 @@ function LandingPage() {
           <div className="relative">
             <div
               ref={playlistRef}
-              className="flex space-x-4 overflow-visible px-1 py-2"
+              onWheel={(e) => e.preventDefault()}
+              onTouchMove={(e) => e.preventDefault()}
+              className="flex space-x-4  h-96 z-50 overflow-x-auto no-scrollbar px-1 py-8"
             >
               {playlists.map((item) => (
                 <div key={item.id} className="w-80 flex-shrink-0 relative">
@@ -324,7 +327,7 @@ function LandingPage() {
         absolute inset-0 rounded-2xl bg-grey-700 backdrop-blur-xl
         opacity-0 group-hover:opacity-100 rounded-2x
         transition-all duration-00 p-3
-        flex flex-col justify-center  h-72
+        flex flex-col justify-center  h-72 z-50
       "
                     >
                       {/* IMAGE TOP ON HOVER */}
@@ -368,7 +371,7 @@ function LandingPage() {
             {/* overlay arrows: show when playlist wrapper hovered (state-based) */}
             <button
               onClick={() => scrollRefByAmt(playlistRef, "left")}
-              className={`absolute left-2 top-1/2 -translate-y-1/2 z-20 transition-opacity pointer-events-auto ${
+              className={`absolute left-2 top-1/2 -translate-y-1/2 z-50 transition-opacity pointer-events-auto ${
                 isPlaylistHover ? "opacity-100" : "opacity-0"
               }`}
             >
@@ -380,7 +383,7 @@ function LandingPage() {
             <button
               onClick={() => scrollRefByAmt(playlistRef, "right")}
               aria-label="scroll playlists right"
-              className={`absolute right-2 top-1/2 -translate-y-1/2 z-20 transition-opacity pointer-events-auto ${
+              className={`absolute right-2 top-1/2 -translate-y-1/2 z-50 transition-opacity pointer-events-auto ${
                 isPlaylistHover ? "opacity-100" : "opacity-0"
               }`}
             >
@@ -393,7 +396,7 @@ function LandingPage() {
       </div>
 
       {/* Master Classes */}
-      <div className="bg-black text-white py-8 px-6">
+      <div className="bg-black text-white px-6">
         <div className="flex  justify-between items-center mb-12">
           <h2 className="text-xl font-semibold">Master Classes</h2>
           <button className="text-sm text-gray-400 hover:text-white transition cursor-pointer">
@@ -409,7 +412,9 @@ function LandingPage() {
           <div>
             <div
               ref={masterRef}
-              className="flex space-x-4 overflow-visible px-1 py-2"
+              onWheel={(e) => e.preventDefault()}
+              onTouchMove={(e) => e.preventDefault()}
+              className="flex space-x-4 h-96 overflow-x-auto no-scrollbar px-1 py-8 "
             >
               {masterClasses.map((item) => (
                 <div
@@ -450,7 +455,7 @@ function LandingPage() {
                       className="absolute inset-0 rounded-2xl bg-grey-700 backdrop-blur-xl
         opacity-0 group-hover:opacity-100 rounded-2x
         transition-all duration-00 p-3
-        flex flex-col justify-center  h-72
+        flex flex-col justify-center  h-72 z-50
   "
                     >
                       <div className="h-40 overflow-hidden rounded-xl">
@@ -494,7 +499,7 @@ function LandingPage() {
             <button
               onClick={() => scrollRefByAmt(masterRef, "left")}
               aria-label="scroll master left"
-              className={`absolute left-2 top-1/2 -translate-y-1/2 z-20 transition-opacity pointer-events-auto ${
+              className={`absolute left-2 top-1/2 -translate-y-1/2 z-50 transition-opacity pointer-events-auto ${
                 isMasterHover ? "opacity-100" : "opacity-0"
               }`}
             >
@@ -506,7 +511,7 @@ function LandingPage() {
             <button
               onClick={() => scrollRefByAmt(masterRef, "right")}
               aria-label="scroll master right"
-              className={`absolute right-2 top-1/2 -translate-y-1/2 z-20 transition-opacity pointer-events-auto ${
+              className={`absolute right-2 top-1/2 -translate-y-1/2 z-50 transition-opacity pointer-events-auto ${
                 isMasterHover ? "opacity-100" : "opacity-0"
               }`}
             >
@@ -519,10 +524,13 @@ function LandingPage() {
       </div>
 
       {/* Blogs */}
-      <div className="bg-black text-white py-8 px-6">
+      <div className="bg-black text-white px-6">
         <div className="flex justify-between items-center bg-black mb-12">
-          <h2 className="text-xl font-semibold">Blog</h2>
-          <button className="text-sm text-gray-400 hover:text-white transition cursor-pointer">
+          <h2 className="text-xl mt-8 font-semibold">Blogs</h2>
+          <button
+            onClick={() => navigate("/Blogs")}
+            className="text-sm text-gray-400 hover:text-white transition cursor-pointer"
+          >
             View All &rarr;
           </button>
         </div>
@@ -535,79 +543,107 @@ function LandingPage() {
           <div className="relative">
             <div
               ref={blogRef}
-              className="flex space-x-4 overflow-visible px-1 py-2"
+              onWheel={(e) => e.preventDefault()}
+              onTouchMove={(e) => e.preventDefault()}
+              className="flex space-x-4  h-96 z-50 overflow-x-auto no-scrollbar px-1 py-8"
             >
               {blogs.map((item) => (
                 <div key={item.id} className="w-80 flex-shrink-0 relative">
-                  <div className="group relative rounded-2xl transition-all duration-500 transform-gpu hover:scale-125 hover:z-50"
-                    style ={{overflow: "visible"}} 
+                  <div
+                    className="group relative rounded-2xl transition-all duration-500 transform-gpu hover:scale-125 hover:z-50"
+                    style={{ overflow: "visible" }}
                   >
-                    <div className=" rounded-2xl overflow-hidden">
+                    {/* IMAGE WRAPPER */}
+                    <div className="rounded-2xl overflow-hidden">
                       <img
                         src={item.thumbnail}
                         alt={item.title}
                         className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
                       />
-                      <div className="absolute bottom-3 right-3 bg-black/60 p-2 rounded-full z-10">
-                        <Play className="w-4 h-4 text-white" />
-                      </div>
-                      <div className="absolute bottom-3 left-3 bg-black/50 px-2 py-1 rounded text-xs z-10">
-                        {item.duration ??
-                          `${Math.floor(Math.random() * 2) + 1}h ${Math.floor(
-                            Math.random() * 50
-                          )}m`}
-                      </div>
-
-                      <div className="absolute inset-0  rounded-2xl bg-grey-700 backdrop-blur-xl opacity-0 group-hover:opacity-100 rounded-2x transition-all duration-00 p-3 flex flex-col justify-center h-72">
-                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-linear w-full h-full flex items-end justify-center pointer-events-auto">
-                          <div className="mb-3 flex items-center gap-3">
-                            <div className="bg-white text-black px-3 py-2 rounded-full font-semibold shadow-md flex items-center gap-2">
-                              <Play size={14} />
-                              <span className="text-xs">Watch Now</span>
-                            </div>
-                            <button className="bg-black/70 hover:bg-black text-white p-2 rounded-full shadow-md">
-                              <SquarePlus size={14} />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
                     </div>
 
-                    <div className="p-3 transition-all duration-300 group-hover:ring-2 group-hover:ring-cyan-400 group-hover:shadow-2xl">
-                      <h3 className="text-sm font-semibold truncate">
-                        {item.title}
-                      </h3>
-                      <p className="text-xs text-gray-400 mt-1 truncate">
-                        {item.category}
-                      </p>
-                    
+                    {/* BADGES */}
+                    <div className="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-3 py-1 rounded-full">
+                      {item.duration || "1h 45m"}
+                    </div>
+
+                    <div className="absolute bottom-3 left-3 bg-white/30 backdrop-blur-md p-2 rounded-full">
+                      <Play size={18} className="text-white" />
+                    </div>
+
+                    {/* TITLE */}
+                    <p className="text-white mt-3 font-semibold text-sm px-1">
+                      {item.title}
+                    </p>
+
+                    {/* HOVER OVERLAY */}
+                    <div
+                      className="
+        absolute inset-0 rounded-2xl bg-grey-700 backdrop-blur-xl
+        opacity-0 group-hover:opacity-100 rounded-2x
+        transition-all duration-00 p-3
+        flex flex-col justify-center  h-72 z-50
+      "
+                    >
+                      {/* IMAGE TOP ON HOVER */}
+                      <div className="h-40 overflow-hidden rounded-xl">
+                        <img
+                          src={item.thumbnail}
+                          alt={item.title}
+                          className="w-full h-full object-cover h-8"
+                        />
+                      </div>
+
+                      {/* BUTTONS */}
+                      <div className="flex items-center gap-3 mt-4">
+                        <button className="bg-white text-black font-semibold px-6 py-2 rounded-full flex items-center gap-2 text-sm">
+                          <Play size={18} /> Watch Now
+                        </button>
+
+                        <button className="bg-white/20 border border-white rounded-full p-2 text-white">
+                          <SquarePlus size={20} />
+                        </button>
+                      </div>
+
+                      {/* DETAILS */}
+                      <div className="mt-4 text-gray-300 text-sm">
+                        <div className="flex justify-between text-white font-medium">
+                          <span>{item.year || "2025"}</span>
+                          <span>{item.modules || "6 Modules"}</span>
+                        </div>
+
+                        <p className="mt-2 text-gray-300 text-xs leading-relaxed">
+                          {item.description ||
+                            "This playlist covers modern development with hands-on projects & tutorials"}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
 
+            {/* overlay arrows: show when playlist wrapper hovered (state-based) */}
             <button
               onClick={() => scrollRefByAmt(blogRef, "left")}
-              aria-label="scroll blogs left"
-              className={`absolute left-2 top-1/2 -translate-y-1/2 z-20 transition-opacity pointer-events-auto ${
+              className={`absolute left-2 top-1/2 -translate-y-1/2 z-50 transition-opacity pointer-events-auto ${
                 isBlogHover ? "opacity-100" : "opacity-0"
               }`}
             >
               <div className="bg-black/60 hover:bg-black text-white p-2 rounded-full shadow">
-                <CircleArrowLeft className="w-10 h-10" />
+                <CircleChevronLeft className="w-10 h-10" />
               </div>
             </button>
 
             <button
               onClick={() => scrollRefByAmt(blogRef, "right")}
-              aria-label="scroll blogs right"
-              className={`absolute right-2 top-1/2 -translate-y-1/2 z-20 transition-opacity pointer-events-auto ${
+              aria-label="scroll playlists right"
+              className={`absolute right-2 top-1/2 -translate-y-1/2 z-50 transition-opacity pointer-events-auto ${
                 isBlogHover ? "opacity-100" : "opacity-0"
               }`}
             >
               <div className="bg-black/60 hover:bg-black text-white p-2 rounded-full shadow">
-                <CircleArrowRight className="w-10 h-10" />
+                <CircleChevronRight className="w-10 h-10" />
               </div>
             </button>
           </div>
