@@ -1,38 +1,58 @@
 [
-    {
-      "id": 1,
-      "title": "Master Class : Cracking technical interviews",
-      "thumbnail": "pic1.jpg",
-      "duration": "50m",
-      "category": "Interview Preparation"
-    },
-    {
-      "id": 2,
-      "title": "Master Class : Advanced Java Concepts",
-      "thumbnail": "/pic2.jpg",
-      "duration": "1h 1m",
-      "category": "Java Programming"
-    },
-    {
-      "id": 3,
-      "title": "Master Class : React for Professionals",
-      "thumbnail": "/pic3.png",
-      "duration": "1h 50m",
-      "category": "React Native"
-    },
-    {
-      "id": 4,
-      "title": "Master Class : DSA Problem Solving Techniques",
-      "thumbnail": "/pic4.png",
-      "duration": "1h 4m",
-      "category": "Data Structures & Algorithms"
-    },
-    {
-      "id": 5,
-      "title": "Master Class : UI/UX Design Thinking",
-      "thumbnail": "/pic5.png",
-      "duration": "1h 4m",
-      "category": "UI/UX Design"
-    }
-  ]
-
+  {
+    "id": 1,
+    "title": "Master Class : Cracking technical interviews",
+    "thumbnail": "/pic1.jpg",
+    "duration": "50m",
+    "category": "Interview Preparation",
+    "description": "Techniques, common questions and hands-on mocks to crack interviews.",
+    "instructor": "Pankaj Kumar",
+    "live": true,
+    "badge": "Live Class - Available Soon"
+  },
+  {
+    "id": 2,
+    "title": "Master Class : Advanced Java Concepts",
+    "thumbnail": "/pic2.jpg",
+    "duration": "1h 1m",
+    "category": "Java Programming",
+    "description": "Techniques, common questions and hands-on mocks to crack interviews.",
+    "instructor": "Pankaj Kumar",
+    "live": true,
+    "badge": "Live Class - Available Soon"
+    
+  },
+  {
+    "id": 3,
+    "title": "Master Class : React for Professionals",
+    "thumbnail": "/pic3.png",
+    "duration": "1h 50m",
+    "category": "React Native",
+    "description": "Techniques, common questions and hands-on mocks to crack interviews.",
+    "instructor": "Pankaj Kumar",
+    "live": true,
+    "badge": "Live Class - Available Soon"
+  },
+  {
+    "id": 4,
+    "title": "Master Class : DSA Problem Solving Techniques",
+    "thumbnail": "/pic4.png",
+    "duration": "1h 4m",
+    "category": "Data Structures & Algorithms",
+    "description": "Techniques, common questions and hands-on mocks to crack interviews.",
+    "instructor": "Pankaj Kumar",
+    "live": true,
+    "badge": "Live Class - Available Soon"
+  },
+  {
+    "id": 5,
+    "title": "Master Class : UI/UX Design Thinking",
+    "thumbnail": "/pic5.png",
+    "duration": "1h 4m",
+    "category": "UI/UX Design",
+    "description": "Techniques, common questions and hands-on mocks to crack interviews.",
+    "instructor": "Pankaj Kumar",
+    "live": true,
+    "badge": "Live Class - Available Soon"
+  }
+]
