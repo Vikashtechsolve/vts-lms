@@ -19,7 +19,7 @@
 //   { id: "cert", label: "Certification", to: "/certification" },
 //   { id: "badges", label: "Badges", to: "/badges" },
 //   { id: "dash", label: "Dashboard", to: "/dashboard" },
-  
+
 // ];
 
 // export default function Navbar() {
@@ -68,7 +68,7 @@
 
 //         {/* SEARCH BAR (shows on icon click) */}
 //         {showSearch && (
-//           <div className="flex items-center bg-[#1A1A1A] border border-gray-700 
+//           <div className="flex items-center bg-[#1A1A1A] border border-gray-700
 //           rounded-full px-4 py-2 w-64 transition">
 //             <Search size={18} className="text-gray-400" />
 
@@ -122,14 +122,21 @@
 // }
 
 import { NavLink, useNavigate } from "react-router-dom";
-import { Search, User, FileBadge, Award, LayoutDashboard, LogOut } from "lucide-react";
+import {
+  Search,
+  User,
+  FileBadge,
+  Award,
+  LayoutDashboard,
+  LogOut,
+} from "lucide-react";
 import { useState, useRef } from "react";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 
 const MENU = [
   { id: 1, title: "Home", to: "/" },
   { id: 2, title: "Playlists", to: "/Playlist" },
-  { id: 3, title: "Master Classes", to: "/master-classes" },
+  { id: 3, title: "Master Classes", to: "/MasterClass" },
   { id: 4, title: "Programs", to: "/programs" },
   { id: 5, title: "Blogs", to: "/blogs" },
   { id: 6, title: "News", to: "/news" },
@@ -143,7 +150,7 @@ const userMenu = [
   { id: 2, label: "Certification", icon: <FileBadge size={18} /> },
   { id: 3, label: "Badges", icon: <Award size={18} /> },
   { id: 4, label: "Dashboard", icon: <LayoutDashboard size={18} /> },
-   
+
   { id: 5, label: "Sign In", icon: <LogOut size={18} />, route: "/signin" },
 ];
 
@@ -158,7 +165,6 @@ export default function Navbar() {
 
   return (
     <header className="w-full bg-[#0F0F0F] h-20 flex items-center px-12">
-
       {/* LOGO */}
       <div className="flex items-center">
         <img src="/logo.png" className="w-35" />
@@ -183,7 +189,6 @@ export default function Navbar() {
 
       {/* RIGHT SIDE */}
       <div className="flex items-center gap-6">
-
         {/* SEARCH ICON */}
         <button
           onClick={() => setShowSearch(!showSearch)}
@@ -194,8 +199,10 @@ export default function Navbar() {
 
         {/* SEARCH BAR */}
         {showSearch && (
-          <div className="flex items-center bg-[#1A1A1A] border border-gray-700 
-          rounded-full px-4 py-2 w-64 transition">
+          <div
+            className="flex items-center bg-[#1A1A1A] border border-gray-700
+          rounded-full px-4 py-2 w-64 transition"
+          >
             <Search size={18} className="text-gray-400" />
 
             <input
@@ -225,8 +232,7 @@ export default function Navbar() {
           </button>
 
           {dropdownOpen && (
-          <div className="absolute right-0 mt-3 w-52 bg-[#111111] text-white rounded-xl shadow-xl z-50 py-2">
-
+            <div className="absolute right-0 mt-3 w-52 bg-[#111111] text-white rounded-xl shadow-xl z-50 py-2">
               {userMenu.map((item) => (
                 <button
                   key={item.id}
@@ -239,11 +245,9 @@ export default function Navbar() {
                   <span className="text-[15px]">{item.label}</span>
                 </button>
               ))}
-
             </div>
           )}
         </div>
-
       </div>
     </header>
   );
