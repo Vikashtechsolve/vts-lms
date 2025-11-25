@@ -20,7 +20,7 @@ import Programs from "./Pages/Programs/Programs.jsx";
 import News from "./Pages/News/News.jsx";
 import Interview from "./Pages/Interviews/Interview.jsx";
 import Reels from "./Pages/Reels/Reels.jsx";
-
+import SignIn from "./Pages/SignIn.jsx";
 
 
 // create router with nested routes (App is the layout)
@@ -38,6 +38,7 @@ const router = createBrowserRouter([
       { path: "/News", element: <News/> },
       { path: "/Interviews", element: <Interview/> },
       { path: "/Reels", element: <Reels/> },
+      { path: "signin", element: <SignIn /> },
       
 
 
