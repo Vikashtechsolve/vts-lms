@@ -11,10 +11,10 @@
     "comments": [
       {
         "id": 1,
-        "author": "Priya Tiwari",
+        "author": "Vikas Sharma",
+        "date": "1 day ago",
         "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80",
-        "text": "Share your thoughts?",
-        "isInput": true
+        "text": "Great insights! The future of online learning is indeed exciting. I love how AI is making education more personalized and engaging."
       },
       {
         "id": 2,
@@ -45,7 +45,7 @@
     "title": "Why Every Student Should Learn Coding",
     "description": "From logic to creativity — coding builds problem-solving skills and opens endless career opportunities in the digital era.",
     "author": "Amit Kumar",
-    "date": "Oct 24, 2025",
+    "date": "november 26, 2025",
     "image": "https://images.unsplash.com/photo-1555099962-4199c345e5dd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     "content": "Full blog content goes here...",
     "comments": []
@@ -67,7 +67,7 @@
     "title": "Building Responsive Websites that Impress",
     "description": "Learn how to make your websites look amazing on all devices with responsive layouts and smart design techniques.",
     "author": "Meenu Sharma",
-    "date": "Oct 21, 2025",
+    "date": "Nov 20, 2025",
     "image": "https://images.unsplash.com/photo-1558655146-d09347e92766?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     "content": "Full blog content goes here...",
     "comments": []
@@ -78,7 +78,7 @@
     "title": "Mastering DSA for Placements",
     "description": "Data Structures and Algorithms are the key to cracking top company interviews. Here's how to prepare smartly.",
     "author": "Riya Kapoor",
-    "date": "Oct 21, 2025",
+    "date": "nov 25, 2025",
     "image": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     "content": "Full blog content goes here...",
     "comments": []
@@ -103,6 +103,43 @@
     "date": "Oct 20, 2025",
     "image": "https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     "content": "Full blog content goes here...",
+    "comments": []
+  },
+  {
+    "id": 8,
+    "category": "Education",
+    "title": "The Future of Online Learning",
+    "description": "Discover how technology and AI are reshaping the education world, making learning more accessible and personalized for every student.",
+    "author": "Vikas Sharma",
+    "date": "2025-10-25T10:00:00Z",
+    "image": "https://images.unsplash.com/photo-1501504905252-473c47e087f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    "content": "<p class='mb-6 text-[#E0E0E0]'>Online learning has transformed drastically over the past few years...</p>",
+    "comments": [
+      {
+        "id": "c1",
+        "author": "Priya Tiwari",
+        "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80",
+        "text": "Share your thoughts?",
+        "isInput": true
+      },
+      {
+        "id": "c2",
+        "author": "Ajay Jain",
+        "date": "2025-11-25T09:00:00Z",
+        "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
+        "text": "This blog really opened my eyes! Online learning has actually made studying so much more flexible for me."
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "category": "Student Life",
+    "title": "Why Every Student Should Learn Coding",
+    "description": "From logic to creativity — coding builds problem-solving skills and opens endless career opportunities in the digital era.",
+    "author": "Amit Kumar",
+    "date": "2025-10-24T14:30:00Z",
+    "image": "https://images.unsplash.com/photo-1555099962-4199c345e5dd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    "content": "<p>Full content for this blog goes here...</p>",
     "comments": []
   }
 ]

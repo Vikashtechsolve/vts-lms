@@ -1,13 +1,17 @@
 import React, { useState } from "react";
-import { FaArrowLeft, FaPaperPlane } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa";
 import { Plus, Check, MessageCircle, Share2 } from "lucide-react";
+import TimeAgo from "./components/Timeago";
 import Comments from "../../components/Comments";
+import FormatDate from "./components/FormatDate";
 
-const BlogDetails = ({ blog, onBack }) => {
+const NewsDetails = ({ news, onBack }) => {
   const [inWishlist, setInWishlist] = useState(false);
-  const comments = blog.comments || [];
+  const comments = news.comments || [];
+  const timeAgo = TimeAgo(news.date);
+  const date = FormatDate(news.date);
 
-  if (!blog) return null;
+  if (!news) return null;
 
   return (
     <div className="min-h-screen bg-black text-white pb-20 animate-fade-in">
@@ -18,7 +22,7 @@ const BlogDetails = ({ blog, onBack }) => {
           className="flex items-center text-gray-400 hover:text-white transition-colors group font-poppins"
         >
           <FaArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />{" "}
-          Back to Blogs
+          Back to News
         </button>
       </div>
 
@@ -27,22 +31,22 @@ const BlogDetails = ({ blog, onBack }) => {
         {/* 1. Top Image */}
         <div className="w-full h-[250px] md:h-[420px] rounded-[12px] overflow-hidden mb-[28px]">
           <img
-            src={blog.image}
-            alt={blog.title}
+            src={news.image}
+            alt={news.title}
             className="w-full h-full object-cover"
           />
         </div>
 
         {/* 2. Title */}
         <h1 className="font-roboto font-semibold text-[22px] md:text-[26px] leading-[1.2] md:leading-[24px] text-white mb-6 text-left">
-          {blog.title}
+          {news.title}
         </h1>
 
         {/* 3. Description & Actions Row */}
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8 border-b border-[#333] pb-8">
           {/* LEFT: Description */}
           <p className="font-poppins font-medium text-[14px] leading-[24px] text-[#B3B3B3] md:max-w-[760px] text-left">
-            {blog.description}
+            {news.description}
           </p>
 
           {/* RIGHT: Actions (Watchlist, Comment, Share) */}
@@ -82,20 +86,21 @@ const BlogDetails = ({ blog, onBack }) => {
           {/* Avatar Placeholder */}
           <div className="w-10 h-10 rounded-full bg-gray-700 overflow-hidden">
             <div className="w-full h-full flex items-center justify-center text-sm font-bold">
-              {blog.author.charAt(0)}
+              {news.author.charAt(0)}
             </div>
           </div>
 
           <div className="flex flex-col md:flex-row md:items-center md:gap-4 text-[14px] font-poppins">
-            <span className="text-white font-semibold">{blog.author}</span>
+            <span className="text-white font-semibold">{news.author}</span>
             <span className="hidden md:inline text-gray-600">•</span>
-            <span className="text-gray-500">{blog.date}</span>
+            <span className="text-gray-500">{date}</span>
+            <span className="text-gray-500">{timeAgo}</span>
           </div>
         </div>
 
         {/* 5. Main Content */}
         <div className="font-roboto font-normal text-[16px] leading-[26px] text-[#E0E0E0] mb-20 space-y-6 text-left">
-          <div dangerouslySetInnerHTML={{ __html: blog.content }} />
+          <div dangerouslySetInnerHTML={{ __html: news.content }} />
         </div>
 
         {/* 6. Comments Section */}
@@ -105,4 +110,4 @@ const BlogDetails = ({ blog, onBack }) => {
   );
 };
 
-export default BlogDetails;
+export default NewsDetails;
