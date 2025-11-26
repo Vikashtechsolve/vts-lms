@@ -18,13 +18,13 @@ const TestResult = ({ data, answers, onRetake, onReview }) => {
   if (percentage < 40) resultColor = "text-red-500";
 
   return (
-    <div className="bg-gray-800 p-6 md:p-8 rounded-lg shadow-xl max-w-2xl mx-auto text-center">
+    <div className="bg-zinc-900 p-6 md:p-8 rounded-lg shadow-xl max-w-2xl mx-auto text-center">
       <h2 className="text-3xl font-bold text-white mb-4">Test Completed!</h2>
       <p className="text-gray-400 text-lg mb-8">
         Here's your analysis for the {data.title}.
       </p>
 
-      <div className={`p-8 bg-gray-900 rounded-lg`}>
+      <div className={`p-8 bg-zinc-800 rounded-lg`}>
         <h3 className="text-lg text-gray-400">Your Score</h3>
         <p className={`text-6xl font-bold my-4 ${resultColor}`}>
           {percentage}%

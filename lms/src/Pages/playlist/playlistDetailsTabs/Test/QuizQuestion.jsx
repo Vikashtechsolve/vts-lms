@@ -99,8 +99,8 @@ const QuizQuestions = ({ data, onFinishQuiz }) => {
   };
 
   return (
-    <div className="bg-gray-800 p-6 md:p-8 rounded-lg shadow-xl max-w-4xl mx-auto">
-      <h2 className="text-xl font-semibold text-gray-300 mb-6">
+    <div className="bg-black p-6 md:p-8 rounded-lg shadow-xl max-w-4xl mx-auto">
+      <h2 className="text-xl font-semibold text-left text-gray-300 mb-6">
         Test - {data.title}
       </h2>
       <div className="flex">
@@ -125,12 +125,12 @@ const QuizQuestions = ({ data, onFinishQuiz }) => {
 
         {/* Question Content */}
         <div className="pl-0 sm:pl-8 flex-1">
-          <p className="text-lg text-gray-200 mb-6">
+          <p className="text-lg text-gray-300 text-left mb-6">
             Ques {currentQuestion + 1}. {question.text}
           </p>
-          <div className="space-y-4">
+          <div className="bg-black space-y-4">
             {question.options.map((option, index) => (
-              <Option
+              <Option 
                 key={index}
                 option={option}
                 question={question}
@@ -176,7 +176,7 @@ const QuizQuestions = ({ data, onFinishQuiz }) => {
             {currentQuestion === totalQuestions - 1 ? (
               <button
                 onClick={handleFinish}
-                className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-md"
+                className=" bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-md"
               >
                 Finish
               </button>
@@ -184,7 +184,7 @@ const QuizQuestions = ({ data, onFinishQuiz }) => {
               <button
                 onClick={handleNext}
                 disabled={!isAnswered} // User must answer to proceed
-                className="bg-gray-700 hover:bg-gray-600 text-gray-300 py-2 px-6 rounded-md disabled:opacity-50"
+                className="bg-zinc-800 hover:bg-gray-600 text-white py-2 px-6 rounded-md disabled:opacity-50"
               >
                 Next
               </button>
