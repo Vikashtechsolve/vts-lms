@@ -2,7 +2,7 @@
 import React, { useEffect, useState, Suspense } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Share2, MessageSquare, Edit2, Video as VideoIcon } from "lucide-react";
+import { Share2, MessageCircle, Pencil , Video as VideoIcon } from "lucide-react";
 
 import Sidebar from "./playlistDetailsTabs/SideBar/SideBar";
 import { courseData } from "../../../courseData";
@@ -152,7 +152,7 @@ export default function PlaylistDetail() {
                       <button
                         key={t}
                         onClick={() => setActiveTab(t)}
-                        className={`text-xs px-3 py-1 rounded-full border transition ${
+                        className={`text-xs px-3 py-1 rounded border transition ${
                           isActive ? "bg-[#9b1b1b] text-white border-transparent" : "border-gray-800 text-gray-200 hover:text-white"
                         }`}
                       >
@@ -162,33 +162,33 @@ export default function PlaylistDetail() {
                   })}
                 </div>
 
-                <h1 className="text-lg md:text-2xl font-semibold mb-2">{playlist.title ?? courseData?.courseTitle}</h1>
-                <p className="text-sm text-gray-300 leading-relaxed">{playlist.description}</p>
-                <p className="text-xs text-gray-500 mt-4">Released on: {playlist.released}</p>
+                <h1 className="text-lg md:text-2xl font-semibold text-left mb-2">{playlist.title ?? courseData?.courseTitle}</h1>
+                <p className="text-sm text-gray-300 leading-relaxed text-left">{playlist.description}</p>
+                <p className="text-xs text-gray-400 text-left mt-4">Released on: {playlist.released}</p>
               </div>
 
-              <div className="flex items-center gap-3 text-gray-400">
+              <div className=" gap-3 text-gray-300">
                 <button className="p-2 hover:text-white">
                   <Share2 size={16} />
                 </button>
                 <button className="p-2 hover:text-white">
-                  <MessageSquare size={16} />
+                  <MessageCircle size={16} />
                 </button>
                 <button className="p-2 hover:text-white">
-                  <Edit2 size={16} />
+                  <Pencil  size={16} />
                 </button>
               </div>
             </div>
           </div>
 
           <div className="bg-[#151516] border border-[#232323] rounded-xl overflow-hidden shadow-inner">
-            <div className="px-5 py-4 border-b border-[#232323]">
-              <div className="text-sm text-gray-200 font-medium">
+            <div className=" py-4 border-[#232323]">
+              <div className=" px-7 text-2xl text-left text-gray-200 font-medium">
                 {playlist.title ?? courseData?.courseTitle} {currentSession ? `| ${currentSession.title}` : ""}
               </div>
             </div>
 
-            <div className="p-6">
+            <div className="px-6">
               {activeTab === "Videos" && (
                 <Suspense fallback={<div className="text-center text-gray-400">Loading video...</div>}>
                   <Videos data={videoData} />

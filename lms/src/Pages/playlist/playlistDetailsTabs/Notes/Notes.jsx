@@ -5,7 +5,7 @@ import { FaRegCopy, FaRegLightbulb } from "react-icons/fa";
 // --- Reusable CodeBlock ---
 const CodeBlock = ({ code }) => {
   return (
-    <div className="bg-gray-900 rounded-lg overflow-hidden my-6">
+    <div className="bg-zinc-900 rounded-lg overflow-hidden my-6">
       <div className="flex justify-between items-center bg-gray-700 px-4 py-2">
         <span className="text-gray-300 text-sm">Example Code</span>
         <div className="flex space-x-3">
@@ -21,7 +21,7 @@ const CodeBlock = ({ code }) => {
           </button>
         </div>
       </div>
-      <pre className="p-4 text-sm text-gray-200 overflow-x-auto">
+      <pre className="p-4 text-sm text-left text-gray-200 overflow-x-auto">
         <code>{code}</code>
       </pre>
     </div>
@@ -33,12 +33,12 @@ const ContentBlock = ({ block }) => {
   if (!block) return null;
   switch (block.type) {
     case "p":
-      return <p className="mb-4">{block.text}</p>;
+      return <p className="text-left mb-4">{block.text}</p>;
     case "h4":
-      return <h4 className="font-semibold text-white mb-2">{block.text}</h4>;
+      return <h4 className="font-semibold text-left text-white mb-2">{block.text}</h4>;
     case "ul":
       return (
-        <ul className="list-disc list-inside space-y-1 mb-4">
+        <ul className="text-left list-disc list-inside space-y-1 mb-4">
           {(block.items || []).map((item, index) => (
             <li key={index}>{item}</li>
           ))}
@@ -49,7 +49,7 @@ const ContentBlock = ({ block }) => {
     default:
       // fallback: if block is a string or has text property
       if (typeof block === "string") return <p className="mb-4">{block}</p>;
-      if (block.text) return <p className="mb-4">{block.text}</p>;
+      if (block.text) return <p className=" mb-4">{block.text}</p>;
       return null;
   }
 };

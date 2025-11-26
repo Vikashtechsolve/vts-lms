@@ -2,12 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import MasterClassCard from "../../components/Cards/MasterClassCard";
 
-/**
- * MasterClass component with playlist-like hover effect.
- *
- * - Put your JSON in public/masterClass.json (or adjust URL)
- * - Thumbnails should point to /images/... or whatever your public path is.
- */
+
 
 export default function MasterClass() {
   const [classes, setClasses] = useState([]);
@@ -68,6 +63,8 @@ export default function MasterClass() {
             <MasterClassCard item={item} />
           ))}
         </div>
+
+        <div className="mt-12" />
       </div>
     </div>
   );

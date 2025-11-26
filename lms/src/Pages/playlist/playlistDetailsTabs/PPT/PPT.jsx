@@ -87,7 +87,7 @@ const PPT = ({ data, pptUrl }) => {
       <div className="flex justify-between items-start mb-4">
         <div>
           <h2 className="text-2xl font-bold text-white mb-1">{topic ?? "Presentation"}</h2>
-          <p className="text-xs text-gray-400">Released on: 10 November, 2025</p>
+          <p className="text-xs p-2 text-left text-gray-400">Released on: 10 November, 2025</p>
         </div>
         <div className="flex space-x-3">
           <button className="text-gray-400 hover:text-white" aria-label="Share">
@@ -109,22 +109,22 @@ const PPT = ({ data, pptUrl }) => {
         </div>
       </div>
 
-      <p className="text-sm text-gray-400 mb-2">
-        This presentation covers essential DSA topics. Use the controls below to navigate the slides.
-      </p>
+      {/* <p className="text-sm text-left text-gray-400 mb-2">
+       PPT Topic: This presentation covers essential DSA topics. Use the controls below to navigate the slides.
+      </p> */}
 
-      <hr className="border-gray-700 my-6" />
+      {/* <hr className="border-gray-700 my-6" /> */}
 
       {/* Content */}
       <div>
         {/* Topic */}
-        <p className="text-xl font-semibold text-gray-200 mb-6">
+        <p className="text-xl text-left  font-semibold text-gray-200 mb-6">
           <span className="font-medium text-gray-400">PPT Topic :</span> {topic ?? "Presentation"}
         </p>
 
         {/* If we have slide images, show viewer */}
         {totalSlides > 0 ? (
-          <div className="relative bg-gray-900 p-4 rounded-lg">
+          <div className="relative bg-zinc-900 p-4 rounded-lg">
             <div className="bg-white rounded-md shadow-lg overflow-hidden">
               {/* Slide as image or iframe if embed URL looks like iframe source */}
               {(() => {

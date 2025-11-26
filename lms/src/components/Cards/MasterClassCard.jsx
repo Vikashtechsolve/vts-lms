@@ -34,11 +34,7 @@ const MasterClassCard = ({ item }) => {
 
         {/* HOVER OVERLAY FULL CARD */}
         <div
-          className="absolute inset-0 rounded-2xl bg-grey-700 backdrop-blur-xl
-  opacity-0 group-hover:opacity-100 rounded-2x
-  transition-all duration-00 p-3
-  flex flex-col justify-center  h-72 z-50
-  "
+          className="absolute inset-0 rounded-2xl bg-grey-700 backdrop-blur-xl opacity-0 group-hover:opacity-100 transition-all duration-00 p-3 flex flex-col justify-center  h-72 z-50"
         >
           <div className="h-40 overflow-hidden rounded-xl">
             {/* TITLE TOP */}

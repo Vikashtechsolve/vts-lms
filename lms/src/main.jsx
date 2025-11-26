@@ -13,8 +13,6 @@ import LandingPage from "./Pages/LandingPage/LandingPage.jsx";
 import Blogs from "./Pages/blogs/Blogs.jsx";
 import Playlist from "./Pages/playlist/playlist.jsx";
 import PlaylistDetail from "./Pages/playlist/PlaylistDetails.jsx";
-import Notes from "./Pages/playlist/playlistDetailsTabs/Notes/Notes.jsx";
-import Video from "./Pages/playlist/playlistDetailsTabs/Videos/Videos.jsx";
 import MasterClass from "./Pages/MasterClass/MasterClass.jsx";
 import Programs from "./Pages/Programs/Programs.jsx";
 import News from "./Pages/News/News.jsx";
