@@ -19,6 +19,12 @@ import News from "./Pages/News/News.jsx";
 import Interview from "./Pages/Interviews/Interview.jsx";
 import Reels from "./Pages/Reels/Reels.jsx";
 import SignIn from "./Pages/SignIn.jsx";
+import LiveClass from "./Pages/MasterClass/LiveClass.jsx";
+// import RecordedClassCard from "./components/Cards/RecordedClassCard.jsx";
+// import UpcomingEventCard from "./components/Cards/UpcomingEventCard.jsx";
+import RecordedClass from "./Pages/MasterClass/RecordedClass.jsx";
+import UpcomingEventClass from "./Pages/MasterClass/UpcomingEventClass.jsx";
+// import LiveClassCard from "./components/Cards/LiveClassCard";
 
 
 // create router with nested routes (App is the layout)
@@ -37,6 +43,10 @@ const router = createBrowserRouter([
       { path: "/Interviews", element: <Interview/> },
       { path: "/Reels", element: <Reels/> },
       { path: "signin", element: <SignIn /> },
+      { path: "/LiveClass/:id", element: <LiveClass /> },    // live page (you already had)
+      { path: "/Recorded/:id", element: <RecordedClass/> },
+      { path: "/Upcoming/:id", element: <UpcomingEventClass/> },
+
       
 
 
