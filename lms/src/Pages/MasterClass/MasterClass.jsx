@@ -51,8 +51,8 @@ export default function MasterClass() {
   return (
     <div className="px-6 py-10 bg-black text-white">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-serif">Master Classes</h1>
+        <div className="flex items-center justify-center mb-8">
+          <h1 className="text-3xl  font-serif">Master Classes</h1>
         </div>
 
         <div
