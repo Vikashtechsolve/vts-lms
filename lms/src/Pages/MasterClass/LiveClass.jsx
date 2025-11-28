@@ -33,8 +33,8 @@ const LiveClass = () => {
   if (!item) return <div className="p-8 text-zinc-300">No class found.</div>;
 
   return (
-    <div className="min-h-screen bg-[#0b0b0b] text-white p-8">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-[#0b0b0b] text-white p-4">
+      <div className="max-w-6xl mx-auto">
         <div className="relative rounded-xl overflow-hidden shadow-lg">
           <img src={item.thumbnail} alt={item.title} className="w-full h-96 object-cover" />
 
