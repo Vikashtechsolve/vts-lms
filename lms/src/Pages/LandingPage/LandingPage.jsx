@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Play,
   SquarePlus,
-  CircleChevronLeft,
-  CircleChevronRight,
+  // CircleChevronLeft,
+  // CircleChevronRight,
   CircleArrowLeft,
   CircleArrowRight,
 } from "lucide-react";
@@ -276,11 +276,11 @@ function LandingPage() {
 
       {/* Playlists */}
       <div className="bg-black text-white px-6">
-        <div className="flex justify-between items-center bg-black mb-12">
-          <h2 className="text-xl mt-8 font-semibold">Playlists</h2>
+        <div className="flex justify-between items-center bg-black mb-">
+          <h2 className="text-xl z-100 relative mt-8 font-semibold">Playlists</h2>
           <button
             onClick={() => navigate("/Playlist")}
-            className="text-sm text-gray-400 hover:text-white transition cursor-pointer"
+            className="text-sm z-100 relative text-gray-400 hover:text-white transition cursor-pointer"
           >
             View All &rarr;
           </button>
@@ -306,24 +306,24 @@ function LandingPage() {
             {/* overlay arrows: show when playlist wrapper hovered (state-based) */}
             <button
               onClick={() => scrollRefByAmt(playlistRef, "left")}
-              className={`absolute left-2 top-1/2 -translate-y-1/2 z-50 transition-opacity pointer-events-auto ${
+              className={`absolute -left-1 top-32 -translate-y-1/2 z-50 transition-opacity pointer-events-auto cursor-pointer bg-black opacity-15 h-4/4 rounded ${
                 isPlaylistHover ? "opacity-100" : "opacity-0"
               }`}
             >
               <div className="bg-black/60 hover:bg-black text-white p-2 rounded-full shadow">
-                <CircleChevronLeft className="w-10 h-10" />
+                <CircleArrowLeft className="w-10 h-10" />
               </div>
             </button>
 
             <button
               onClick={() => scrollRefByAmt(playlistRef, "right")}
               aria-label="scroll playlists right"
-              className={`absolute right-2 top-1/2 -translate-y-1/2 z-50 transition-opacity pointer-events-auto ${
+              className={`absolute -right-1 top-32 -translate-y-1/2 z-50 transition-opacity pointer-events-auto cursor-pointer  bg-black opacity-15 h-4/4 rounded ${
                 isPlaylistHover ? "opacity-100" : "opacity-0"
               }`}
             >
               <div className="bg-black/60 hover:bg-black text-white p-2 rounded-full shadow">
-                <CircleChevronRight className="w-10 h-10" />
+                <CircleArrowRight className="w-10 h-10" />
               </div>
             </button>
           </div>
@@ -331,10 +331,12 @@ function LandingPage() {
       </div>
 
       {/* Master Classes */}
-      <div className="bg-black text-white px-6">
-        <div className="flex  justify-between items-center mb-12">
-          <h2 className="text-xl font-semibold">Master Classes</h2>
-          <button className="text-sm text-gray-400 hover:text-white transition cursor-pointer">
+      <div className="bg-black text-white px-6 ">
+        <div className="flex  justify-between items-center mb-1">
+          <h2 className="text-xl z-100 relative font-semibold">Master Classes</h2>
+          <button
+           onClick={() => navigate("/MasterClass")}
+           className="text-sm z-100 relative text-gray-400 hover:text-white transition cursor-pointer">
             View All &rarr;
           </button>
         </div>
@@ -359,8 +361,8 @@ function LandingPage() {
             <button
               onClick={() => scrollRefByAmt(masterRef, "left")}
               aria-label="scroll master left"
-              className={`absolute left-2 top-1/2 -translate-y-1/2 z-50 transition-opacity pointer-events-auto ${
-                isMasterHover ? "opacity-100" : "opacity-0"
+              className={`absolute -left-1 top-32 -translate-y-1/2 z-50 transition-opacity pointer-events-auto  cursor-pointer bg-black h-4/4 rounded ${
+                isMasterHover ? "opacity-100" : "opacity-15"
               }`}
             >
               <div className="bg-black/60 hover:bg-black text-white p-2 rounded-full shadow">
@@ -371,7 +373,7 @@ function LandingPage() {
             <button
               onClick={() => scrollRefByAmt(masterRef, "right")}
               aria-label="scroll master right"
-              className={`absolute right-2 top-1/2 -translate-y-1/2 z-50 transition-opacity pointer-events-auto ${
+              className={`absolute -right-1 top-32 -translate-y-1/2 z-50 transition-opacity pointer-events-auto cursor-pointer bg-black h-4/4 rounded ${
                 isMasterHover ? "opacity-100" : "opacity-0"
               }`}
             >
@@ -384,12 +386,12 @@ function LandingPage() {
       </div>
 
       {/* Blogs */}
-      <div className="bg-black text-white px-6">
-        <div className="flex justify-between items-center bg-black mb-12">
-          <h2 className="text-xl mt-8 font-semibold">Blogs</h2>
+      <div className="bg-black text-white px-4">
+        <div className="flex justify-between items-center bg-black">
+          <h2 className="text-xl z-100 relative mt-8 font-semibold">Blogs</h2>
           <button
             onClick={() => navigate("/Blogs")}
-            className="text-sm text-gray-400 hover:text-white transition cursor-pointer"
+            className="text-sm z-100 relative text-gray-400 hover:text-white transition cursor-pointer"
           >
             View All &rarr;
           </button>
@@ -415,24 +417,24 @@ function LandingPage() {
             {/* overlay arrows: show when playlist wrapper hovered (state-based) */}
             <button
               onClick={() => scrollRefByAmt(blogRef, "left")}
-              className={`absolute left-2 top-1/2 -translate-y-1/2 z-50 transition-opacity pointer-events-auto ${
+              className={`absolute -left-1 top-32 -translate-y-1/2 z-50 transition-opacity pointer-events-auto  cursor-pointer bg-black h-4/4 rounded ${
                 isBlogHover ? "opacity-100" : "opacity-0"
               }`}
             >
               <div className="bg-black/60 hover:bg-black text-white p-2 rounded-full shadow">
-                <CircleChevronLeft className="w-10 h-10" />
+                <CircleArrowLeft className="w-10 h-10" />
               </div>
             </button>
 
             <button
               onClick={() => scrollRefByAmt(blogRef, "right")}
               aria-label="scroll playlists right"
-              className={`absolute right-2 top-1/2 -translate-y-1/2 z-50 transition-opacity pointer-events-auto ${
+              className={`absolute -right-1 top-32 -translate-y-1/2 z-50 transition-opacity pointer-events-auto cursor-pointer bg-black h-4/4 rounded ${
                 isBlogHover ? "opacity-100" : "opacity-0"
               }`}
             >
               <div className="bg-black/60 hover:bg-black text-white p-2 rounded-full shadow">
-                <CircleChevronRight className="w-10 h-10" />
+                <CircleArrowRight className="w-10 h-10" />
               </div>
             </button>
           </div>

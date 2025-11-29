@@ -33,8 +33,8 @@ export default function UpcomingEventClass() {
   if (!item) return <div className="p-8 text-zinc-300">No event found.</div>;
 
   return (
-    <div className="min-h-screen bg-zinc-900 text-zinc-200 px-6 md:px-12 py-8">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-zinc-900 text-zinc-200 px-6 md:px-12 py-4">
+      <div className="max-w-6xl mx-auto">
         <div className="relative rounded-md overflow-hidden">
           <img src={item.thumbnail} alt={item.title} className="w-full h-96 object-cover" />
 
@@ -68,18 +68,8 @@ export default function UpcomingEventClass() {
             )}
            
           </div>
-{/* 
-          <div className="md:col-span-2 text-zinc-300">
-            <h2 className="text-xl font-bold text-white">{item.title}</h2>
-            <p className="mt-3 text-sm">{item.description}</p>
 
-            <div className="mt-6">
-              <h4 className="text-sm font-semibold text-white mb-2">What this session covers</h4>
-              <ul className="list-disc list-inside text-sm text-zinc-400 space-y-1">
-                {(item.whatThisSessionCovers || []).map((t, i) => <li key={i}>{t}</li>)}
-              </ul>
-            </div>
-          </div> */}
+        
         </div>
       </div>
     </div>

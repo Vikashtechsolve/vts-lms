@@ -33,23 +33,27 @@ const MasterClassCard = ({ item }) => {
           <img
             src={item.thumbnail}
             alt={item.title}
-            className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+            className="w-full h-52 object-cover transition-transform duration-500 group-hover:scale-110"
           />
 
           {/* Badge */}
           {item.status === "Upcoming" || item.badge === "Upcoming Master Class" ? (
-            <div className="absolute left-0 right-0 mx-auto w-[280px] bottom-3 bg-zinc-700 text-yellow-400 text-sm px-3 py-1 flex items-center justify-center font-bold gap-2 rounded">
+            <div className="absolute left-0 right-0 mx-auto w-[320px] top-40 bg-zinc-700 text-yellow-400 text-sm px-3 py-1 flex items-center justify-center font-bold gap-2 rounded">
               <CalendarCheck2 />
               {item.badge}
             </div>
+
           ) : item.status === "Live" || item.badge === "Live Now" ? (
-            <div className="absolute left-0 right-0 mx-auto w-[320px] bottom-3 bg-zinc-700 text-red-500 text-sm px-3 py-1 flex items-center justify-center font-bold gap-2 rounded">
+            <div className="absolute left-0 right-0 mx-auto w-[320px] top-40 bg-zinc-700 text-white text-sm px-3 py-1 flex items-center justify-center font-bold gap-2 rounded">
+               <span className="inline-block w-3 h-3 bg-red-500 rounded-full" aria-hidden="true" />
               {item.badge}
             </div>
+
           ) : item.status === "Recorded" || item.badge === "Recorded" ? (
-            <div className="absolute left-3 bottom-3 bg-slate-700 text-white text-xs px-3 py-1 rounded-full">
+            <div className="absolute left- top-40 w-[320px] bg-zinc-700 text-white px-3 py-1 rounded">
               {item.badge}
             </div>
+
           ) : (
             <div className="absolute left-3 bottom-3 bg-slate-700 text-white text-xs px-3 py-1 rounded-full">
               {item.badge}
