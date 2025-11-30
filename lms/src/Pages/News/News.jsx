@@ -1,31 +1,31 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import BlogsCardH from "../../components/Cards/BlogsCardH";
-import BlogDetails from "./BlogDetails";
+import NewsCardH from "../../components/Cards/NewsCardH";
+import NewsDetails from "./NewsDetails";
 
-const Blogs = () => {
-  const [blogs, setBlogs] = useState([]);
+const News = () => {
+  const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedBlog, setSelectedBlog] = useState(null);
+  const [selectedNews, setSelectedNews] = useState(null);
 
   useEffect(() => {
-    const fetchBlogs = async () => {
+    const fetchNews = async () => {
       try {
-        const response = await axios.get("/blogs.json");
-        setBlogs(response.data);
+        const response = await axios.get("/news.json");
+        setNews(response.data);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching blogs:", error);
+        console.error("Error fetching News:", error);
         setLoading(false);
       }
     };
 
-    fetchBlogs();
+    fetchNews();
   }, []);
 
-  if (selectedBlog) {
+  if (selectedNews) {
     return (
-      <BlogDetails blog={selectedBlog} onBack={() => setSelectedBlog(null)} />
+      <NewsDetails news={selectedNews} onBack={() => setSelectedNews(null)} />
     );
   }
 
@@ -34,22 +34,22 @@ const Blogs = () => {
       {/* Page Header */}
       <div className="flex flex-col items-center justify-center mb-10">
         <h2 className="font-playfair font-semibold text-[28px] leading-[100%] text-white tracking-normal">
-          Blogs
+          News
         </h2>
       </div>
 
-      {/* Blog List Container */}
+      {/* News List Container */}
       <div className="px-4 md:px-0 max-w-[1110px] mx-auto space-y-6">
         {loading ? (
           <div className="text-center text-gray-500 py-20">
             Loading articles...
           </div>
         ) : (
-          blogs.map((item) => (
-            <BlogsCardH
+          news.map((item) => (
+            <NewsCardH
               key={item.id}
               data={item}
-              onClick={() => setSelectedBlog(item)}
+              onClick={() => setSelectedNews(item)}
             />
           ))
         )}
@@ -65,4 +65,4 @@ const Blogs = () => {
   );
 };
 
-export default Blogs;
+export default News;

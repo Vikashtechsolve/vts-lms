@@ -2,37 +2,40 @@
 import React, { useEffect, useState, Suspense } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Share2, MessageSquare, Edit2, ChevronDown, ChevronRight, Video } from "lucide-react";
+import { Share2, MessageCircle, Pencil , Video as VideoIcon } from "lucide-react";
 
-// Lazy load heavy tabs
-const Videos = React.lazy(() => import("./playlistDetailsTabs/Videos"));
-const PPT = React.lazy(() => import("./playlistDetailsTabs/PPT"));
+import Sidebar from "./playlistDetailsTabs/SideBar/SideBar";
+import { courseData } from "../../../courseData";
 
-// Eager load lightweight tabs
-import Notes from "./playlistDetailsTabs/Notes";
-import Test from "./playlistDetailsTabs/Test";
+const Videos = React.lazy(() => import("./playlistDetailsTabs/Videos/Videos"));
+const PPT = React.lazy(() => import("./playlistDetailsTabs/PPT/PPT"));
+
+import Notes from "./playlistDetailsTabs/Notes/Notes";
+import Test from "./playlistDetailsTabs/Test/Test";
 
 export default function PlaylistDetail() {
   const { id } = useParams();
+
   const [playlist, setPlaylist] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Videos");
-
-  // Sidebar Accordion State
-  const [openModule, setOpenModule] = useState(null);
+  const [activeSessionKey, setActiveSessionKey] = useState(null);
+  const [currentSession, setCurrentSession] = useState(null);
 
   const tabs = ["Videos", "Notes", "PPT", "Test"];
 
+  // Fetch playlist 
   useEffect(() => {
     const fetchPlaylist = async () => {
       try {
         const res = await axios.get("/PlaylistDetails.json");
         const data = Array.isArray(res.data)
           ? res.data.find((p) => String(p.id) === String(id))
-          : res.data.playlists?.find((p) => String(p.id) === String(id));
+          : res.data.playlists?.find((p) => String(p.id) === String(id)) || res.data;
         setPlaylist(data ?? null);
+        console.log("Loaded playlist:", data);
       } catch (err) {
-        console.error(err);
+        console.error("Failed to fetch playlist:", err);
         setPlaylist(null);
       } finally {
         setLoading(false);
@@ -41,6 +44,33 @@ export default function PlaylistDetail() {
     fetchPlaylist();
   }, [id]);
 
+  const modules = (courseData?.modules && courseData.modules.length)
+    ? courseData.modules
+    : playlist?.modules ?? [];
+
+  
+  useEffect(() => {
+    if (currentSession) return;
+
+    // Prefer first session from courseData/modules if present
+    if (modules && modules.length) {
+      const first = modules[0]?.sessions?.[0] ?? null;
+      if (first) {
+        setCurrentSession(first);
+        return;
+      }
+    }
+
+   
+    if (playlist) {
+      const possibleSession = (playlist.sessions && playlist.sessions[0]) || null;
+      if (possibleSession) {
+        setCurrentSession(possibleSession);
+      }
+    }
+  }, [modules, playlist, currentSession]);
+
+  
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-400">
@@ -55,79 +85,62 @@ export default function PlaylistDetail() {
       </div>
     );
 
-  // Dummy module/session data
-  const modules = [
-    {
-      name: "Module 1 – Basics",
-      sessions: ["Session 1: Introduction", "Session 2: Getting Started", "Session 3: Fundamentals"],
-    },
-    {
-      name: "Module 2 – Intermediate",
-      sessions: ["Session 1: Core Concepts", "Session 2: Deep Dive"],
-    },
-    {
-      name: "Module 3 – Advanced",
-      sessions: ["Session 1: Architecture", "Session 2: Optimization", "Session 3: Case Studies"],
-    },
-  ];
+  
+  const videoData = {
+    title: currentSession?.video?.title ?? playlist.title ?? "Video",
+    description: currentSession?.video?.description ?? playlist.description ?? "",
+    url: currentSession?.video?.url ?? playlist.videoUrl ?? playlist.video ?? "",
+  };
+
+  const notesData = currentSession?.notes ?? playlist.Notes ?? playlist.notes ?? playlist.notesData ?? null;
+  const pptUrl = currentSession?.ppt ?? playlist.pptUrl ?? playlist.ppt ?? null;
+  const testData = currentSession?.test ?? playlist.test ?? playlist.tests ?? null;
+
+ 
+  const handleSelectSession = (sessionKey) => {
+    if (!sessionKey) return;
+    setActiveSessionKey(sessionKey);
+
+    // Parse module and session titles from the emitted sessionKey
+    const firstDash = sessionKey.indexOf("-");
+    let moduleTitle, sessionTitle;
+    if (firstDash === -1) {
+      const parts = sessionKey.split("-");
+      moduleTitle = parts[0];
+      sessionTitle = parts.slice(1).join("-");
+    } else {
+      moduleTitle = sessionKey.slice(0, firstDash);
+      sessionTitle = sessionKey.slice(firstDash + 1);
+    }
+
+    // Find module
+    const mod = modules.find((m) => String(m.title) === String(moduleTitle)) ||
+                modules.find((m) => String(m.title).includes(String(moduleTitle)) || String(moduleTitle).includes(String(m.title)));
+
+    if (!mod) {
+      console.warn("handleSelectSession: module not found for key:", sessionKey);
+      return;
+    }
+
+    const session = (mod.sessions || []).find((s) => String(s.title) === String(sessionTitle));
+    if (!session) {
+      console.warn("handleSelectSession: session not found in module:", moduleTitle, "sessionTitle:", sessionTitle);
+      return;
+    }
+
+    setCurrentSession(session);
+    setActiveTab("Videos");
+  };
 
   return (
-    <div className="bg-[#0b0b0c] text-white min-h-screen py-8">
-      <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-12 gap-6">
-        
-        {/* ===================== SIDEBAR ===================== */}
-        <aside className="col-span-3 hidden md:block">
-          <div className="bg-[#111111] rounded-md p-4 h-full text-sm border border-[#1f1f1f]">
+    <div className="bg-[#0b0b0c] text-white min-h-screen py-4">
+      <div className="max-w-[1500px] mx-auto px-6 grid grid-cols-12 gap-6 ">
+        {/* SIDEBAR */}
+        <div className="col-span-3 bg-zinc-90">
+          <Sidebar modules={modules} activeSessionKey={activeSessionKey} onSelectSession={handleSelectSession} />
+        </div>
 
-            <h2 className="text-gray-200 font-semibold mb-4 text-lg">
-              Course Content
-            </h2>
-
-            <div className="space-y-3">
-              {modules.map((module, index) => {
-                const isOpen = openModule === index;
-
-                return (
-                  <div key={index} className="bg-[#0f0f0f] rounded-lg border border-[#1e1e1e]">
-                    {/* Module Header */}
-                    <button
-                      onClick={() =>
-                        setOpenModule(isOpen ? null : index)
-                      }
-                      className="w-full flex items-center justify-between px-3 py-2 text-left text-gray-300 hover:bg-[#1a1a1a] rounded-lg"
-                    >
-                      <span className="font-medium">{module.name}</span>
-                      {isOpen ? (
-                        <ChevronDown size={16} />
-                      ) : (
-                        <ChevronRight size={16} />
-                      )}
-                    </button>
-
-                    {/* Sessions List */}
-                    {isOpen && (
-                      <ul className="px-4 pb-3 pt-1 space-y-1 text-gray-400">
-                        {module.sessions.map((s, i) => (
-                          <li
-                            key={i}
-                            className="flex items-center gap-2 px-2 py-1 hover:bg-[#1a1a1a] rounded-md cursor-pointer"
-                          >
-                            <Video size={14} className="text-gray-500" />
-                            <span className="text-xs">{s}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </aside>
-        {/* ===================== END SIDEBAR ===================== */}
-
-
-        {/* ===================== MAIN CONTENT ===================== */}
+        {/* MAIN */}
         <main className="col-span-12 md:col-span-9">
           <div className="bg-[#121212] border border-[#232323] rounded-xl p-6 mb-6 shadow-sm">
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
@@ -139,10 +152,8 @@ export default function PlaylistDetail() {
                       <button
                         key={t}
                         onClick={() => setActiveTab(t)}
-                        className={`text-xs px-3 py-1 rounded-full border transition ${
-                          isActive
-                            ? "bg-[#9b1b1b] text-white border-transparent"
-                            : "border-gray-800 text-gray-200 hover:text-white"
+                        className={`text-xs px-3 py-1 rounded border transition ${
+                          isActive ? "bg-[#9b1b1b] text-white border-transparent" : "border-gray-800 text-gray-200 hover:text-white"
                         }`}
                       >
                         {t}
@@ -151,54 +162,48 @@ export default function PlaylistDetail() {
                   })}
                 </div>
 
-                <h1 className="text-lg md:text-2xl font-semibold mb-2">
-                  {playlist.title}
-                </h1>
-                <p className="text-sm text-gray-300 leading-relaxed">
-                  {playlist.description}
-                </p>
-                <p className="text-xs text-gray-500 mt-4">
-                  Released on: {playlist.released}
-                </p>
+                <h1 className="text-lg md:text-2xl font-semibold text-left mb-2">{playlist.title ?? courseData?.courseTitle}</h1>
+                <p className="text-sm text-gray-300 leading-relaxed text-left">{playlist.description}</p>
+                <p className="text-xs text-gray-400 text-left mt-4">Released on: {playlist.released}</p>
               </div>
 
-              <div className="flex items-center gap-3 text-gray-400">
+              <div className=" gap-3 text-gray-300">
                 <button className="p-2 hover:text-white">
                   <Share2 size={16} />
                 </button>
                 <button className="p-2 hover:text-white">
-                  <MessageSquare size={16} />
+                  <MessageCircle size={16} />
                 </button>
                 <button className="p-2 hover:text-white">
-                  <Edit2 size={16} />
+                  <Pencil  size={16} />
                 </button>
               </div>
             </div>
           </div>
 
           <div className="bg-[#151516] border border-[#232323] rounded-xl overflow-hidden shadow-inner">
-            <div className="px-5 py-4 border-b border-[#232323]">
-              <div className="text-sm text-gray-200 font-medium">
-                {playlist.title} | Module 1 | Session 2
+            <div className=" py-4 border-[#232323]">
+              <div className=" px-7 text-2xl text-left text-gray-200 font-medium">
+                {playlist.title ?? courseData?.courseTitle} {currentSession ? `| ${currentSession.title}` : ""}
               </div>
             </div>
 
-            <div className="p-6">
+            <div className="px-6">
               {activeTab === "Videos" && (
                 <Suspense fallback={<div className="text-center text-gray-400">Loading video...</div>}>
-                  <Videos videoUrl={playlist.videoUrl} />
+                  <Videos data={videoData} />
                 </Suspense>
               )}
 
-              {activeTab === "Notes" && <Notes notes={playlist.notes} />}
+              {activeTab === "Notes" && <Notes data={notesData} />}
 
               {activeTab === "PPT" && (
                 <Suspense fallback={<div className="text-center text-gray-400">Loading presentation...</div>}>
-                  <PPT pptUrl={playlist.pptUrl} />
+                  <PPT pptUrl={pptUrl} />
                 </Suspense>
               )}
 
-              {activeTab === "Test" && <Test test={playlist.test} />}
+              {activeTab === "Test" && <Test test={testData} />}
             </div>
           </div>
 

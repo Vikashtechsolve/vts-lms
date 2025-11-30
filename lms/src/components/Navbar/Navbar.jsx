@@ -1,12 +1,19 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { Search, User, FileBadge, Award, LayoutDashboard, LogOut } from "lucide-react";
+import {
+  Search,
+  User,
+  LogOut,
+  FileBadge,
+  Award,
+  LayoutDashboard,
+} from "lucide-react";
 import { useState, useRef } from "react";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 
 const MENU = [
   { id: 1, title: "Home", to: "/" },
-  { id: 2, title: "Playlists", to: "/Playlist" },
-  { id: 3, title: "Master Classes", to: "/master-classes" },
+  { id: 2, title: "Playlists", to: "/playlist" },
+  { id: 3, title: "Master Classes", to: "/masterclass" },
   { id: 4, title: "Programs", to: "/programs" },
   { id: 5, title: "Blogs", to: "/blogs" },
   { id: 6, title: "News", to: "/news" },
@@ -14,31 +21,27 @@ const MENU = [
   { id: 8, title: "Reels", to: "/reels" },
 ];
 
-// Figma style icons + labels
-const userMenu = [
-  { id: 1, label: "Profile", icon: <User size={18} /> },
-  { id: 2, label: "Certification", icon: <FileBadge size={18} /> },
-  { id: 3, label: "Badges", icon: <Award size={18} /> },
-  { id: 4, label: "Dashboard", icon: <LayoutDashboard size={18} /> },
-   
-  { id: 5, label: "Sign In", icon: <LogOut size={18} />, route: "/signin" },
-];
-
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
   const dropdownRef = useRef(null);
   useOnClickOutside(dropdownRef, () => setDropdownOpen(false));
 
-  return (
-    <header className="w-full bg-[#0F0F0F] h-20 flex items-center px-12">
+  const isLoggedIn = Boolean(localStorage.getItem("token"));
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/signin");
+  };
+
+  return (
+    <header className="w-full bg-[#0F0F0F] h-20 flex items-center px-12 fixed top-0 left-0 z-50">
       {/* LOGO */}
       <div className="flex items-center">
-        <img src="/logo.png" className="w-35" />
+        <img src="/logo.png" className="w-35" alt="logo" />
       </div>
 
       {/* CENTER MENU */}
@@ -60,8 +63,7 @@ export default function Navbar() {
 
       {/* RIGHT SIDE */}
       <div className="flex items-center gap-6">
-
-        {/* SEARCH ICON */}
+        {/* SEARCH BUTTON */}
         <button
           onClick={() => setShowSearch(!showSearch)}
           className="text-white text-xl hover:text-red-500 transition"
@@ -71,8 +73,7 @@ export default function Navbar() {
 
         {/* SEARCH BAR */}
         {showSearch && (
-          <div className="flex items-center bg-[#1A1A1A] border border-gray-700 
-          rounded-full px-4 py-2 w-64 transition">
+          <div className="flex items-center bg-[#1A1A1A] border border-gray-700 rounded-full px-4 py-2 w-64 transition">
             <Search size={18} className="text-gray-400" />
 
             <input
@@ -101,26 +102,74 @@ export default function Navbar() {
             <User size={20} />
           </button>
 
+          {/* DROPDOWN LIST */}
           {dropdownOpen && (
-          <div className="absolute right-0 mt-3 w-52 bg-[#111111] text-white rounded-xl shadow-xl z-50 py-2">
+            <div className="absolute right-0 mt-3 w-52 bg-[#111111] text-white rounded-xl shadow-xl z-50 py-2">
+              <button
+                onClick={() => {
+                  navigate("/profile");
+                  setDropdownOpen(false);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-900 transition text-left"
+              >
+                <User size={18} /> Profile
+              </button>
 
-              {userMenu.map((item) => (
+              <button
+                onClick={() => {
+                  navigate("/profile/certificates");
+                  setDropdownOpen(false);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-900 transition text-left"
+              >
+                <FileBadge size={18} /> Certification
+              </button>
+
+              <button
+                onClick={() => {
+                  navigate("/profile/badges");
+                  setDropdownOpen(false);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-900 transition text-left"
+              >
+                <Award size={18} /> Badges
+              </button>
+
+              <button
+                onClick={() => {
+                  navigate("/dashboard");
+                  setDropdownOpen(false);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-900 transition text-left"
+              >
+                <LayoutDashboard size={18} /> Dashboard
+              </button>
+
+              {/* LOGIN / LOGOUT SWITCH */}
+              {!isLoggedIn ? (
                 <button
-                  key={item.id}
                   onClick={() => {
-                    if (item.route) navigate(item.route);
+                    navigate("/signin");
+                    setDropdownOpen(false);
                   }}
-                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition text-left"
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-900 transition text-left"
                 >
-                  {item.icon}
-                  <span className="text-[15px]">{item.label}</span>
+                  <User size={18} /> Sign In
                 </button>
-              ))}
-
+              ) : (
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setDropdownOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-900 transition text-left text-red-300"
+                >
+                  <LogOut size={18} /> Sign Out
+                </button>
+              )}
             </div>
           )}
         </div>
-
       </div>
     </header>
   );
