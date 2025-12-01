@@ -39,10 +39,6 @@ const router = createBrowserRouter([
       { path: "/Interviews", element: <Interview/> },
       { path: "/Reels", element: <Reels/> },
       { path: "signin", element: <SignIn /> },
-      
-
-
-                
     ],
   },
 ]);
