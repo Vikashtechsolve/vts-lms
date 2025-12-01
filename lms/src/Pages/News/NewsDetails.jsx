@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { Plus, Check, MessageCircle, Share2 } from "lucide-react";
 import TimeAgo from "./components/Timeago";
-import Comments from "../../components/Comments";
 import FormatDate from "./components/FormatDate";
 
 const NewsDetails = ({ news, onBack }) => {

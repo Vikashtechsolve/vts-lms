@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaArrowLeft, FaPaperPlane } from "react-icons/fa";
 import { Plus, Check, MessageCircle, Share2 } from "lucide-react";
-import Comments from "../../components/Comments";
+
 
 const BlogDetails = ({ blog, onBack }) => {
   const [inWishlist, setInWishlist] = useState(false);
