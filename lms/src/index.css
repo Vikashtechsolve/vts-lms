@@ -1,1 +1,15 @@
 @import "tailwindcss";
+/* hide native scrollbar for horizontal scroller */
+.tc-scroller::-webkit-scrollbar {
+  display: none;
+}
+.tc-scroller {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* optional: subtle card hover scale */
+.tc-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  transition: transform 220ms ease;
+}
