@@ -2,7 +2,7 @@ import { Play, SquarePlus } from "lucide-react";
 
 const BlogsCard = ({ item }) => {
   return (
-    <div key={item.id} className="w-80 flex-shrink-0 relative">
+    <div key={item.id} className="w-69 flex-shrink-0 relative">
       <div
         className="group relative rounded-2xl transition-all duration-500 transform-gpu hover:scale-125 hover:z-50"
         style={{ overflow: "visible" }}
@@ -40,7 +40,7 @@ const BlogsCard = ({ item }) => {
   "
         >
           {/* IMAGE TOP ON HOVER */}
-          <div className="h-40 overflow-hidden rounded-xl">
+          <div className="h-40  overflow-hidden rounded-xl">
             <img
               src={item.thumbnail}
               alt={item.title}
@@ -50,23 +50,23 @@ const BlogsCard = ({ item }) => {
 
           {/* BUTTONS */}
           <div className="flex items-center gap-3 mt-4">
-            <button className="bg-white text-black font-semibold px-6 py-2 rounded-full flex items-center gap-2 text-sm">
-              <Play size={18} /> Watch Now
+            <button className="bg-white text-black font-semibold px-5 py-2 rounded-md flex items-center gap-2 text-sm w-full">
+              <Play size={18} /> Continue Reading
             </button>
 
-            <button className="bg-white/20 border border-white rounded-full p-2 text-white">
-              <SquarePlus size={20} />
+            <button className=" text-white">
+              <SquarePlus size={38} fill="gray" />
             </button>
           </div>
 
           {/* DETAILS */}
           <div className="mt-4 text-gray-300 text-sm">
-            <div className="flex justify-between text-white font-medium">
+            {/* <div className="flex justify-between text-white font-medium">
               <span>{item.year || "2025"}</span>
               <span>{item.modules || "6 Modules"}</span>
-            </div>
+            </div> */}
 
-            <p className="mt-2 text-gray-300 text-xs leading-relaxed">
+            <p className="mt-2 text-gray-300 text-xs text-left leading-relaxed">
               {item.description ||
                 "This playlist covers modern development with hands-on projects & tutorials"}
             </p>
