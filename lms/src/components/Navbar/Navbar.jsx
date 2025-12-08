@@ -145,14 +145,25 @@ const MENU = [
 ];
 
 // Figma style icons + labels
-const userMenu = [
-  { id: 1, label: "Profile", icon: <User size={18} /> },
-  { id: 2, label: "Certification", icon: <FileBadge size={18} /> },
-  { id: 3, label: "Badges", icon: <Award size={18} /> },
-  { id: 4, label: "Dashboard", icon: <LayoutDashboard size={18} /> },
 
-  { id: 5, label: "Sign In", icon: <LogOut size={18} />, route: "/signin" },
+const userMenu = [
+  { id: 1, label: "Profile", icon: <User size={18} />, route: "/profile" },
+  {
+    id: 2,
+    label: "Certification",
+    icon: <FileBadge size={18} />,
+    route: "/profile/certifications",
+  },
+  { id: 3, label: "Badges", icon: <Award size={18} />, route: "/profile/badges" },
+  {
+    id: 4,
+    label: "Dashboard",
+    icon: <LayoutDashboard size={18} />,
+    route: "/dashboard",
+  },
+  { id: 5, label: "Sign Out", icon: <LogOut size={18} />, route: "/signin" },
 ];
+
 
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -232,21 +243,22 @@ export default function Navbar() {
           </button>
 
           {dropdownOpen && (
-            <div className="absolute right-0 mt-3 w-52 bg-[#111111] text-white rounded-xl shadow-xl z-50 py-2">
-              {userMenu.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    if (item.route) navigate(item.route);
-                  }}
-                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition text-left"
-                >
-                  {item.icon}
-                  <span className="text-[15px]">{item.label}</span>
-                </button>
-              ))}
-            </div>
-          )}
+  <div className="absolute right-0 mt-3 w-52 bg-[#1A1A1A] text-white rounded-xl shadow-xl z-50 py-2 border border-white/10">
+    {userMenu.map((item) => (
+      <button
+        key={item.id}
+        onClick={() => {
+          if (item.route) navigate(item.route);
+        }}
+        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#2A2A2A] transition text-left"
+      >
+        {item.icon}
+        <span className="text-[15px] text-gray-200">{item.label}</span>
+      </button>
+    ))}
+  </div>
+)}
+
         </div>
       </div>
     </header>

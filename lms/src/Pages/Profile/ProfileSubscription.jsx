@@ -1,0 +1,97 @@
+import { Check, Lock, Star, ListCheck } from "lucide-react";
+import ProfileSidebar from "./ProfileSidebar";
+
+export default function ProfileSubscription() {
+  return (
+    <div className="flex bg-[#0B0B0B] text-white min-h-screen">
+      {/* Sidebar */}
+      <ProfileSidebar />
+
+      {/* Main Content */}
+      <div className="flex-1 px-6 sm:px-10 py-10">
+        
+        
+        {/* Page Title */}
+        <h1 className="text-3xl font-semibold mb-8 text-left">Profile</h1>
+
+        {/* Section Title */}
+        <div className="flex items-center gap-2 mb-6">
+          <ListCheck size={20} />
+          <h2 className="text-xl font-medium">Subscription</h2>
+        </div>
+
+        {/* CURRENT PLAN BOX */}
+        <div className="bg-[#111111] border border-white/10 rounded-xl px-6 py-5 mb-8 
+                        w-full sm:w-[80%] lg:w-[60%] xl:w-[50%]">
+          <p className="text-[14px] text-left">
+            <span className="font-medium">Your Current Plan :</span> Starter Plan
+          </p>
+          <p className="text-gray-400 text-[13px] mt-1 text-left">
+            You’re on the free plan with limited access
+          </p>
+        </div>
+
+        {/* FEATURES SECTION */}
+        <div className="bg-[#111111] border border-white/10 rounded-xl px-6 py-8 
+                        w-full sm:w-[80%] lg:w-[60%] xl:w-[50%]">
+
+          <div className="flex flex-col sm:flex-row justify-between gap-10">
+            
+            {/* Included Features */}
+            <div className="flex-1">
+              <h3 className="font-medium mb-4 text-[15px] text-left">
+                Features Included :
+              </h3>
+              <div className="flex flex-col gap-3 text-[14px] text-gray-300">
+                {[
+                  "Website Overview",
+                  "Access to all playlist cards",
+                  "Masterclass cards visible",
+                  "Blogs cards visible",
+                  "News cards visible",
+                ].map((feature) => (
+                  <div key={feature} className="flex items-center gap-2">
+                    <Check size={18} className="text-green-500" />
+                    {feature}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Locked Features */}
+            <div className="flex-1">
+              <h3 className="font-medium mb-4 text-[15px] text-left">
+                Locked Features :
+              </h3>
+              <div className="flex flex-col gap-3 text-[14px] text-gray-300">
+
+                {[
+                  "Playlist details (Notes, Videos, PPT, Text)",
+                  "Doubt Session Access",
+                  "Mentor Connect",
+                  "Live Master Classes Access",
+                ].map((feature) => (
+                  <div key={feature} className="flex items-center gap-2">
+                    <Lock size={18} className="text-yellow-500" />
+                    {feature}
+                  </div>
+                ))}
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* UPGRADE BTN */}
+        <div className="flex justify-center mt-10 
+                        w-full sm:w-[80%] lg:w-[60%] xl:w-[50%]">
+           <button className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 transition text-white text-[15px] px-10 py-4 rounded-md font-medium">
+        <Star size={18} color="#FFD700" fill="#FFD700" />
+        Upgrade to Premium
+      </button>
+        </div>
+
+      </div>
+    </div>
+  );
+}
