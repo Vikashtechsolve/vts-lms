@@ -3,6 +3,7 @@ import { useState } from "react";
 import LandingPageNavbar from "../../components/Navbar/NoNavbarLayout";
 import TrendingCarousel from "./TrendingCarousel";
 import { useNavigate } from "react-router-dom";
+import { Languages } from "lucide-react";
 
 const reasonData = [
   {
@@ -76,24 +77,28 @@ export default function LandingPage() {
         {/* LOGO */}
         <div className="flex items-center gap-4">
           {/* smaller on mobile, larger on desktop */}
-          <img src="/logo.png" alt="logo" className="h-10 md:h-36 w-auto" />
+          <img src="/logo.png" alt="logo" className="h-30 md:h-36 w-auto" />
         </div>
 
         {/* RIGHT SIDE: language (hidden on mobile) + Sign in */}
         <div className="flex items-center gap-3">
           {/* Language select - hidden on small screens */}
-          <div className="hidden md:block relative">
-            <select className="bg-black/60 text-white border border-gray-700 rounded-md px-3 py-2 pr-8 w-36">
-              <option>English</option>
+          <div className=" hidde md:block relative">
+            <span>
+
+           
+              {/* <Languages color="white" /> */}
+            <select className="bg-black/60 text-white border border-gray-700 rounded-md px-2 py-2 w-25">
+              <option className="hidden md:block relative"> English</option>
               <option>हिन्दी</option>
             </select>
-            <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-white/80">
-              ▾
-            </div>
+            </span>
           </div>
 
           {/* Sign in button - smaller on mobile */}
-          <button className="bg-[#c72b2b] hover:bg-[#b32626] text-white font-medium px-4 md:px-5 py-2 md:py-2.5 rounded-md text-sm md:text-base">
+          <button
+          onClick={() => navigate("/app/signin")}
+           className="bg-[#c72b2b] hover:bg-[#b32626] cursor-pointer text-white font-medium px-4 md:px-5 py-2 md:py-2.5 rounded-md text-sm md:text-base">
             Sign in
           </button>
         </div>
@@ -108,8 +113,8 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-black/70" />
 
         {/* MAIN CONTENT - centered */}
-        <main className="relative z-20 max-w-3xl w-full px-6 sm:px-8 text-center text-white">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight drop-shadow-lg">
+        <main className="relative z-20 max-w-6xl w-full px-6 sm:px-8 text-center text-white">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-5xl font-extrabold leading-tight drop-shadow-lg">
             Your Learning Starts Here
           </h1>
 
@@ -118,7 +123,7 @@ export default function LandingPage() {
             more.
           </p>
 
-          <p className="mt-4 text-xs sm:text-sm md:text-base text-gray-300 max-w-2xl mx-auto">
+          <p className="mt-4 text-sm sm:text-sm md:text-base text-gray-300 max-w-2xl mx-auto">
             Ready to Upgrade Yourself? Sign up and dive into structured courses,
             live classes, and expert-led guidance.
           </p>
@@ -136,7 +141,7 @@ export default function LandingPage() {
               onClick={() => navigate("/auth", { state: { email } })}
               className="flex items-center gap-2 bg-[#c72b2b] hover:bg-[#b32626] text-white font-semibold px-5 py-3 rounded-md"
             >
-              <span className="hidden sm:inline">Get Started</span>
+              <span className="">Get Started</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
