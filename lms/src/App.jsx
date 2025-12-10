@@ -8,7 +8,6 @@ function App() {
     <div>
       <Navbar />
       <main>
-        {/* Routed pages will render here */}
         <Outlet />
       </main>
     </div>
