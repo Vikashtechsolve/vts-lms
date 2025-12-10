@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "title": "VTS Launches New AI Learning Module",
+    "subtitle": "A complete UI/UX masterclass featuring hands-on Figma sessions and design challenges.",
+    "description": "A new AI-based learning module has been added to help students understand machine learning with interactive lessons and real-world projects..",
+    "publishedBy": "Swati Gupta",
+    "date": "Nov 4, 2025",
+    "timeAgo": "15 mins ago",
+    "image": "newsPic1.png"
+  },
+  {
+    "id": 2,
+    "title": "Upcoming Live Coding Contest Announced",
+    "subtitle": "Learn MERN stack with real-world projects and hands-on mentorship.",
+    "description": "Get ready for an exciting coding competition! Participate and test your programming skills with peers across India.",
+    "publishedBy": "Rahul Verma",
+    "date": "Oct 29, 2025",
+    "timeAgo": "2 hours ago",
+    "image": "newsPic2.png"
+  },
+  {
+    "id": 3,
+    "title": "New Masterclass on UI/UX Design Goes Live",
+    "subtitle": "Start your journey into Artificial Intelligence with beginner-friendly lessons.",
+    "description": "A complete UI/UX masterclass is now live on the LMS portal, featuring hands-on Figma sessions and design challenges.",
+    "publishedBy": "Aditi Sharma",
+    "date": "Oct 15, 2025",
+    "timeAgo": "1 day ago",
+    "image": "newsPic3.png"
+  },
+  {
+    "id": 4,
+    "title": "Placement Drive 2025: Registration Opens",
+    "subtitle": "Level up your JavaScript skills with 20 new coding challenges.",
+    "description": "The new placement season is here! Students can now register for upcoming placement drives through the LMS portal..",
+    "publishedBy": "Karan Mehta",
+    "date": "Oct 10, 2025",
+    "timeAgo": "3 days ago",
+    "image": "newsPic4.png"
+  },
+  {
+    "id": 5,
+    "title": " DSA Bootcamp Receives Record Enrollments",
+    "subtitle": "New modules added for animations, offline support, and deployment.",
+    "description": "Over 10,000 students have enrolled in the DSA Bootcamp this month — setting a new record for most active learners.",
+    "publishedBy": "Neha Singh",
+    "date": "Sep 28, 2025",
+    "timeAgo": "1 week ago",
+    "image": "newsPic5.jpg"
+  },
+  {
+    "id": 6,
+    "title": "Data Science Advanced Track Announcement",
+    "subtitle": "Advanced modules covering statistics, ML ops, and pipelines.",
+    "description": "An advanced Data Science program has been announced, focusing on ML pipelines, statistical models, and real-world datasets.",
+    "publishedBy": "Ankit Raj",
+    "date": "Sep 20, 2025",
+    "timeAgo": "2 weeks ago",
+    "image": "newsPic6.png"
+  }
+]

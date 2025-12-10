@@ -22,6 +22,14 @@ import UpcomingEventClass from "./Pages/MasterClass/UpcomingEventClass.jsx";
 import LandingPage from "./Pages/Auth/LandingPage.jsx";
 import Auth from "./Pages/Auth/Auth.jsx";
 import PlanChooser from "./Pages/Auth/PlanChooser.jsx";
+import ProfilePage from "./Pages/Profile/ProfilePage.jsx";
+import ProfileCertificates from "./Pages/Profile/ProfileCertificates.jsx";
+import ProfileBadges from "./Pages/Profile/ProfileBadges.jsx";
+import ProfileSubscription from "./Pages/Profile/ProfileSubscription.jsx";
+import ProfileNotifications from "./Pages/Profile/ProfileNotifications.jsx";
+import Watchlist from "./Pages/Profile/Watchlist.jsx";
+import ProfileSignOut from "./Pages/Profile/ProfileSignOut.jsx";
+import StudentProgress from "./Pages/Profile/StudentProgress.jsx";
 
 import NoNavbarLayout from "./components/Navbar/NoNavbarLayout.jsx";
 
@@ -58,6 +66,17 @@ const router = createBrowserRouter([
       { path: "LiveClass/:id", element: <LiveClass /> },
       { path: "Recorded/:id", element: <RecordedClass/> },
       { path: "Upcoming/:id", element: <UpcomingEventClass/> },
+      { path: "profile", element: <ProfilePage /> },
+      { path: "profile/certificates", element: <ProfileCertificates />},
+      { path: "profile/badges", element: <ProfileBadges />},
+      { path: "profile/subscription", element: <ProfileSubscription />},
+      {path: "profile/notifications", element: <ProfileNotifications />},
+      {path: "profile/watchlist", element: <Watchlist />},
+            
+      {path: "profile/progress", element: <StudentProgress />},
+      {path: "profile/signout", element: <ProfileSignOut />},
+      
+      
     ],
   },
 ]);
