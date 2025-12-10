@@ -1,30 +1,49 @@
-// src/components/Cards/PlaylistCard.jsx
-import React from "react";
-import { Play, SquarePlus } from "lucide-react";
+import React, { useState } from "react";
+import { Play, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
+const WATCHLIST_KEY = "watchlistItems";
 
 const PlaylistCard = ({ item }) => {
   const navigate = useNavigate();
+  const [added, setAdded] = useState(false);
 
   const handleCardClick = () => {
-    // navigate to detail page
     navigate(`/app/playlist/${item.id}`);
   };
 
+  const addToWatchlist = (item) => {
+    try {
+      const raw = localStorage.getItem(WATCHLIST_KEY);
+      const list = raw ? JSON.parse(raw) : [];
+
+      const exists = list.some((i) => i.id === item.id);
+      if (!exists) {
+        list.push(item);
+        localStorage.setItem(WATCHLIST_KEY, JSON.stringify(list));
+        window.dispatchEvent(new Event("watchlistUpdated"));
+        setAdded(true);
+      } else {
+        setAdded(true);
+      }
+    } catch (err) {
+      console.error("Failed to add to watchlist:", err);
+    }
+  };
+
   const handleAddClick = (e) => {
-    // prevent card click while interacting with add button
     e.stopPropagation();
-    // TODO: handle add-to-playlist logic here
-    console.log("Add clicked for", item.id);
+    addToWatchlist(item);
   };
 
   return (
     <div
       onClick={handleCardClick}
-      className="relative w-[70%] sm:w-[45%] md:w-70 flex-shrink-0 cursor-pointer"
+      className="relative w-[60%] sm:w-[45%] md:w-70 flex-shrink-0 cursor-pointer "
     >
+      {/* NOTE: parent no longer uses the "group" class */}
       <div
-        className="group relative rounded-2xl transition-all duration-500 transform-gpu hover:scale-125 hover:z-50"
+        className="relative rounded-2xl transition-all duration-500 transform-gpu hover:scale-125 hover:z-50"
         style={{ overflow: "visible" }}
       >
         {/* NORMAL CARD */}
@@ -32,36 +51,35 @@ const PlaylistCard = ({ item }) => {
           <img
             src={item.thumbnail}
             alt={item.title}
-            className="w-full h-48 object-cover"
+            className="w-full h-52 object-cover transition-transform duration-500 hover:scale-110"
           />
         </div>
 
         {/* BADGES */}
-        <div className="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-3 py-1 rounded-full">
+        <div className="absolute bottom-9 right-3 text-white text-xs px-3 py-1 rounded-full">
           {item.duration || "1h 45m"}
         </div>
-        <div className="absolute bottom-3 left-3 bg-white/30 backdrop-blur-md p-2 rounded-full">
+        <div className="absolute bottom-8 left-3 p-2 rounded-full">
           <Play size={18} fill="white" />
         </div>
 
         {/* TITLE */}
-        <p className="text-white mt-3 font-semibold text-sm px-1">
+        <p className="text-white mt-3 text-left ml-2 font-semibold text-sm px-1">
           {item.title}
         </p>
 
-        {/* EXPANDED ON HOVER */}
+        {/* EXPANDED ON HOVER (card-level hover still works via :hover instead of group-hover) */}
         <div
           className="
-        absolute inset-0 rounded-xl
-        bg-black/70 backdrop-blur-xl
-        opacity-0 group-hover:opacity-100 
-        transition-all duration-300
-        h-72 z-50 flex flex-col
-        p-3
-      "
+            absolute inset-0 rounded-xl
+            bg-neutral-900 backdrop-blur-xl
+            opacity-0 hover:opacity-100 
+            transition-all duration-300
+            h-72 z-50 flex flex-col 
+          "
         >
-          {/* TOP HALF - IMAGE */}
-          <div className="h-40 rounded-xl overflow-hidden mb-">
+          {/* TOP HALF */}
+          <div className="h-40 rounded-t-xl overflow-hidden">
             <img
               src={item.thumbnail}
               alt={item.title}
@@ -69,22 +87,52 @@ const PlaylistCard = ({ item }) => {
             />
           </div>
 
-          {/* BOTTOM HALF CONTENT */}
-          <div className="flex flex-col gap-3 text-white">
+          {/* BOTTOM CONTENT */}
+          <div className="flex flex-col gap-3 text-white px-2">
             {/* BUTTONS */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 mt-2">
+              {/* WATCH NOW BTN */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`/app/playlist/${item.id}/watch`);
+                  navigate(`/app/playlist/${item.id}`);
                 }}
                 className="bg-white text-black font-semibold px-5 py-2 rounded-md flex items-center gap-2 text-sm w-full cursor-pointer"
               >
                 <Play size={18} fill="black" /> Watch Now
               </button>
 
-              <button onClick={handleAddClick} className="p-2 text-white">
-                <SquarePlus size={40} fill="grey" />
+              {/* ADD TO WATCHLIST BTN */}
+              {/* IMPORTANT: this button *is* the group (so hover text is tied to it only) */}
+              <button
+                onClick={handleAddClick}
+                className="border border-gray-600 rounded bg-gray-600 p-2 text-white relative group"
+              >
+                {/* PLUS ICON (hide when added) */}
+                <Plus
+                  size={18}
+                  className={`${added ? "opacity-0" : "opacity-100"} transition`}
+                />
+
+                {/* HOVER TEXT → WATCHLIST (only shows when hovering this button) */}
+                {!added && (
+                  <span
+                    className="absolute left-1/2 top-full transform -translate-x-1/2 mt-1 
+                    text-xs bg-black px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition"
+                  >
+                    Watchlist
+                  </span>
+                )}
+
+                {/* CLICKED TEXT → ADDED */}
+                {added && (
+                  <span
+                    className="absolute inset-0 flex items-center justify-center 
+                    text-xs font-semibold"
+                  >
+                    Added
+                  </span>
+                )}
               </button>
             </div>
 
@@ -95,7 +143,7 @@ const PlaylistCard = ({ item }) => {
             </div>
 
             {/* DESCRIPTION */}
-            <p className="text-gray-300 text-xs text-left leading-relaxed">
+            <p className="text-gray-300 text-xs text-left mb-2 leading-relaxed">
               {item.description ||
                 "Create stunning web apps with React. Learn components, hooks, APIs, and deployment with real-world projects."}
             </p>

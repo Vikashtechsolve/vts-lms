@@ -1,4 +1,3 @@
-
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   Search,
@@ -12,24 +11,24 @@ import { useState, useRef } from "react";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 
 const MENU = [
-  { id: 1, title: "Home", to: "/" },
+  { id: 1, title: "Home", to: "/app" },
   { id: 2, title: "Playlists", to: "/app/Playlist" },
   { id: 3, title: "Master Classes", to: "/app/MasterClass" },
   { id: 4, title: "Programs", to: "/app/programs" },
-  { id: 5, title: "Blogs", to: "//appblogs" },
+  { id: 5, title: "Blogs", to: "/app/blogs" },
   { id: 6, title: "News", to: "/app/news" },
-  { id: 7, title: "Interviews", to: "//appinterviews" },
+  { id: 7, title: "Interviews", to: "/app/interviews" },
   { id: 8, title: "Reels", to: "/app/reels" },
 ];
 
 // Figma style icons + labels
 const userMenu = [
-  { id: 1, label: "Profile", icon: <User size={18} /> },
-  { id: 2, label: "Certification", icon: <FileBadge size={18} /> },
-  { id: 3, label: "Badges", icon: <Award size={18} /> },
-  { id: 4, label: "Dashboard", icon: <LayoutDashboard size={18} /> },
+  { id: 1, label: "Profile", icon: <User size={18} />, route: "/app/profile" },
+  { id: 2, label: "Certification", icon: <FileBadge size={18} />,  route: "/app/profile/certifications", },
+  { id: 3, label: "Badges", icon: <Award size={18} />,  route: "/app/profile/badges"  },
+  { id: 4, label: "Dashboard", icon: <LayoutDashboard size={18} />, route: "/app/dashboard", },
 
-  { id: 5, label: "Sign In", icon: <LogOut size={18} />, route: "/signin" },
+  { id: 5, label: "Sign In", icon: <LogOut size={18} />, route: "/app/signin" },
 ];
 
 export default function Navbar() {
@@ -42,9 +41,12 @@ export default function Navbar() {
   useOnClickOutside(dropdownRef, () => setDropdownOpen(false));
 
   return (
-    <header className="w-full bg-[#0F0F0F] h-20 flex items-center px-12">
+    <header className="w-full bg-[#0F0F0F] h-20 flex items-center justify-between px-3 lg:px-12">
       {/* LOGO */}
-      <div className="flex items-center">
+      <div
+        className="flex  cursor-pointer"
+        onClick={() => navigate("/app")}
+      >
         <img src="/logo.png" className="w-35" />
       </div>
 
@@ -54,10 +56,10 @@ export default function Navbar() {
           <NavLink
             key={item.id}
             to={item.to}
+            end
             className={({ isActive }) =>
-              `text-white text-[15px] font-medium hover:text-red-500 transition ${
-                isActive ? "text-red-500" : ""
-              }`
+              `text-[15px] font-medium transition 
+                ${isActive ? "text-red-500" : "text-white hover:text-red-500"}`
             }
           >
             {item.title}
@@ -104,7 +106,7 @@ export default function Navbar() {
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center hover:bg-red-700 transition text-white"
+            className="w-10 cursor-pointer h-10 rounded-full bg-red-600 flex items-center justify-center hover:bg-red-700 transition text-white"
           >
             <User size={20} />
           </button>
@@ -117,7 +119,7 @@ export default function Navbar() {
                   onClick={() => {
                     if (item.route) navigate(item.route);
                   }}
-                  className="w-full flex items-center gap-3 px-4 py-3  transition text-left"
+                  className="w-full flex cursor-pointer hover:underline items-center gap-3 px-4 py-3  transition text-left"
                 >
                   {item.icon}
                   <span className="text-[15px]">{item.label}</span>

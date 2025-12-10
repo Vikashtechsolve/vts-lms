@@ -29,7 +29,7 @@ export default function MonthlyPlan({ selected, onSelect }) {
         ${isSelected ? "ring-2 ring-blue-400 shadow-lg" : "border-gray-200 shadow-sm"}`}
       aria-pressed={isSelected}
     >
-      <div className="rounded-t-2xl text-center px-6 py-6 bg-gradient-to-r from-[#3b3bce] to-[#a04bff] text-white">
+      <div className="rounded-t-2xl text-center px-6 py-6 mb-6 bg-gradient-to-r from-[#3b3bce] to-[#a04bff] text-white">
         <h3 className="text-lg font-semibold">Monthly Plan</h3>
         <p className="text-sm mt-1 opacity-90">Full access · Flexible monthly learning</p>
       </div>

@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import {
   Play,
-  SquarePlus,
+  // SquarePlus,
   Plus,
+  ChevronRight,
   // CircleChevronLeft,
   // CircleChevronRight,
   CircleArrowLeft,
@@ -18,6 +20,7 @@ import pic3 from "../../assets/pic3.png";
 import PlaylistCard from "../../components/Cards/PlaylistCard.jsx";
 import MasterClassCard from "../../components/Cards/MasterClassCard.jsx";
 import BlogsCard from "../../components/Cards/BlogsCard.jsx";
+import NewsCard from "../../components/Cards/NewsCard.jsx";
 
 const INTERVAL_MS = 3500; // 3.5 seconds
 
@@ -54,6 +57,7 @@ function LandingPage() {
   const [playlistScrolled, setPlaylistScrolled] = useState(false);
   const [masterScrolled, setMasterScrolled] = useState(false);
   const [blogScrolled, setBlogScrolled] = useState(false);
+  const [newsScrolled, setNewsScrolled] = useState(false);
 
   const timerRef = useRef(null);
 
@@ -61,19 +65,23 @@ function LandingPage() {
   const [playlists, setPlaylists] = useState([]);
   const [masterClasses, setMasterClasses] = useState([]);
   const [blogs, setBlogs] = useState([]);
+  const [news, setNews] = useState([]);
   const [loadingPlaylists, setLoadingPlaylists] = useState(true);
   const [loadingMaster, setLoadingMaster] = useState(true);
   const [loadingBlogs, setLoadingBlogs] = useState(true);
+  const [loadingNews, setLoadingNews] = useState(true);
 
   // refs for scrolling
   const playlistRef = useRef(null);
   const masterRef = useRef(null);
   const blogRef = useRef(null);
+  const newsRef = useRef(null);
 
   // hover state for each carousel wrapper (controls overlay arrows)
   const [isPlaylistHover, setIsPlaylistHover] = useState(false);
   const [isMasterHover, setIsMasterHover] = useState(false);
   const [isBlogHover, setIsBlogHover] = useState(false);
+  const [isNewsHover, setIsNewsHover] = useState(false);
 
   const navigate = useNavigate();
 
@@ -130,7 +138,7 @@ function LandingPage() {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await axios.get("/dummy.json");
+        const res = await axios.get("/blogs.json");
         setBlogs(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Failed to load blogs data:", err);
@@ -142,7 +150,23 @@ function LandingPage() {
     fetchBlogs();
   }, []);
 
-  const loading = loadingPlaylists || loadingMaster || loadingBlogs;
+  useEffect(() => {
+    const fetchnews = async () => {
+      try {
+        const res = await axios.get("/news.json");
+        setNews(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        console.error("Failed to load blogs data:", err);
+        setNews([]);
+      } finally {
+        setLoadingNews(false);
+      }
+    };
+    fetchnews();
+  }, []);
+
+  const loading =
+    loadingPlaylists || loadingMaster || loadingBlogs || loadingNews;
 
   const scrollRefByAmt = (ref, direction, amt = 320) => {
     const el = ref && ref.current;
@@ -165,7 +189,7 @@ function LandingPage() {
   const active = slides[current];
 
   return (
-    <div className="bg-black text-white min-h-screen  overflow-x-hidden">
+    <div className="bg-black text-white min-h-screen flex flex-col gap-1 sm:gap-1 md:gap-1  overflow-x-hidden">
       {/* Hero Section */}
       <section
         onMouseEnter={() => setIsPaused(true)}
@@ -227,58 +251,61 @@ function LandingPage() {
 
             <button className="flex items-center gap-2 bg-gray-600 text-white px-3 py-2 rounded bord border-white/20 text-sm hover:bg-white/5 transition">
               <Plus size={20} />
-              Watchlist
+              <span className="lg:hidden">Watchlist</span>
             </button>
           </div>
         </div>
 
-        {/* (Optional) hide controls on smallest screens to match screenshot feel */}
-        {/* If you want them back, uncomment and/or adjust breakpoints */}
+       
       </section>
 
       {/* Continue Watching */}
-      <section className="px-4 md:px-16 py-10 bg-black">
+     <section className="px-4 md:px-16 py-10 bg-black">
   <h2 className="text-xl text-left font-semibold mb-6">
     Continue Watching
   </h2>
 
   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
-    {/* Card 1 */}
-    <div className="bg-gray-900 rounded-xl overflow-hidden hover:scale-105 transition duration-300">
-      <img
-        src={Machinelearning}
-        alt="Machine Learning Basics"
-        className="w-full h-32 object-cover"
-      />
-      <div className="p-3">
-        <p className="text-sm font-semibold">Machine Learning Basics</p>
-      </div>
-    </div>
+    
+    {/* CARD COMPONENT */}
+    {[ 
+      { img: Machinelearning, title: "Machine Learning Basics" },
+      { img: DSA, title: "DSA Mastery" }
+    ].map((item, index) => (
+      <div
+        key={index}
+        className="bg-gray-900 rounded-xl overflow-hidden
+        hover:scale-[1.03] transition duration-300 w-full"
+      >
+        {/* IMAGE CONTAINER WITH FIXED ASPECT RATIO */}
+        <div className="aspect-video w-full overflow-hidden">
+          <img
+            src={item.img}
+            alt={item.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
 
-    {/* Card 2 */}
-    <div className="bg-gray-900 rounded-xl overflow-hidden hover:scale-105 transition duration-300">
-      <img
-        src={DSA}
-        alt="DSA Mastery"
-        className="w-full h-32 object-cover"
-      />
-      <div className="p-3">
-        <p className="text-sm font-semibold">DSA Mastery</p>
+        <div className="p-3">
+          <p className="text-sm font-semibold">{item.title}</p>
+        </div>
       </div>
-    </div>
+    ))}
+
   </div>
 </section>
 
 
+
       {/* Playlists */}
-      <div className="bg-black text-white px-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl mt-8 font-semibold">Playlists</h2>
+      <div className="bg-black text-white px-8 ">
+        <div className="flex justify-between items-center ">
+          <h2 className="font-serif text-xl font-light">Playlists</h2>
           <button
             onClick={() => navigate("/app/playlist")}
-            className="text-sm text-gray-400 hover:text-white transition cursor-pointer"
+            className="font-serif flex items-center text-sm text-gray-400 hover:text-white transition cursor-pointer"
           >
-            View All →
+            View All <ChevronRight />
           </button>
         </div>
 
@@ -297,7 +324,7 @@ function LandingPage() {
               }}
               onWheel={(e) => e.preventDefault()}
               onTouchMove={(e) => e.preventDefault()}
-              className="flex space-x-4 h-96 z-50 overflow-x-auto overflow-y-visible no-scrollbar px-6 py-8"
+              className="flex space-x-4 h-96 z-50 overflow-x-auto overflow-y-visible no-scrollbar lg:px-6 py-2 lg:py-8"
             >
               {playlists.map((item) => (
                 <PlaylistCard key={item.id} item={item} />
@@ -308,12 +335,12 @@ function LandingPage() {
             {playlistScrolled && (
               <button
                 onClick={() => scrollRefByAmt(playlistRef, "left")}
-                className={`absolute left-4 top-34 cursor-pointer -translate-y-1/2 z-50 transition-opacity ${
-                  isPlaylistHover ? "opacity-100" : "opacity-0"
+                className={`absolute left-0 top-32 -translate-y-1/2 z-50 transition-opacity pointer-events-auto cursor-pointer bg-black h-4/4 rounded ${
+                  isPlaylistHover ? "opacity-40" : "opacity-0"
                 }`}
               >
                 <div className="bg-black/60 hover:bg-black text-white p-2 rounded-full shadow">
-                  <CircleArrowLeft className="w-10 h-10" />
+                  <ChevronLeftIcon className="w-10 h-10" />
                 </div>
               </button>
             )}
@@ -321,12 +348,12 @@ function LandingPage() {
             {/* Right arrow */}
             <button
               onClick={() => scrollRefByAmt(playlistRef, "right")}
-              className={`absolute right-4 top-34 -translate-y-1/2 z-50 transition-opacity ${
-                isPlaylistHover ? "opacity-100" : "opacity-0"
+              className={`absolute right-0 top-32 -translate-y-1/2 z-50 transition-opacity pointer-events-auto cursor-pointer bg-black h-4/4 rounded ${
+                isPlaylistHover ? "opacity-40" : "opacity-0"
               }`}
             >
               <div className="bg-black/60 hover:bg-black text-white p-2 rounded-full shadow">
-                <CircleArrowRight className="w-10 h-10" />
+                <ChevronRightIcon className="w-10 h-10" />
               </div>
             </button>
           </div>
@@ -334,16 +361,17 @@ function LandingPage() {
       </div>
 
       {/* Master Classes */}
-      <div className="bg-black text-white px-6 ">
+      <div className="mt-[-90px] sm:mt-0 bg-black text-white px-6 lg:mt-[-70px] ">
         <div className="flex  justify-between items-center mb-1">
-          <h2 className="text-xl z-100 relative font-semibold">
+          <h2 className="text-xl z-100 relative font-serif font-light">
             Master Classes
           </h2>
           <button
             onClick={() => navigate("/app/MasterClass")}
-            className="text-sm z-100 relative text-gray-400 hover:text-white transition cursor-pointer"
+            className="font-serif flex items-center text-sm z-100 relative text-gray-400 hover:text-white transition cursor-pointer"
           >
-            View All &rarr;
+            View All
+            <ChevronRight />
           </button>
         </div>
 
@@ -362,7 +390,7 @@ function LandingPage() {
               }}
               onWheel={(e) => e.preventDefault()}
               onTouchMove={(e) => e.preventDefault()}
-              className="flex space-x-4 h-96 overflow-x-auto overflow-y-visible no-scrollbar px-6 py-8"
+              className="flex space-x-4 h-96 z-50 overflow-x-auto overflow-y-visible no-scrollbar lg:px-6 py-2 lg:py-8"
             >
               {masterClasses.map((item) => (
                 <MasterClassCard item={item} />
@@ -372,24 +400,24 @@ function LandingPage() {
             {masterScrolled && (
               <button
                 onClick={() => scrollRefByAmt(masterRef, "left")}
-                className={`absolute left-4 top-32 -translate-y-1/2 z-50 transition-opacity ${
-                  isMasterHover ? "opacity-100" : "opacity-0"
+                className={`absolute left-0 top-32 -translate-y-1/2 z-50 transition-opacity pointer-events-auto cursor-pointer bg-black h-4/4 rounded ${
+                  isMasterHover ? "opacity-40" : "opacity-0"
                 }`}
               >
                 <div className="bg-black/60 hover:bg-black text-white p-2 rounded-full shadow">
-                  <CircleArrowLeft className="w-10 h-10" />
+                  <ChevronLeftIcon className="w-10 h-10" />
                 </div>
               </button>
             )}
 
             <button
               onClick={() => scrollRefByAmt(masterRef, "right")}
-              className={`absolute right-4 top-32 -translate-y-1/2 z-50 transition-opacity ${
-                isMasterHover ? "opacity-100" : "opacity-0"
+              className={`absolute -right-1 top-32 -translate-y-1/2 z-50 transition-opacity pointer-events-auto cursor-pointer bg-black h-full rounded ${
+                isMasterHover ? "opacity-40" : "opacity-0"
               }`}
             >
               <div className="bg-black/60 hover:bg-black text-white p-2 rounded-full shadow">
-                <CircleArrowRight className="w-10 h-10" />
+                <ChevronRightIcon className="w-10 h-10" />
               </div>
             </button>
           </div>
@@ -397,14 +425,16 @@ function LandingPage() {
       </div>
 
       {/* Blogs */}
-      <div className="bg-black text-white px-4">
+      <div className="mt-[-80px] sm:mt-0 bg-black text-white px-4 lg:mt-[-80px]">
         <div className="flex justify-between items-center bg-black">
-          <h2 className="text-xl z-100 relative mt-8 font-semibold">Blogs</h2>
+          <h2 className="text-xl z-100 font-serif relative  font-light">
+            Blogs
+          </h2>
           <button
             onClick={() => navigate("/app/Blogs")}
-            className="text-sm z-100 relative text-gray-400 hover:text-white transition cursor-pointer"
+            className=" font-serif flex items-centertext-sm z-100 relative text-gray-400 hover:text-white transition cursor-pointer"
           >
-            View All &rarr;
+            View All <ChevronRight />
           </button>
         </div>
 
@@ -423,7 +453,7 @@ function LandingPage() {
               }}
               onWheel={(e) => e.preventDefault()}
               onTouchMove={(e) => e.preventDefault()}
-              className="flex space-x-4 h-96 z-50 overflow-x-auto overflow-y-visible no-scrollbar px-6 py-8"
+              className="flex space-x-4 h-96 z-50 overflow-x-auto overflow-y-visible no-scrollbar lg:px-6 py-2 lg:py-8"
             >
               {blogs.map((item) => (
                 <BlogsCard item={item} />
@@ -434,12 +464,12 @@ function LandingPage() {
             {blogScrolled && (
               <button
                 onClick={() => scrollRefByAmt(blogRef, "left")}
-                className={`absolute -left-1 top-32 -translate-y-1/2 z-50 transition-opacity ${
-                  isBlogHover ? "opacity-100" : "opacity-0"
+                className={`absolute left-0 top-32 -translate-y-1/2 z-50 transition-opacity pointer-events-auto cursor-pointer bg-black h-4/4 rounded  ${
+                  isBlogHover ? "opacity-40" : "opacity-0"
                 }`}
               >
                 <div className="bg-black/60 hover:bg-black text-white p-2 rounded-full shadow">
-                  <CircleArrowLeft className="w-10 h-10" />
+                  <ChevronLeftIcon className="w-10 h-10" />
                 </div>
               </button>
             )}
@@ -448,11 +478,76 @@ function LandingPage() {
               onClick={() => scrollRefByAmt(blogRef, "right")}
               aria-label="scroll playlists right"
               className={`absolute -right-1 top-32 -translate-y-1/2 z-50 transition-opacity pointer-events-auto cursor-pointer bg-black h-4/4 rounded ${
-                isBlogHover ? "opacity-100" : "opacity-0"
+                isBlogHover ? "opacity-40" : "opacity-0"
               }`}
             >
               <div className="bg-black/60 hover:bg-black text-white p-2 rounded-full shadow">
-                <CircleArrowRight className="w-10 h-10" />
+                <ChevronRightIcon className="w-10 h-10" />
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* News Section - Placeholder for future implementation */}
+      <div className="mt-[-100px] sm:mt-0 bg-black text-white px-4 lg:mt-[-70px]">
+        <div className="flex justify-between items-center bg-black">
+          <h2 className="text-xl z-100 font-serif relative font-light">
+            News
+          </h2>
+          <button
+            onClick={() => navigate("/app/news")}
+            className=" font-serif flex items-centertext-sm z-100 relative text-gray-400 hover:text-white transition cursor-pointer"
+          >
+            View All <ChevronRight />
+          </button>
+        </div>
+
+        <div
+          className="relative"
+          onMouseEnter={() => setIsNewsHover(true)}
+          onMouseLeave={() => setIsNewsHover(false)}
+        >
+          <div className="relative">
+            <div
+              ref={newsRef}
+              onScroll={() => {
+                const el = newsRef.current;
+                if (!el) return;
+                setNewsScrolled(el.scrollLeft > 0);
+              }}
+              onWheel={(e) => e.preventDefault()}
+              onTouchMove={(e) => e.preventDefault()}
+              className="flex space-x-4 h-96 z-50 overflow-x-auto overflow-y-visible no-scrollbar lg:px-6 py-2 lg:py-8"
+            >
+              {news.map((item) => (
+                <NewsCard item={item} />
+              ))}
+            </div>
+
+            {/* overlay arrows: show when playlist wrapper hovered (state-based) */}
+            {newsScrolled && (
+              <button
+                onClick={() => scrollRefByAmt(newsRef, "left")}
+                className={`absolute left-0 top-32 -translate-y-1/2 z-999 transition-opacity pointer-events-auto cursor-pointer bg-black h-4/4 rounded ${
+                  isNewsHover ? "opacity-40" : "opacity-0"
+                }`}
+              >
+                <div className="bg-black/60 hover:bg-black text-white p-2 rounded-full shadow">
+                  <ChevronLeftIcon className="w-10 h-10" />
+                </div>
+              </button>
+            )}
+
+            <button
+              onClick={() => scrollRefByAmt(newsRef, "right")}
+              aria-label="scroll news right"
+              className={`absolute -right-1 top-32 -translate-y-1/2 z-50 transition-opacity pointer-events-auto cursor-pointer bg-black h-4/4 rounded ${
+                isNewsHover ? "opacity-40" : "opacity-0"
+              }`}
+            >
+              <div className="bg-black/60 hover:bg-black text-white p-2 rounded-full shadow">
+                <ChevronRightIcon className="w-10 h-10" />
               </div>
             </button>
           </div>

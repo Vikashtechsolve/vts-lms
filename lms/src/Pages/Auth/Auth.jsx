@@ -42,7 +42,7 @@ export default function Auth() {
         existing.push(newEntry);
         localStorage.setItem("demo_passwords", JSON.stringify(existing, null, 2));
         alert(
-          "Could not save to /Letter/passwords.json — saved locally in localStorage for demo ✅"
+          "Could not save to /Letter/passwords.json — saved locally in localStorage for demo "
         );
       } catch (lsErr) {
         alert("Failed to save password: " + (lsErr.message || err.message));
@@ -59,20 +59,24 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center">
-      <header className="w-full h-20 border-b px-4 md:px-12 flex justify-between items-center py-4">
+      <header className="w-full h-20 border-b border-gray-500 px-4 md:px-12 flex justify-between items-center py-4">
         {/* logo: smaller on mobile, original size on md+ */}
         <img src="/logoBlack.png" alt="Logo" className="h-20 w-20 md:h-40 md:w-40 object-contain" />
-        <p className="font-medium text-sm md:text-base">Sign in</p>
+        
+        <button on onClick={() => navigate("/app/signin")}
+         className="cursor-pointer">
+        <p className="font-medium underline text-sm md:text-base">Sign in</p>
+        </button>
       </header>
 
       {/* heading area: keep same look but responsive spacing */}
-      <div className="mt-8 md:mt-16 w-full px-4 md:px-0 max-w-[820px]">
+      <div className="mt-18 md:mt-16 w-full px-4 md:px-0 max-w-[820px]">
         <div className="mx-auto" style={{ maxWidth: "580px" }}>
-          <p className="text-gray-600 text-left text-sm">Step 1 of 3</p>
-          <h1 className="text-2xl  text-left md:text-3xl font-extrabold mt-3 text-black">
-            Create a password to begin your Subscription
+          <p className="text-gray-900 text-left text-sm">Step <span className="font-bold">1</span> of <span className="font-bold">3</span></p>
+          <h1 className="text-2xl  text-left md:text-3xl font-bold mt-3 text-black">
+            Create a Password to Begin your Subscription
           </h1>
-          <p className="text-gray-500 text-left mt-3 text-sm">
+          <p className="text-gray-600 text-left mt-3 text-sm">
             You are just a few more steps away from accessing
             <br className="hidden md:block" />
             all LMS features!
@@ -81,16 +85,16 @@ export default function Auth() {
       </div>
 
       {/* form area - same visual size on desktop, fluid on mobile */}
-      <div className="w-full px-4 md:px-0 mt-8 md:mt-12">
+      <div className="w-full px-4 md:px-0 mt-6 md:mt-12">
         <div className="mx-auto w-full max-w-[580px] space-y-5">
           {/* Disabled Email Box */}
-          <div className="border border-green-600 text-left rounded-md p-4">
-            <label className="text-green-600 text-xs">Email</label>
+          <div className="border border-green-600 text-left rounded-md p-1">
+            <label className="text-green-600 ml-1 text-xs">Email</label>
             <input
               type="email"
               value={email}
               disabled
-              className="w-full bg-transparent outline-none text-black font-medium"
+              className="w-full  bg-transparent outline-none text-black font-medium"
             />
           </div>
 
@@ -100,7 +104,7 @@ export default function Auth() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border border-gray-300 rounded-md p-4 placeholder:text-gray-400 outline-none text-black font-medium"
+            className="w-full border border-gray-300 rounded-md p-3.5 placeholder:text-gray-400 outline-none text-black font-medium"
           />
 
           {/* Next Button */}
