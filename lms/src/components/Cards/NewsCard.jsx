@@ -8,7 +8,7 @@ const PlaylistCard = ({ item }) => {
 
   const handleCardClick = () => {
     // navigate to detail page
-    navigate(`/app/playlist/${item.id}`);
+    navigate(`/app/news/${item.id}`);
   };
 
   const handleAddClick = (e) => {
