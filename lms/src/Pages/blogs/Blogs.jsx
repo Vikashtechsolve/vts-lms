@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import BlogsCardH from "../../components/Cards/BlogsCardH";
-import BlogDetails from "./BlogDetails";
 
 const Blogs = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedBlog, setSelectedBlog] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -23,11 +23,9 @@ const Blogs = () => {
     fetchBlogs();
   }, []);
 
-  if (selectedBlog) {
-    return (
-      <BlogDetails blog={selectedBlog} onBack={() => setSelectedBlog(null)} />
-    );
-  }
+  const handleBlogClick = (blog) => {
+    navigate(`/app/Blogs/${blog.id}`);
+  };
 
   return (
     <div className="min-h-screen bg-black pb-20 pt-10">
@@ -49,7 +47,7 @@ const Blogs = () => {
             <BlogsCardH
               key={item.id}
               data={item}
-              onClick={() => setSelectedBlog(item)}
+              onClick={() => handleBlogClick(item)}
             />
           ))
         )}

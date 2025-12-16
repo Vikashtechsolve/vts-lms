@@ -8,7 +8,7 @@ const BlogsCard = ({ item }) => {
 
   const handleCardClick = () => {
     // navigate to detail page
-    navigate(`/app/blogs/${item.id}`);
+    navigate(`/app/Blogs/${item.id}`);
   };
 
   return (

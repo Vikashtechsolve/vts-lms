@@ -496,7 +496,7 @@ function LandingPage() {
             News
           </h2>
           <button
-            onClick={() => navigate("/app/news")}
+            onClick={() => navigate("/app/News")}
             className=" font-serif flex items-centertext-sm z-100 relative text-gray-400 hover:text-white transition cursor-pointer"
           >
             View All <ChevronRight />

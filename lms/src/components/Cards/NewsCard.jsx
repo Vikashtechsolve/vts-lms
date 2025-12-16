@@ -3,12 +3,12 @@ import React from "react";
 import { Play, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const PlaylistCard = ({ item }) => {
+const NewsCard = ({ item }) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
     // navigate to detail page
-    navigate(`/app/news/${item.id}`);
+    navigate(`/app/News/${item.id}`);
   };
 
   const handleAddClick = (e) => {
@@ -76,7 +76,7 @@ const PlaylistCard = ({ item }) => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`/app/playlist/${item.id}`);
+                  navigate(`/app/News/${item.id}`);
                 }}
                 className="mt-2 bg-white text-black font-semibold px-5 py-2 rounded-md flex items-center gap-2 text-sm w-full cursor-pointer"
               >
@@ -108,4 +108,4 @@ const PlaylistCard = ({ item }) => {
   );
 };
 
-export default PlaylistCard;
+export default NewsCard;
