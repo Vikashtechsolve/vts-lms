@@ -15,8 +15,8 @@ const MENU = [
   { id: 2, title: "Playlists", to: "/app/Playlist" },
   { id: 3, title: "Master Classes", to: "/app/MasterClass" },
   { id: 4, title: "Programs", to: "/app/programs" },
-  { id: 5, title: "Blogs", to: "/app/blogs" },
-  { id: 6, title: "News", to: "/app/news" },
+  { id: 5, title: "Blogs", to: "/app/Blogs" },
+  { id: 6, title: "News", to: "/app/News" },
   { id: 7, title: "Interviews", to: "/app/interviews" },
   { id: 8, title: "Reels", to: "/app/reels" },
 ];

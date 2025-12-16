@@ -1,24 +1,72 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 import { FaArrowLeft } from "react-icons/fa";
 import { Plus, Check, MessageCircle, Share2 } from "lucide-react";
 import TimeAgo from "./components/Timeago";
 import Comments from "../../components/Comments";
 import FormatDate from "./components/FormatDate";
 
-const NewsDetails = ({ news, onBack }) => {
+const NewsDetails = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [news, setNews] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [inWishlist, setInWishlist] = useState(false);
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const response = await axios.get("/news.json");
+        const newsList = Array.isArray(response.data) ? response.data : [];
+        const foundNews = newsList.find((n) => String(n.id) === String(id));
+        if (foundNews) {
+          setNews(foundNews);
+        } else {
+          console.error("News not found");
+        }
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchNews();
+    }
+  }, [id]);
+
+  const handleBack = () => {
+    navigate("/app/News");
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-gray-400">Loading news...</div>
+      </div>
+    );
+  }
+
+  if (!news) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-red-400">News not found</div>
+      </div>
+    );
+  }
+
   const comments = news.comments || [];
   const timeAgo = TimeAgo(news.date);
   const date = FormatDate(news.date);
-
-  if (!news) return null;
 
   return (
     <div className="min-h-screen bg-black text-white pb-20 animate-fade-in">
       {/* Back Navigation */}
       <div className="max-w-[1110px] mx-auto px-4 pt-6 mb-4">
         <button
-          onClick={onBack}
+          onClick={handleBack}
           className="flex items-center text-gray-400 hover:text-white transition-colors group font-poppins"
         >
           <FaArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />{" "}

@@ -8,11 +8,13 @@ import "./index.css";
 import App from "./App.jsx"; // App contains Navbar + <Outlet />
 import Home from "./Pages/Home/Home.jsx";
 import Blogs from "./Pages/blogs/Blogs.jsx";
+import BlogDetails from "./Pages/blogs/BlogDetails.jsx";
 import Playlist from "./Pages/playlist/playlist.jsx";
 import PlaylistDetail from "./Pages/playlist/PlaylistDetails.jsx";
 import MasterClass from "./Pages/MasterClass/MasterClass.jsx";
 import Programs from "./Pages/Programs/Programs.jsx";
 import News from "./Pages/News/News.jsx";
+import NewsDetails from "./Pages/News/NewsDetails.jsx";
 import Interview from "./Pages/Interviews/Interview.jsx";
 import Reels from "./Pages/Reels/Reels.jsx";
 import SignIn from "./Pages/SignIn.jsx";
@@ -59,7 +61,9 @@ const router = createBrowserRouter([
       { path: "MasterClass", element: <MasterClass /> },
       { path: "Programs", element: <Programs /> },
       { path: "Blogs", element: <Blogs /> },
+      { path: "Blogs/:id", element: <BlogDetails /> },
       { path: "News", element: <News /> },
+      { path: "News/:id", element: <NewsDetails /> },
       { path: "Interviews", element: <Interview /> },
       { path: "Reels", element: <Reels /> },
       { path: "signin", element: <SignIn /> },

@@ -9,7 +9,8 @@ const BlogsCard = ({ item }) => {
   const [added, setAdded] = useState(false);
 
   const handleCardClick = () => {
-    navigate(`/app/blogs/${item.id}`);
+    // navigate to detail page
+    navigate(`/app/Blogs/${item.id}`);
   };
 
   const addToWatchlist = (item) => {

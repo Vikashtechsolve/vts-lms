@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import NewsCardH from "../../components/Cards/NewsCardH";
-import NewsDetails from "./NewsDetails";
 
 const News = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedNews, setSelectedNews] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -23,11 +23,9 @@ const News = () => {
     fetchNews();
   }, []);
 
-  if (selectedNews) {
-    return (
-      <NewsDetails news={selectedNews} onBack={() => setSelectedNews(null)} />
-    );
-  }
+  const handleNewsClick = (newsItem) => {
+    navigate(`/app/News/${newsItem.id}`);
+  };
 
   return (
     <div className="min-h-screen bg-black pb-20 pt-10">
@@ -49,7 +47,7 @@ const News = () => {
             <NewsCardH
               key={item.id}
               data={item}
-              onClick={() => setSelectedNews(item)}
+              onClick={() => handleNewsClick(item)}
             />
           ))
         )}

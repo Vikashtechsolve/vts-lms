@@ -1,20 +1,68 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 import { FaArrowLeft, FaPaperPlane } from "react-icons/fa";
 import { Plus, Check, MessageCircle, Share2 } from "lucide-react";
 import Comments from "../../components/Comments";
 
-const BlogDetails = ({ blog, onBack }) => {
+const BlogDetails = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [blog, setBlog] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [inWishlist, setInWishlist] = useState(false);
-  const comments = blog.comments || [];
 
-  if (!blog) return null;
+  useEffect(() => {
+    const fetchBlog = async () => {
+      try {
+        const response = await axios.get("/blogs.json");
+        const blogs = Array.isArray(response.data) ? response.data : [];
+        const foundBlog = blogs.find((b) => String(b.id) === String(id));
+        if (foundBlog) {
+          setBlog(foundBlog);
+        } else {
+          console.error("Blog not found");
+        }
+      } catch (error) {
+        console.error("Error fetching blog:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchBlog();
+    }
+  }, [id]);
+
+  const handleBack = () => {
+    navigate("/app/Blogs");
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-gray-400">Loading blog...</div>
+      </div>
+    );
+  }
+
+  if (!blog) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-red-400">Blog not found</div>
+      </div>
+    );
+  }
+
+  const comments = blog.comments || [];
 
   return (
     <div className="min-h-screen bg-black text-white pb-20 animate-fade-in">
       {/* Back Navigation */}
       <div className="max-w-[1110px] mx-auto px-4 pt-6 mb-4">
         <button
-          onClick={onBack}
+          onClick={handleBack}
           className="flex items-center text-gray-400 hover:text-white transition-colors group font-poppins"
         >
           <FaArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />{" "}
