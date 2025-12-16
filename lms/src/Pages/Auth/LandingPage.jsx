@@ -88,7 +88,7 @@ export default function LandingPage() {
 
            
               {/* <Languages color="white" /> */}
-            <select className="bg-black/60 text-white border border-gray-700 rounded-md px-2 py-2 w-25">
+            <select className="bg-black/60 text-white border cursor-pointer border-gray-700 rounded-md px-2 py-2 w-25">
               <option className="hidden md:block relative"> English</option>
               <option>हिन्दी</option>
             </select>
@@ -139,7 +139,7 @@ export default function LandingPage() {
 
             <button
               onClick={() => navigate("/auth", { state: { email } })}
-              className="flex items-center gap-2 bg-[#c72b2b] hover:bg-[#b32626] text-white font-semibold px-5 py-3 rounded-md"
+              className="flex items-center gap-2 bg-[#c72b2b] hover:bg-[#b32626] text-white font-semibold px-5 cursor-pointer py-3 rounded-md"
             >
               <span className="">Get Started</span>
               <svg

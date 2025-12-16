@@ -20,13 +20,15 @@ const Sidebar = ({ modules, activeSessionKey, onSelectSession }) => {
 
   return (
     <aside
-      className={`
-      bg-zinc-900 flex-shrink-0 hidden md:flex flex-col
-      transition-all duration-300 ease-in-out relative
-      ${isSidebarOpen ? "w-80" : "w-20"}
-    `}
-    >
-      <button
+  className={`
+    bg-zinc-900 flex flex-col flex-shrink-0
+    transition-all duration-300 ease-in-out relative
+    w-full
+    md:w-60
+    lg:${isSidebarOpen ? "w-80" : "w-20"}
+  `}
+>
+      {/* <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         // Updated button colors
         className="absolute top-6 -right-3 z-10 bg-vts-card border border-gray-700 hover:bg-vts-red text-white p-2 rounded-full shadow-lg focus:outline-none"
@@ -37,7 +39,7 @@ const Sidebar = ({ modules, activeSessionKey, onSelectSession }) => {
         ) : (
           <FaChevronRight size={12} />
         )}
-      </button>
+      </button> */}
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="p-4 border-b border-gray-700 h-16 flex items-center">

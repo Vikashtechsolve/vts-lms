@@ -1,14 +1,19 @@
 import { Award } from "lucide-react";
-import ProfileSidebar from "./ProfileSidebar";
+import Sidebar from "./ProfileSidebar";
+import Header from "../Header/Header";
 
 const ProfileBadges = () => {
   return (
-    <div className="flex flex-col md:flex-row bg-[#0B0B0B] text-white min-h-screen">
-      
+    <>
+     <div className="fixed top-0 left-0 w-full z-40">
+  <Header />
+</div>
+
+    <div className="flex flex-col md:flex-row bg-[#141414] text-white min-h-screen pt-16">
       {/* Sidebar (full width on mobile, regular on desktop) */}
-      <div className="w-full md:w-auto">
-        <ProfileSidebar />
-      </div>
+     <div className="mt-0 px-0 md:mt-8 md:px-12">
+                   <Sidebar />
+                 </div>
 
       {/* Main Section */}
       <div className="flex-1 px-5 sm:px-8 md:px-10 py-8">
@@ -44,6 +49,7 @@ const ProfileBadges = () => {
       </div>
 
     </div>
+          </>
   );
 };
 

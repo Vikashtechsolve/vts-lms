@@ -22,13 +22,49 @@ export default function ProfileSidebar() {
 
   const items = [
     { key: "profile", label: "Profile", icon: User, path: "/app/profile" },
-    { key: "progress", label: "Student Progress", icon: GraduationCap, path: "/app/profile/progress" },
-    { key: "certificates", label: "Certificates", icon: FileBadge, path: "/app/profile/certificates" },
-    { key: "badges", label: "Badges Earned", icon: Award, path: "/app/profile/badges" },
-    { key: "subscription", label: "Subscription", icon: ListCheck, path: "/app/profile/subscription" },
-    { key: "notifications", label: "Notifications", icon: Bell, path: "/app/profile/notifications" },
-    { key: "watchlist", label: "Watchlist", icon: Plus, path: "/app/profile/watchlist", special: true },
-    { key: "signout", label: "Sign Out", icon: LogOut, path: "/app/profile/signout" },
+    {
+      key: "progress",
+      label: "Student Progress",
+      icon: GraduationCap,
+      path: "/app/profile/progress",
+    },
+    {
+      key: "certificates",
+      label: "Certificates",
+      icon: FileBadge,
+      path: "/app/profile/certificates",
+    },
+    {
+      key: "badges",
+      label: "Badges Earned",
+      icon: Award,
+      path: "/app/profile/badges",
+    },
+    {
+      key: "subscription",
+      label: "Subscription",
+      icon: ListCheck,
+      path: "/app/profile/subscription",
+    },
+    {
+      key: "notifications",
+      label: "Notifications",
+      icon: Bell,
+      path: "/app/profile/notifications",
+    },
+    {
+      key: "watchlist",
+      label: "Watchlist",
+      icon: Plus,
+      path: "/app/profile/watchlist",
+      special: true,
+    },
+    {
+      key: "signout",
+      label: "Sign Out",
+      icon: LogOut,
+      path: "/app/profile/signout",
+    },
   ];
 
   // Close sidebar on route change
@@ -56,12 +92,14 @@ export default function ProfileSidebar() {
   return (
     <>
       {/* Mobile Hamburger */}
-      <button
-        className="md:hidden p-3 text-white fixed top-4 left-4 z-50 bg-black/40 backdrop-blur-lg rounded-lg"
-        onClick={() => setOpen(true)}
-      >
-        <Menu size={26} />
-      </button>
+      {!open && (
+        <button
+          className="md:hidden p-3 text-white fixed top-3 left-4 z-50 backdrop-blur-lg rounded-lg"
+          onClick={() => setOpen(true)}
+        >
+          <Menu size={36} />
+        </button>
+      )}
 
       {/* Overlay */}
       {open && (
@@ -103,6 +141,7 @@ export default function ProfileSidebar() {
             <NavLink
               key={it.key}
               to={it.path}
+              end
               className={({ isActive }) =>
                 `flex items-center gap-4 text-[15px] transition-all duration-200 ${
                   isActive ? "text-red-500" : "text-white hover:text-gray-300"

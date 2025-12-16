@@ -9,7 +9,7 @@ function Playlist() {
   const containerRef = useRef(null);
 
   useEffect(() => {
-    const url = "/playlist.json";
+    const url = "/dummy.json"; // Update with actual API endpoint
 
     const fetchData = async () => {
       try {
@@ -33,29 +33,37 @@ function Playlist() {
 
   if (loading) {
     return (
-      <div className="bg-black text-white py-8 px-6">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-semibold text-center mb-10">
+      <div className="bg-black text-white py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-center mb-6">
             Playlists
           </h1>
-          <div className="text-sm text-gray-400">Loading playlists...</div>
+          <div className="text-sm sm:text-base text-gray-400 text-center">
+            Loading playlists...
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="px-6 py-10 bg-black text-white">
+    <div className="bg-black text-white py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className=" items-center justify-between mb-8">
-          <h1 className="text-3xl m-8 font-serif">Playlists</h1>
+        <div className="mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-serif mb-6 sm:mb-8">
+            Playlists
+          </h1>
 
+          {/* Grid: remains responsive; keeps original design */}
           <div
             ref={containerRef}
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+            className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-2"
           >
             {items.map((item) => (
-              <PlaylistCard key={item.id} item={item} />
+              <div key={item.id} className="w-full">
+                {/* ensure each card fills its grid cell */}
+                <PlaylistCard item={item} />
+              </div>
             ))}
           </div>
 

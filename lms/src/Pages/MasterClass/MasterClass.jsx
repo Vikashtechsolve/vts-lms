@@ -49,7 +49,7 @@ export default function MasterClass() {
     );
 
   return (
-    <div className="px-6 py-10 bg-black text-white">
+    <div className="px-6 py-10  bg-black text-white">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-center mb-8">
           <h1 className="text-3xl  font-serif">Master Classes</h1>
@@ -57,7 +57,7 @@ export default function MasterClass() {
 
         <div
           ref={containerRef}
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
         >
           {classes.map((item) => (
             <MasterClassCard item={item} />

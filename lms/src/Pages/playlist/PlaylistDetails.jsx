@@ -2,7 +2,7 @@
 import React, { useEffect, useState, Suspense } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Share2, MessageCircle, Pencil , Video as VideoIcon } from "lucide-react";
+import { Share2, MessageCircle, Pencil,ChevronDown ,ChevronUp , Video as VideoIcon } from "lucide-react";
 
 import Sidebar from "./playlistDetailsTabs/SideBar/SideBar";
 import { courseData } from "../../../courseData";
@@ -16,11 +16,13 @@ import Test from "./playlistDetailsTabs/Test/Test";
 export default function PlaylistDetail() {
   const { id } = useParams();
 
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [playlist, setPlaylist] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Videos");
   const [activeSessionKey, setActiveSessionKey] = useState(null);
   const [currentSession, setCurrentSession] = useState(null);
+
 
   const tabs = ["Videos", "Notes", "PPT", "Test"];
 
@@ -133,11 +135,45 @@ export default function PlaylistDetail() {
   };
 
   return (
-    <div className="bg-[#0b0b0c] text-white min-h-screen py-4">
-      <div className="max-w-[1500px] mx-auto px-6 grid grid-cols-12 gap-6 ">
-        {/* SIDEBAR */}
-        <div className="col-span-3 bg-zinc-90">
-          <Sidebar modules={modules} activeSessionKey={activeSessionKey} onSelectSession={handleSelectSession} />
+   <div className="bg-[#0b0b0c] text-white min-h-screen py-4">
+      <div className="max-w-[1500px] mx-auto px-4 md:px-6 grid grid-cols-12 gap-6">
+
+        
+       {/* MOBILE SIDEBAR DROPDOWN */}
+<div className="col-span-12 md:hidden relative z-50">
+  <button
+    onClick={() => setMobileSidebarOpen(prev => !prev)}
+    className="w-full flex items-center justify-between
+               px-4 py-3 rounded-lg
+               bg-[#121212] border border-[#232323]
+               text-red-500 font-semibold"
+  >
+    DSA Mastery
+    {mobileSidebarOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+  </button>
+
+  {mobileSidebarOpen && (
+    <div className="mt-3 bg-[#121212] border border-[#232323] rounded-xl">
+      <Sidebar
+        modules={modules}
+        activeSessionKey={activeSessionKey}
+        onSelectSession={(key) => {
+          handleSelectSession(key);
+          setMobileSidebarOpen(false); 
+        }}
+      />
+    </div>
+  )}
+</div>
+
+
+        {/* 🖥 DESKTOP SIDEBAR */}
+        <div className="hidden md:block col-span-3">
+          <Sidebar
+            modules={modules}
+            activeSessionKey={activeSessionKey}
+            onSelectSession={handleSelectSession}
+          />
         </div>
 
         {/* MAIN */}

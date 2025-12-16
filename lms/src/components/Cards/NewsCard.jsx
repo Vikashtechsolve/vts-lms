@@ -21,7 +21,7 @@ const PlaylistCard = ({ item }) => {
   return (
     <div
       onClick={handleCardClick}
-      className="relative w-[60%] sm:w-[45%] md:w-70 flex-shrink-0 cursor-pointer"
+      className="relative w-[90%] sm:w-[45%] md:w-70 flex-shrink-0 cursor-pointer"
     >
       <div
         className="group relative rounded-2xl transition-all duration-500 transform-gpu hover:scale-125 hover:z-50"
