@@ -128,7 +128,7 @@ const QuizQuestions = ({ data, onFinishQuiz }) => {
           <p className="text-lg text-gray-300 text-left mb-6">
             Ques {currentQuestion + 1}. {question.text}
           </p>
-          <div className="bg-black space-y-4">
+          <div className="bg-black space-y-4 text-left">
             {question.options.map((option, index) => (
               <Option 
                 key={index}
@@ -146,18 +146,18 @@ const QuizQuestions = ({ data, onFinishQuiz }) => {
           <div className="mt-6">
             <button
               onClick={() => setShowHint(!showHint)}
-              className="text-sm text-gray-400 hover:text-white flex items-center"
+              className="text-sm  text-gray-400 hover:text-white flex items-center"
             >
               Show hint{" "}
               <FaChevronDown
-                className={`ml-2 transition-transform ${
+                className={`ml-2 text-left transition-transform ${
                   showHint ? "rotate-180" : ""
                 }`}
                 size={12}
               />
             </button>
             {showHint && (
-              <div className="bg-gray-700 p-4 rounded-lg mt-3 text-gray-300">
+              <div className="bg-gray-700 text-left p-4 rounded-lg mt-3 text-gray-300">
                 {question.hint}
               </div>
             )}

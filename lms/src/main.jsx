@@ -5,7 +5,7 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 
-import App from "./App.jsx";
+import App from "./App.jsx"; // App contains Navbar + <Outlet />
 import Home from "./Pages/Home/Home.jsx";
 import Blogs from "./Pages/blogs/Blogs.jsx";
 import BlogDetails from "./Pages/blogs/BlogDetails.jsx";
@@ -21,9 +21,11 @@ import SignIn from "./Pages/SignIn.jsx";
 import LiveClass from "./Pages/MasterClass/LiveClass.jsx";
 import RecordedClass from "./Pages/MasterClass/RecordedClass.jsx";
 import UpcomingEventClass from "./Pages/MasterClass/UpcomingEventClass.jsx";
+
 import LandingPage from "./Pages/Auth/LandingPage.jsx";
 import Auth from "./Pages/Auth/Auth.jsx";
 import PlanChooser from "./Pages/Auth/PlanChooser.jsx";
+
 import ProfilePage from "./Pages/Profile/ProfilePage.jsx";
 import ProfileCertificates from "./Pages/Profile/ProfileCertificates.jsx";
 import ProfileBadges from "./Pages/Profile/ProfileBadges.jsx";
@@ -35,27 +37,25 @@ import StudentProgress from "./Pages/Profile/StudentProgress.jsx";
 
 import NoNavbarLayout from "./components/Navbar/NoNavbarLayout.jsx";
 
-// Router:
-// - Root ("/") -> NoNavbarLayout (landing, auth, planChooser) -> NO navbar
-// - /app -> App layout (default navbar) for all main pages
+
 const router = createBrowserRouter([
   // Landing page on root "/"
   {
     path: "/",
     element: <NoNavbarLayout />,
     children: [
-      { index: true, element: <LandingPage /> },       // "/" → LandingPage
+      { index: true, element: <LandingPage /> },
       { path: "auth", element: <Auth /> },
       { path: "planChooser", element: <PlanChooser /> },
     ],
   },
 
-  // All pages with navbar
+  
   {
     path: "/app",
-    element: <App />,
+    element: <App />, // App contains Navbar + Outlet
     children: [
-      { index: true, element: <Home /> },        // "/app" → Home
+      { index: true, element: <Home /> },
       { path: "playlist", element: <Playlist /> },
       { path: "playlist/:id", element: <PlaylistDetail /> },
       { path: "MasterClass", element: <MasterClass /> },
@@ -70,25 +70,29 @@ const router = createBrowserRouter([
       { path: "LiveClass/:id", element: <LiveClass /> },
       { path: "Recorded/:id", element: <RecordedClass /> },
       { path: "Upcoming/:id", element: <UpcomingEventClass /> },
-      { path: "profile", element: <ProfilePage /> },
-      { path: "profile/certificates", element: <ProfileCertificates /> },
-      { path: "profile/badges", element: <ProfileBadges /> },
-      { path: "profile/subscription", element: <ProfileSubscription /> },
-      { path: "profile/notifications", element: <ProfileNotifications /> },
-      { path: "profile/watchlist", element: <Watchlist /> },
+      
+    ],
+  },
 
-      { path: "profile/progress", element: <StudentProgress /> },
-      { path: "profile/signout", element: <ProfileSignOut /> },
-
-
+  
+  {
+    path: "/app/profile",
+    element: <NoNavbarLayout />,
+    children: [
+      { index: true, element: <ProfilePage /> }, 
+      { path: "certificates", element: <ProfileCertificates /> }, 
+      { path: "badges", element: <ProfileBadges /> },
+      { path: "subscription", element: <ProfileSubscription /> },
+      { path: "notifications", element: <ProfileNotifications /> },
+      { path: "watchlist", element: <Watchlist /> },
+      { path: "progress", element: <StudentProgress /> },
+      { path: "signout", element: <ProfileSignOut /> },
     ],
   },
 ]);
-
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <RouterProvider router={router} />
   </StrictMode>
 );
-//change

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Play, Plus } from "lucide-react";
+import { Play, Plus, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const WATCHLIST_KEY = "watchlistItems";
@@ -39,7 +39,7 @@ const PlaylistCard = ({ item }) => {
   return (
     <div
       onClick={handleCardClick}
-      className="relative w-[60%] sm:w-[45%] md:w-70 flex-shrink-0 cursor-pointer "
+      className="relative w-[90%] sm:w-[45%] md:w-70 flex-shrink-0 cursor-pointer "
     >
       {/* NOTE: parent no longer uses the "group" class */}
       <div
@@ -106,31 +106,40 @@ const PlaylistCard = ({ item }) => {
               {/* IMPORTANT: this button *is* the group (so hover text is tied to it only) */}
               <button
                 onClick={handleAddClick}
-                className="border border-gray-600 rounded bg-gray-600 p-2 text-white relative group"
+                className="border cursor-pointer border-gray-600 rounded bg-gray-600 p-2 text-white relative group"
               >
                 {/* PLUS ICON (hide when added) */}
                 <Plus
                   size={18}
-                  className={`${added ? "opacity-0" : "opacity-100"} transition`}
+                  className={`${
+                    added ? "opacity-0" : "opacity-100"
+                  } transition`}
                 />
 
-                {/* HOVER TEXT → WATCHLIST (only shows when hovering this button) */}
+                {/* HOVER TEXT → Watchlist (when not added) */}
                 {!added && (
                   <span
-                    className="absolute left-1/2 top-full transform -translate-x-1/2 mt-1 
-                    text-xs bg-black px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition"
+                      className="absolute left-8 bottom-10 transform -translate-x-1/2 mt-1 
+        text-xs bg-black px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition"
                   >
                     Watchlist
                   </span>
                 )}
 
-                {/* CLICKED TEXT → ADDED */}
+                {/* CLICKED TEXT + CHECK → Added to Watchlist */}
                 {added && (
                   <span
-                    className="absolute inset-0 flex items-center justify-center 
-                    text-xs font-semibold"
+                    className="absolute left-8 bottom-10 transform -translate-x-1/2 mt-1 
+      text-xs bg-black px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition"
                   >
                     Added
+                  </span>
+                )}
+
+                {/* CENTER CHECK ICON */}
+                {added && (
+                  <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold">
+                    <Check />
                   </span>
                 )}
               </button>
