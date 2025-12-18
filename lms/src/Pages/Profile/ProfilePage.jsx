@@ -1,18 +1,93 @@
 import Sidebar from "./ProfileSidebar";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Pencil } from "lucide-react";
 import userGrey from "../../assets/user-grey.png";
 import Header from "../Header/Header";
+import { useAuth } from "../../context/AuthContext";
+import { authAPI } from "../../utils/api";
 
 export default function ProfilePage() {
   const fileInputRef = useRef(null);
+  const { user, setUser } = useAuth();
   const [profile, setProfile] = useState(userGrey);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState({ type: "", text: "" });
 
-  const handleImageChange = (e) => {
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setEmail(user.email || "");
+      setPhone(user.phone || "");
+      setProfile(user.avatarUrl || userGrey);
+    }
+  }, [user]);
+
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      setMessage({ type: "error", text: "Please select an image file" });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage({ type: "error", text: "Image size should be less than 5MB" });
+      return;
+    }
+
+    // For now, we'll use a data URL. In production, upload to cloud storage first
     const url = URL.createObjectURL(file);
     setProfile(url);
+    
+    // Convert to base64 for now (in production, upload to S3/Cloudinary)
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64String = reader.result;
+      await handleSave(base64String);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSave = async (avatarUrl = null) => {
+    setSaving(true);
+    setMessage({ type: "", text: "" });
+    
+    try {
+      const response = await authAPI.updateProfile(
+        name.trim(),
+        phone.trim(),
+        avatarUrl || profile !== userGrey ? profile : undefined
+      );
+
+      if (response.success) {
+        setUser(response.user);
+        setMessage({ type: "success", text: "Profile updated successfully!" });
+        setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+      }
+    } catch (error) {
+      setMessage({ type: "error", text: error.message || "Failed to update profile" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleNameBlur = () => {
+    if (name.trim() !== user?.name) {
+      handleSave();
+    }
+  };
+
+  const handlePhoneBlur = () => {
+    if (phone.trim() !== user?.phone) {
+      handleSave();
+    }
   };
 
   return (
@@ -57,35 +132,43 @@ export default function ProfilePage() {
             />
           </div>
 
+          {/* MESSAGE */}
+          {message.text && (
+            <div className={`w-full max-w-[650px] px-4 ml-0 lg:ml-16 mb-4 ${
+              message.type === "success" ? "text-green-400" : "text-red-400"
+            }`}>
+              {message.text}
+            </div>
+          )}
+
           {/* FORM SECTION */}
           <div className="w-full max-w-[650px] flex flex-col px-4  gap-6 ml-0 lg:ml-16">
             {/* NAME */}
             <input
-              className="
-  block w-full
-  bg-transparent text-lg py-2 
-  border-b border-white/20 
-  outline-none text-white/60
-"
-              defaultValue="Rohan Singh"
+              className="block w-full bg-transparent text-lg py-2 border-b border-white/20 outline-none text-white/60 focus:text-white focus:border-white/40 transition"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onBlur={handleNameBlur}
+              placeholder="Name"
+              disabled={saving}
             />
 
             {/* EMAIL */}
             <input
-              className="block w-full
-  bg-transparent text-lg py-2 
-  border-b border-white/20 
-  outline-none text-white/60"
-              defaultValue="rohansingh2209@gmail.com"
+              className="block w-full bg-transparent text-lg py-2 border-b border-white/20 outline-none text-white/60 cursor-not-allowed"
+              value={email}
+              disabled
+              placeholder="Email"
             />
 
             {/* PHONE */}
             <input
-              className="block w-full
-  bg-transparent text-lg py-2 
-  border-b border-white/20 
-  outline-none text-white/60"
-              defaultValue="+91 9823478093"
+              className="block w-full bg-transparent text-lg py-2 border-b border-white/20 outline-none text-white/60 focus:text-white focus:border-white/40 transition"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              onBlur={handlePhoneBlur}
+              placeholder="Phone"
+              disabled={saving}
             />
           </div>
         </div>

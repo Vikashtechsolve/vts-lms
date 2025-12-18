@@ -1,8 +1,33 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../Header/Header";
 import Sidebar from "./ProfileSidebar";
 import { LogOut } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
 const ProfileSignOut = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
+  const handleSignOut = async () => {
+    setLoading(true);
+    try {
+      await logout();
+      navigate("/");
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Still navigate even if API call fails
+      navigate("/");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancel = () => {
+    navigate(-1);
+  };
+
   return (
     <>
       <div className="fixed top-0 left-0 w-full z-40">
@@ -38,11 +63,19 @@ const ProfileSignOut = () => {
 
             {/* Buttons */}
             <div className="space-y-4">
-              <button className="w-full bg-[#151515] border border-[#262626] rounded-lg py-4 text-center hover:border-[#3A3A3A] transition font-medium">
-                Yes
+              <button 
+                onClick={handleSignOut}
+                disabled={loading}
+                className="w-full bg-[#151515] border border-[#262626] rounded-lg py-4 text-center hover:border-[#3A3A3A] transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Signing out..." : "Yes"}
               </button>
 
-              <button className="w-full bg-[#151515] border border-[#262626] rounded-lg py-4 text-center hover:border-[#3A3A3A] transition font-medium">
+              <button 
+                onClick={handleCancel}
+                disabled={loading}
+                className="w-full bg-[#151515] border border-[#262626] rounded-lg py-4 text-center hover:border-[#3A3A3A] transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 Cancel
               </button>
             </div>
