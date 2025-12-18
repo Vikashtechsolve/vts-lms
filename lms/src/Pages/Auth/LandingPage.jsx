@@ -95,7 +95,7 @@ export default function LandingPage() {
       // For new users, we'll register with a temporary name and password
       // The name will be updated in Step 1, password will be set in Step 1
       const tempName = email.split("@")[0]; // Use email prefix as temp name
-      const tempPassword = "Temp123!@#"; // Temporary password, will be changed in Step 1
+      const tempPassword = import.meta.env.VITE_TEMP_PASSWORD_PREFIX || "Temp123!@#"; // Temporary password, will be changed in Step 1
       
       const response = await register(tempName, email, tempPassword);
       
@@ -115,7 +115,10 @@ export default function LandingPage() {
       console.error("Registration error:", err);
       // Provide more helpful error messages
       if (err.message.includes("Cannot connect to server") || err.message.includes("Failed to fetch")) {
-        setError("Cannot connect to backend server. Please make sure the backend is running on http://localhost:8000");
+        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+        const errorMsg = import.meta.env.VITE_ERROR_BACKEND_CONNECTION || 
+          "Cannot connect to backend server. Please make sure the backend is running";
+        setError(`${errorMsg} (${apiUrl})`);
       } else {
         setError(err.message || "Something went wrong. Please try again.");
       }

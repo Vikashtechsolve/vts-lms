@@ -99,7 +99,10 @@ export default function PlanChooser({ onNext }) {
       }
     } catch (err) {
       console.error("Error fetching plans:", err);
-      setError(err.message || "Failed to load plans. Please make sure backend is running at http://localhost:8000");
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+      const errorMsg = import.meta.env.VITE_ERROR_BACKEND_CONNECTION || 
+        "Failed to load plans. Please make sure backend is running";
+      setError(err.message || `${errorMsg} (${apiUrl})`);
       setPlans([]);
     } finally {
       setLoading(false);
