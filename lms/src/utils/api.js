@@ -1,9 +1,15 @@
 // API Base URL - Update this to match your backend URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-// Log API URL in development for debugging
+// Log API URL for debugging (always log in production if env var is set, or in dev mode)
 if (import.meta.env.VITE_LOG_API_URL === "true" || import.meta.env.DEV) {
   console.log("🔗 API Base URL:", API_BASE_URL);
+  console.log("🔗 Environment Variable VITE_API_URL:", import.meta.env.VITE_API_URL || "NOT SET");
+}
+
+// Warn if using default localhost URL in production
+if (import.meta.env.PROD && API_BASE_URL === "http://localhost:8000") {
+  console.warn("⚠️ WARNING: Using default localhost API URL in production! Set VITE_API_URL environment variable.");
 }
 
 /**
@@ -74,9 +80,12 @@ const apiRequest = async (endpoint, options = {}) => {
   } catch (error) {
     // Improve error messages for network issues
     if (error.name === "TypeError" && error.message.includes("fetch")) {
-      const errorMsg = import.meta.env.VITE_ERROR_BACKEND_CONNECTION || 
-        `Cannot connect to server. Please make sure the backend is running at ${API_BASE_URL}`;
-      throw new Error(`${errorMsg} (${API_BASE_URL})`);
+      // Use environment variable for error message, but always show the actual API URL being used
+      const customErrorMsg = import.meta.env.VITE_ERROR_BACKEND_CONNECTION;
+      const errorMsg = customErrorMsg 
+        ? `${customErrorMsg} (${API_BASE_URL})`
+        : `Cannot connect to server at ${API_BASE_URL}. Please check your network connection and ensure the backend is running.`;
+      throw new Error(errorMsg);
     }
     throw error;
   }

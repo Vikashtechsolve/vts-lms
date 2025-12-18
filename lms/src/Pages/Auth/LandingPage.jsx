@@ -115,10 +115,8 @@ export default function LandingPage() {
       console.error("Registration error:", err);
       // Provide more helpful error messages
       if (err.message.includes("Cannot connect to server") || err.message.includes("Failed to fetch")) {
-        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
-        const errorMsg = import.meta.env.VITE_ERROR_BACKEND_CONNECTION || 
-          "Cannot connect to backend server. Please make sure the backend is running";
-        setError(`${errorMsg} (${apiUrl})`);
+        // Use the error message from the API call which already includes the URL
+        setError(err.message || "Cannot connect to backend server. Please check your network connection.");
       } else {
         setError(err.message || "Something went wrong. Please try again.");
       }
