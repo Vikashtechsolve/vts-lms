@@ -99,10 +99,8 @@ export default function PlanChooser({ onNext }) {
       }
     } catch (err) {
       console.error("Error fetching plans:", err);
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
-      const errorMsg = import.meta.env.VITE_ERROR_BACKEND_CONNECTION || 
-        "Failed to load plans. Please make sure backend is running";
-      setError(err.message || `${errorMsg} (${apiUrl})`);
+      // Use the error message from the API call which already includes the URL
+      setError(err.message || "Failed to load plans. Please check your network connection.");
       setPlans([]);
     } finally {
       setLoading(false);

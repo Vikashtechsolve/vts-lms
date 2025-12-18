@@ -67,8 +67,63 @@ This application uses environment variables for all configuration. Copy `.env.ex
    npm run dev
    ```
 
+## Deployment
+
+### Important: Environment Variables at Build Time
+
+**Vite embeds environment variables at BUILD TIME, not runtime.** This means:
+
+- Environment variables must be set **before** running `npm run build`
+- The built files will contain the environment variable values
+- You cannot change environment variables after building without rebuilding
+
+### Setting Environment Variables for Deployment
+
+#### Option 1: Using .env file (Local Build)
+1. Create `.env` file with your production values
+2. Run `npm run build`
+3. Deploy the `dist` folder
+
+#### Option 2: Platform Environment Variables (Recommended for CI/CD)
+
+**Vercel:**
+1. Go to Project Settings → Environment Variables
+2. Add all `VITE_*` variables
+3. Redeploy (variables are injected at build time)
+
+**Netlify:**
+1. Go to Site Settings → Environment Variables
+2. Add all `VITE_*` variables
+3. Redeploy (variables are injected at build time)
+
+**GitHub Actions / CI/CD:**
+```yaml
+env:
+  VITE_API_URL: ${{ secrets.VITE_API_URL }}
+  VITE_RAZORPAY_KEY_ID: ${{ secrets.VITE_RAZORPAY_KEY_ID }}
+  # ... other variables
+```
+
+**Docker:**
+```dockerfile
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+RUN npm run build
+```
+
+### Verifying Environment Variables
+
+After deployment, check the browser console. You should see:
+```
+🔗 API Base URL: [your-actual-api-url]
+🔗 Environment Variable VITE_API_URL: [your-actual-api-url]
+```
+
+If you see "NOT SET" or "http://localhost:8000", the environment variable wasn't set during build.
+
 ## Notes
 
 - All environment variables must be prefixed with `VITE_` to be accessible in the frontend
-- After changing environment variables, restart the development server
+- After changing environment variables, **rebuild** the application (`npm run build`)
 - Never commit `.env` file to version control (it's already in `.gitignore`)
+- Environment variables are embedded at build time, not runtime
