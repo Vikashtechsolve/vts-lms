@@ -1,15 +1,18 @@
 // API Base URL - Update this to match your backend URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-// Log API URL for debugging (always log in production if env var is set, or in dev mode)
-if (import.meta.env.VITE_LOG_API_URL === "true" || import.meta.env.DEV) {
-  console.log("🔗 API Base URL:", API_BASE_URL);
-  console.log("🔗 Environment Variable VITE_API_URL:", import.meta.env.VITE_API_URL || "NOT SET");
-}
+// Always log API URL in production for debugging deployment issues
+// This helps identify if env vars were set correctly during build
+console.log("🔗 API Base URL:", API_BASE_URL);
+console.log("🔗 Environment Variable VITE_API_URL:", import.meta.env.VITE_API_URL || "NOT SET");
+console.log("🔗 Mode:", import.meta.env.MODE);
+console.log("🔗 Production:", import.meta.env.PROD);
 
 // Warn if using default localhost URL in production
 if (import.meta.env.PROD && API_BASE_URL === "http://localhost:8000") {
-  console.warn("⚠️ WARNING: Using default localhost API URL in production! Set VITE_API_URL environment variable.");
+  console.error("❌ ERROR: Using default localhost API URL in production!");
+  console.error("❌ VITE_API_URL environment variable was NOT set during build.");
+  console.error("❌ Please set VITE_API_URL in your deployment platform's environment variables and rebuild.");
 }
 
 /**

@@ -121,6 +121,39 @@ After deployment, check the browser console. You should see:
 
 If you see "NOT SET" or "http://localhost:8000", the environment variable wasn't set during build.
 
+### Troubleshooting Deployment Issues
+
+**Problem: Still seeing `http://localhost:8000` in production**
+
+1. **Check browser console** - Look for the debug logs:
+   ```
+   🔗 API Base URL: [should show your production URL]
+   🔗 Environment Variable VITE_API_URL: [should show your URL, not "NOT SET"]
+   ```
+
+2. **Verify environment variables are set in your deployment platform:**
+   - **Vercel**: Project Settings → Environment Variables → Add `VITE_API_URL`
+   - **Netlify**: Site Settings → Environment Variables → Add `VITE_API_URL`
+   - **GitHub Actions**: Check your workflow file has `env:` section
+
+3. **Important**: After setting environment variables, you MUST rebuild:
+   - Vercel/Netlify: Trigger a new deployment
+   - Manual: Run `npm run build` again
+   - CI/CD: Push a new commit or manually trigger build
+
+4. **Verify before building locally:**
+   ```bash
+   npm run verify-env
+   ```
+
+5. **Check your build logs** - Look for the environment variable values during build
+
+6. **Common mistakes:**
+   - ❌ Setting env vars AFTER build (won't work - Vite embeds at build time)
+   - ❌ Using `API_URL` instead of `VITE_API_URL` (must have VITE_ prefix)
+   - ❌ Not rebuilding after setting env vars
+   - ❌ Setting env vars in wrong environment (production vs preview)
+
 ## Notes
 
 - All environment variables must be prefixed with `VITE_` to be accessible in the frontend

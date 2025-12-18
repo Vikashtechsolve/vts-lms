@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { subscriptionAPI } from "../utils/api";
 
 const SignIn = () => {
   const [form, setForm] = useState({

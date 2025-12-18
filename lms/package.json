@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node verify-env.js",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "verify-env": "node verify-env.js"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
