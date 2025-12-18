@@ -170,18 +170,18 @@ export default function ProfileSubscription() {
 
           {/* UPGRADE BTN */}
           {shouldShowUpgradeButton && (
-            <div
-              className="flex justify-center mt-10 
-                          w-full sm:w-[80%] lg:w-[60%] xl:w-[50%]"
-            >
+          <div
+            className="flex justify-center mt-10 
+                        w-full sm:w-[80%] lg:w-[60%] xl:w-[50%]"
+          >
               <button 
                 onClick={handleUpgrade}
                 className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 transition text-white text-[15px] px-10 py-4 rounded-md font-medium"
               >
-                <Star size={18} color="#FFD700" fill="#FFD700" />
+              <Star size={18} color="#FFD700" fill="#FFD700" />
                 {isActive && isStarterPlan ? "Upgrade to Premium" : "Subscribe Now"}
-              </button>
-            </div>
+            </button>
+          </div>
           )}
         </div>
       </div>
