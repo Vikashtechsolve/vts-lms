@@ -92,7 +92,7 @@ const PaymentButton = ({ selected, plans, onSuccess, onFailure, onNext }) => {
         // Load Razorpay script if not already loaded
         if (!window.Razorpay) {
           const script = document.createElement("script");
-          script.src = "https://checkout.razorpay.com/v1/checkout.js";
+          script.src = import.meta.env.VITE_RAZORPAY_CHECKOUT_SCRIPT_URL || "https://checkout.razorpay.com/v1/checkout.js";
           script.onload = () => initiatePayment(orderId, amount, currency, planId, razorpayKey);
           script.onerror = () => {
             onFailure({ error: "Failed to load payment gateway" });
@@ -134,17 +134,17 @@ const PaymentButton = ({ selected, plans, onSuccess, onFailure, onNext }) => {
     const options = {
       key: razorpayKey || import.meta.env.VITE_RAZORPAY_KEY_ID || "",
       amount: amount * 100, // Razorpay expects amount in paise
-      currency: currency || "INR",
-      name: "VTS LMS",
-      description: "Subscription Payment",
+      currency: currency || import.meta.env.VITE_DEFAULT_CURRENCY || "INR",
+      name: import.meta.env.VITE_PAYMENT_GATEWAY_NAME || import.meta.env.VITE_APP_NAME || "VTS LMS",
+      description: import.meta.env.VITE_APP_DESCRIPTION || "Subscription Payment",
       order_id: orderId,
       prefill: {
-        name: user?.name || "",
-        email: user?.email || "",
-        contact: user?.phone || "",
+        name: user?.name || import.meta.env.VITE_RAZORPAY_PREFILL_NAME || "",
+        email: user?.email || import.meta.env.VITE_RAZORPAY_PREFILL_EMAIL || "",
+        contact: user?.phone || import.meta.env.VITE_RAZORPAY_PREFILL_CONTACT || "",
       },
       theme: {
-        color: "#ED0331",
+        color: import.meta.env.VITE_APP_THEME_COLOR || "#ED0331",
       },
       handler: async function (response) {
         try {
@@ -158,7 +158,7 @@ const PaymentButton = ({ selected, plans, onSuccess, onFailure, onNext }) => {
           if (verifyResponse.success) {
             onSuccess(response);
           } else {
-            onFailure({ error: "Payment verification failed" });
+            onFailure({ error: import.meta.env.VITE_ERROR_PAYMENT_VERIFICATION_FAILED || "Payment verification failed" });
           }
         } catch (error) {
           onFailure(error);

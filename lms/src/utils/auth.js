@@ -4,9 +4,9 @@
  */
 
 const TOKEN_KEYS = {
-  ACCESS_TOKEN: "accessToken",
-  REFRESH_TOKEN: "refreshToken",
-  USER: "user",
+  ACCESS_TOKEN: import.meta.env.VITE_TOKEN_STORAGE_ACCESS_KEY || "accessToken",
+  REFRESH_TOKEN: import.meta.env.VITE_TOKEN_STORAGE_REFRESH_KEY || "refreshToken",
+  USER: import.meta.env.VITE_TOKEN_STORAGE_USER_KEY || "user",
 };
 
 export const tokenStorage = {

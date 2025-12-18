@@ -2,7 +2,7 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 // Log API URL in development for debugging
-if (import.meta.env.DEV) {
+if (import.meta.env.VITE_LOG_API_URL === "true" || import.meta.env.DEV) {
   console.log("🔗 API Base URL:", API_BASE_URL);
 }
 
@@ -74,7 +74,9 @@ const apiRequest = async (endpoint, options = {}) => {
   } catch (error) {
     // Improve error messages for network issues
     if (error.name === "TypeError" && error.message.includes("fetch")) {
-      throw new Error(`Cannot connect to server. Please make sure the backend is running at ${API_BASE_URL}`);
+      const errorMsg = import.meta.env.VITE_ERROR_BACKEND_CONNECTION || 
+        `Cannot connect to server. Please make sure the backend is running at ${API_BASE_URL}`;
+      throw new Error(`${errorMsg} (${API_BASE_URL})`);
     }
     throw error;
   }

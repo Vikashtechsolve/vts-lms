@@ -69,7 +69,8 @@ export default function ProfilePage() {
       if (response.success) {
         setUser(response.user);
         setMessage({ type: "success", text: "Profile updated successfully!" });
-        setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+        const timeout = parseInt(import.meta.env.VITE_SUCCESS_MESSAGE_TIMEOUT || "3000", 10);
+        setTimeout(() => setMessage({ type: "", text: "" }), timeout);
       }
     } catch (error) {
       setMessage({ type: "error", text: error.message || "Failed to update profile" });

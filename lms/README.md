@@ -1,18 +1,74 @@
-# React + Vite
+# VTS LMS Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Vite application for VTS Learning Management System.
 
-Currently, two official plugins are available:
+## Environment Variables
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This application uses environment variables for all configuration. Copy `.env.example` to `.env` and configure the following variables:
 
-## React Compiler
+### API Configuration
+- `VITE_API_URL` - Backend API base URL (default: `http://localhost:8000`)
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+### Razorpay Payment Gateway
+- `VITE_RAZORPAY_KEY_ID` - Your Razorpay key ID
+- `VITE_RAZORPAY_CHECKOUT_SCRIPT_URL` - Razorpay checkout script URL (default: `https://checkout.razorpay.com/v1/checkout.js`)
 
-Note: This will impact Vite dev & build performances.
+### Application Configuration
+- `VITE_APP_NAME` - Application name (default: `VTS LMS`)
+- `VITE_APP_DESCRIPTION` - Payment description (default: `Subscription Payment`)
+- `VITE_APP_THEME_COLOR` - Theme color for payment gateway (default: `#ED0331`)
 
-## Expanding the ESLint configuration
+### Payment Configuration
+- `VITE_DEFAULT_CURRENCY` - Default currency code (default: `INR`)
+- `VITE_PAYMENT_GATEWAY_NAME` - Payment gateway display name (default: `VTS LMS`)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### UI Configuration
+- `VITE_SUCCESS_MESSAGE_TIMEOUT` - Success message display timeout in ms (default: `3000`)
+- `VITE_LOADING_MESSAGE` - Loading message text (default: `Loading...`)
+
+### Error Messages
+- `VITE_ERROR_BACKEND_CONNECTION` - Backend connection error message
+- `VITE_ERROR_PAYMENT_FAILED` - Payment failed error message
+- `VITE_ERROR_PAYMENT_VERIFICATION_FAILED` - Payment verification failed error message
+
+### Temporary User Configuration
+- `VITE_TEMP_PASSWORD_PREFIX` - Temporary password prefix for registration (default: `Temp123!@#`)
+
+### Token Storage Keys
+- `VITE_TOKEN_STORAGE_ACCESS_KEY` - Access token storage key (default: `accessToken`)
+- `VITE_TOKEN_STORAGE_REFRESH_KEY` - Refresh token storage key (default: `refreshToken`)
+- `VITE_TOKEN_STORAGE_USER_KEY` - User data storage key (default: `user`)
+
+### Razorpay Payment Options
+- `VITE_RAZORPAY_PREFILL_NAME` - Default prefill name for payment form
+- `VITE_RAZORPAY_PREFILL_EMAIL` - Default prefill email for payment form
+- `VITE_RAZORPAY_PREFILL_CONTACT` - Default prefill contact for payment form
+
+### Development Configuration
+- `VITE_DEV_MODE` - Enable development mode (default: `true`)
+- `VITE_LOG_API_URL` - Log API URL in console (default: `true`)
+
+## Setup
+
+1. Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Update `.env` with your configuration values
+
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+4. Start development server:
+   ```bash
+   npm run dev
+   ```
+
+## Notes
+
+- All environment variables must be prefixed with `VITE_` to be accessible in the frontend
+- After changing environment variables, restart the development server
+- Never commit `.env` file to version control (it's already in `.gitignore`)
