@@ -36,6 +36,9 @@ import ProfileSignOut from "./Pages/Profile/ProfileSignOut.jsx";
 import StudentProgress from "./Pages/Profile/StudentProgress.jsx";
 
 import NoNavbarLayout from "./components/Navbar/NoNavbarLayout.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import PublicRoute from "./components/PublicRoute.jsx";
 
 
 const router = createBrowserRouter([
@@ -44,8 +47,22 @@ const router = createBrowserRouter([
     path: "/",
     element: <NoNavbarLayout />,
     children: [
-      { index: true, element: <LandingPage /> },
-      { path: "auth", element: <Auth /> },
+      { 
+        index: true, 
+        element: (
+          <PublicRoute>
+            <LandingPage />
+          </PublicRoute>
+        ) 
+      },
+      { 
+        path: "auth", 
+        element: (
+          <PublicRoute>
+            <Auth />
+          </PublicRoute>
+        ) 
+      },
       { path: "planChooser", element: <PlanChooser /> },
     ],
   },
@@ -55,21 +72,126 @@ const router = createBrowserRouter([
     path: "/app",
     element: <App />, // App contains Navbar + Outlet
     children: [
-      { index: true, element: <Home /> },
-      { path: "playlist", element: <Playlist /> },
-      { path: "playlist/:id", element: <PlaylistDetail /> },
-      { path: "MasterClass", element: <MasterClass /> },
-      { path: "Programs", element: <Programs /> },
-      { path: "Blogs", element: <Blogs /> },
-      { path: "Blogs/:id", element: <BlogDetails /> },
-      { path: "News", element: <News /> },
-      { path: "News/:id", element: <NewsDetails /> },
-      { path: "Interviews", element: <Interview /> },
-      { path: "Reels", element: <Reels /> },
-      { path: "signin", element: <SignIn /> },
-      { path: "LiveClass/:id", element: <LiveClass /> },
-      { path: "Recorded/:id", element: <RecordedClass /> },
-      { path: "Upcoming/:id", element: <UpcomingEventClass /> },
+      { 
+        index: true, 
+        element: (
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: "playlist", 
+        element: (
+          <ProtectedRoute>
+            <Playlist />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: "playlist/:id", 
+        element: (
+          <ProtectedRoute>
+            <PlaylistDetail />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: "MasterClass", 
+        element: (
+          <ProtectedRoute>
+            <MasterClass />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: "Programs", 
+        element: (
+          <ProtectedRoute>
+            <Programs />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: "Blogs", 
+        element: (
+          <ProtectedRoute>
+            <Blogs />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: "Blogs/:id", 
+        element: (
+          <ProtectedRoute>
+            <BlogDetails />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: "News", 
+        element: (
+          <ProtectedRoute>
+            <News />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: "News/:id", 
+        element: (
+          <ProtectedRoute>
+            <NewsDetails />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: "Interviews", 
+        element: (
+          <ProtectedRoute>
+            <Interview />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: "Reels", 
+        element: (
+          <ProtectedRoute>
+            <Reels />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: "signin", 
+        element: (
+          <PublicRoute>
+            <SignIn />
+          </PublicRoute>
+        ) 
+      },
+      { 
+        path: "LiveClass/:id", 
+        element: (
+          <ProtectedRoute>
+            <LiveClass />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: "Recorded/:id", 
+        element: (
+          <ProtectedRoute>
+            <RecordedClass />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: "Upcoming/:id", 
+        element: (
+          <ProtectedRoute>
+            <UpcomingEventClass />
+          </ProtectedRoute>
+        ) 
+      },
       
     ],
   },
@@ -79,20 +201,78 @@ const router = createBrowserRouter([
     path: "/app/profile",
     element: <NoNavbarLayout />,
     children: [
-      { index: true, element: <ProfilePage /> }, 
-      { path: "certificates", element: <ProfileCertificates /> }, 
-      { path: "badges", element: <ProfileBadges /> },
-      { path: "subscription", element: <ProfileSubscription /> },
-      { path: "notifications", element: <ProfileNotifications /> },
-      { path: "watchlist", element: <Watchlist /> },
-      { path: "progress", element: <StudentProgress /> },
-      { path: "signout", element: <ProfileSignOut /> },
+      { 
+        index: true, 
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        ) 
+      }, 
+      { 
+        path: "certificates", 
+        element: (
+          <ProtectedRoute>
+            <ProfileCertificates />
+          </ProtectedRoute>
+        ) 
+      }, 
+      { 
+        path: "badges", 
+        element: (
+          <ProtectedRoute>
+            <ProfileBadges />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: "subscription", 
+        element: (
+          <ProtectedRoute>
+            <ProfileSubscription />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: "notifications", 
+        element: (
+          <ProtectedRoute>
+            <ProfileNotifications />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: "watchlist", 
+        element: (
+          <ProtectedRoute>
+            <Watchlist />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: "progress", 
+        element: (
+          <ProtectedRoute>
+            <StudentProgress />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: "signout", 
+        element: (
+          <ProtectedRoute>
+            <ProfileSignOut />
+          </ProtectedRoute>
+        ) 
+      },
     ],
   },
 ]);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>
 );

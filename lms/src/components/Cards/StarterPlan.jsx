@@ -32,6 +32,7 @@ export default function StarterPlan({ selected, onSelect }) {
       <div className="rounded-t-2xl text-center px-6 py-6 bg-gradient-to-r from-[#244a94] to-[#2f5aa8] text-white">
         <h3 className="text-lg font-semibold">Starter Plan</h3>
         <p className="text-sm mt-1 opacity-90">Start learning with essential access</p>
+        <p className="text-xs mt-2 opacity-75">Free • Valid for 24 hours</p>
       </div>
 
       <div className="bg-white p-12 border-t border-gray-200">

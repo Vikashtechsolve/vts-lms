@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import StarterPlan from "../../components/Cards/StarterPlan";
 import MonthlyPlan from "../../components/Cards/MonthlyPlan";
 import YearlyPlan from "../../components/Cards/YearlyPlan";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { plansAPI, subscriptionAPI } from "../../utils/api";
+import { useAuth } from "../../context/AuthContext";
+import { tokenStorage } from "../../utils/auth";
+import PaymentButton from "../../components/PaymentButton";
 
 /**
  * PlanChooser
@@ -10,16 +14,185 @@ import { useNavigate } from "react-router-dom";
  * Usage: <PlanChooser onNext={(planId) => ...} />
  */
 export default function PlanChooser({ onNext }) {
-  const [selected, setSelected] = useState("monthly");
+  const [selected, setSelected] = useState("starter");
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [processingPayment, setProcessingPayment] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { completeLogin, isAuthenticated } = useAuth();
 
+  useEffect(() => {
+    // Check if we have tokens from previous step (OTP verification) or existing login
+    const accessToken = location.state?.accessToken || tokenStorage.getAccessToken();
+    const refreshToken = location.state?.refreshToken || tokenStorage.getRefreshToken();
+    const userData = location.state?.user || tokenStorage.getUser();
+
+    // If no tokens and not authenticated, redirect to landing page
+    if (!accessToken && !isAuthenticated) {
+      navigate("/");
+      return;
+    }
+
+    // Set tokens if we have them from location state
+    if (location.state?.accessToken && !tokenStorage.getAccessToken()) {
+      tokenStorage.setTokens(
+        location.state.accessToken,
+        location.state.refreshToken,
+        location.state.user
+      );
+    }
+
+    // Check if user already has an active subscription
+    checkExistingSubscription();
+    fetchPlans();
+  }, [navigate, location, isAuthenticated]);
+
+  const checkExistingSubscription = async () => {
+    try {
+      const response = await subscriptionAPI.getStatus();
+      const hasActiveSubscription = 
+        response.status === "active" && 
+        response.endAt && 
+        new Date(response.endAt) > new Date();
+
+      if (hasActiveSubscription) {
+        // User already has subscription, redirect to LMS
+        console.log("User already has active subscription, redirecting to LMS");
+        navigate("/app");
+      }
+    } catch (error) {
+      console.error("Subscription check error:", error);
+      // Continue to plan selection if check fails
+    }
+  };
+
+  const fetchPlans = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      
+      console.log("Fetching plans...");
+      const plansData = await plansAPI.listPlans();
+      console.log("Plans received:", plansData);
+      
+      if (Array.isArray(plansData)) {
+        setPlans(plansData);
+        // If no plans found, set default selection
+        if (plansData.length === 0) {
+          setError("No plans available. Please contact support.");
+        } else {
+          // Auto-select starter plan if available
+          const starterPlan = plansData.find(p => 
+            p.name.toLowerCase().includes("starter") || 
+            (p.billingCycle === "monthly" && p.price === 0)
+          );
+          if (starterPlan) {
+            setSelected("starter");
+          }
+        }
+      } else {
+        console.error("Invalid plans data:", plansData);
+        setError("Invalid response from server. Please try again.");
+        setPlans([]);
+      }
+    } catch (err) {
+      console.error("Error fetching plans:", err);
+      setError(err.message || "Failed to load plans. Please make sure backend is running at http://localhost:8000");
+      setPlans([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Map plan selection to plan ID from database
+  const getSelectedPlanId = () => {
+    if (!plans.length) return null;
+    
+    // Map UI selection to database plan
+    const planMap = {
+      starter: plans.find(p => p.name.toLowerCase().includes("starter") || p.billingCycle === "monthly" && p.price === 0),
+      monthly: plans.find(p => p.billingCycle === "monthly" && p.price > 0),
+      yearly: plans.find(p => p.billingCycle === "yearly")
+    };
+
+    return planMap[selected]?._id || plans[0]?._id;
+  };
+
+  const handlePaymentSuccess = async (razorpayResponse) => {
+    setProcessingPayment(true);
+    try {
+      
+      // Free plan - already activated, now log in user
+      if (razorpayResponse.isFreePlan) {
+        // Get user data and complete login
+        const user = tokenStorage.getUser();
+        if (user) {
+          // Update user with subscription info if available
+          const updatedUser = razorpayResponse.subscription 
+            ? { ...user, subscription: razorpayResponse.subscription }
+            : user;
+          
+          // Complete login process
+          completeLogin(updatedUser);
+          
+          // Redirect to LMS
+          navigate("/app");
+          return;
+        }
+        navigate("/app");
+        return;
+      }
+
+      // Paid plan - verify payment
+      const planId = getSelectedPlanId();
+      if (!planId) {
+        throw new Error("Plan not found");
+      }
+
+      const verifyResponse = await subscriptionAPI.verifyPayment(
+        razorpayResponse.razorpay_order_id,
+        razorpayResponse.razorpay_payment_id,
+        razorpayResponse.razorpay_signature,
+        planId
+      );
+
+      if (verifyResponse.success) {
+        // Get user data and complete login
+        const user = tokenStorage.getUser();
+        if (user) {
+          // Update user with subscription info
+          const updatedUser = verifyResponse.subscription 
+            ? { ...user, subscription: verifyResponse.subscription }
+            : user;
+          
+          // Complete login process
+          completeLogin(updatedUser);
+          
+          // Redirect to LMS
+          navigate("/app");
+        } else {
+          navigate("/app");
+        }
+      } else {
+        setError("Payment verification failed. Please contact support.");
+      }
+    } catch (err) {
+      setError(err.message || "Payment processing failed. Please try again.");
+    } finally {
+      setProcessingPayment(false);
+    }
+  };
+
+  const handlePaymentFailure = (error) => {
+    setError(error.error?.description || error.message || "Payment failed. Please try again.");
+    setProcessingPayment(false);
+  };
+
+  // This function is no longer used - PaymentButton handles everything
   const handleNext = () => {
     navigate("/app");
-    if (onNext) onNext(selected);
-    // example: navigate to checkout and pass selected plan
-    // navigate("/checkout", { state: { planId: selected } });
-    // default behaviour: console.log
-    console.log("selected plan:", selected);
   };
 
   return (
@@ -48,20 +221,51 @@ export default function PlanChooser({ onNext }) {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <StarterPlan selected={selected} onSelect={setSelected} />
-          <MonthlyPlan selected={selected} onSelect={setSelected} />
-          <YearlyPlan selected={selected} onSelect={setSelected} />
-        </div>
+        {loading ? (
+          <div className="text-center py-8">
+            <p className="text-gray-600">Loading plans...</p>
+          </div>
+        ) : error && !plans.length ? (
+          <div className="text-center py-8">
+            <p className="text-red-600">{error}</p>
+            <button
+              onClick={fetchPlans}
+              className="mt-4 text-red-700 underline"
+            >
+              Retry
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <StarterPlan selected={selected} onSelect={setSelected} />
+              <MonthlyPlan selected={selected} onSelect={setSelected} />
+              <YearlyPlan selected={selected} onSelect={setSelected} />
+            </div>
 
-        <div className="mt-10 flex justify-center">
-          <button
-            onClick={handleNext}
-            className="max-w-xl cursor-pointer w-full md:w-1/2 bg-red-700 hover:bg-red-800 text-white font-semibold py-4 rounded-md shadow-md"
-          >
-            Next
-          </button>
-        </div>
+            {error && (
+              <div className="mt-4 text-center">
+                <p className="text-red-600 text-sm">{error}</p>
+              </div>
+            )}
+
+            <div className="mt-10 flex justify-center">
+              {processingPayment ? (
+                <div className="text-center">
+                  <p className="text-gray-600">Processing payment...</p>
+                </div>
+              ) : (
+                <PaymentButton
+                  selected={selected}
+                  plans={plans}
+                  onSuccess={handlePaymentSuccess}
+                  onFailure={handlePaymentFailure}
+                  onNext={handleNext}
+                />
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

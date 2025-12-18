@@ -1,65 +1,96 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { authAPI } from "../../utils/api";
 
 export default function Auth() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { verifyOtp } = useAuth();
   const email = location.state?.email || "";
+  const userId = location.state?.userId || "";
+  const isNewUser = location.state?.isNewUser || false;
+  
+  const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [resending, setResending] = useState(false);
 
-  const savePassword = async () => {
-    if (!password) return alert("Please enter password");
+  useEffect(() => {
+    if (!email) {
+      navigate("/");
+    }
+  }, [email, navigate]);
+
+  const handleResendOtp = async () => {
+    setResending(true);
+    setError("");
+    try {
+      const response = await authAPI.resendOtp(email);
+      if (response.success) {
+        alert("OTP resent successfully. Please check your email.");
+      } else {
+        setError(response.message || "Failed to resend OTP");
+      }
+    } catch (err) {
+      setError(err.message || "Failed to resend OTP");
+    } finally {
+      setResending(false);
+    }
+  };
+
+  const handleVerifyAndSave = async () => {
+    if (!otp || !password) {
+      setError("Please enter both OTP and password");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
 
     setSaving(true);
+    setError("");
 
-    const newEntry = { email, password, createdAt: new Date().toISOString() };
-
-    // Try to update the dummy JSON file (will fail on static hosts).
     try {
-      const res = await fetch("/Letter/passwords.json");
-      if (!res.ok) throw new Error("Could not read dummy file");
-
-      const data = await res.json();
-
-      data.push(newEntry);
-
-      // Attempt to write back (note: this usually won't work on static hosts)
-      const writeRes = await fetch("/Letter/passwords.json", {
-        method: "PUT", // your server would need to accept this and update the file
-        body: JSON.stringify(data, null, 2),
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (!writeRes.ok) throw new Error("Server refused write");
-
-      // success path
-      alert("Password saved to dummy file ✅");
-    } catch (err) {
-      // Fallback: save to localStorage (demo-only)
-      try {
-        const existing = JSON.parse(
-          localStorage.getItem("demo_passwords") || "[]"
-        );
-        existing.push(newEntry);
-        localStorage.setItem(
-          "demo_passwords",
-          JSON.stringify(existing, null, 2)
-        );
-        alert(
-          "Could not save to /Letter/passwords.json — saved locally in localStorage for demo "
-        );
-      } catch (lsErr) {
-        alert("Failed to save password: " + (lsErr.message || err.message));
+      // First verify OTP but DON'T log in yet (skipLogin = true)
+      // User will be logged in after plan selection
+      const verifyResponse = await verifyOtp(email, otp, true);
+      
+      if (!verifyResponse.success) {
+        setError(verifyResponse.error || "OTP verification failed");
         setSaving(false);
         return;
       }
+
+      // If new user, update password
+      if (isNewUser) {
+        try {
+          await authAPI.updatePasswordAfterOtp(email, password);
+        } catch (err) {
+          console.error("Password update error:", err);
+          // Continue even if password update fails
+        }
+      }
+
+      // Store tokens temporarily for API calls but don't set auth state
+      // Navigate to plan chooser - user will be logged in after plan selection
+      navigate("/planChooser", { 
+        state: { 
+          email, 
+          userId,
+          accessToken: verifyResponse.accessToken,
+          refreshToken: verifyResponse.refreshToken,
+          user: verifyResponse.user
+        } 
+      });
+    } catch (err) {
+      setError(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setSaving(false);
     }
-
-    setSaving(false);
-
-    // Navigate to plan chooser and pass email in state (or use query param)
-    navigate("/planchooser", { state: { email } });
   };
 
   return (
@@ -108,41 +139,54 @@ export default function Auth() {
               {email || "No email provided"}
             </span>
           </div>
-          {/* <div className="border border-green-600 text-left rounded-md p-1">
-            <label className="text-green-600 ml-1 text-xs">OTP</label>
-            <input
-              type="email"
-              value={""}
-              disabled
-              className="w-full  bg-transparent outline-none text-black font-medium"
-            />
-          </div> */}
+          {/* OTP Input */}
           <input
-            type="password"
-            placeholder="OTP"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            type="text"
+            placeholder="Enter OTP"
+            value={otp}
+            onChange={(e) => {
+              setOtp(e.target.value.replace(/\D/g, "").slice(0, 6));
+              setError("");
+            }}
             className="w-full border border-gray-300 rounded-md p-3.5 placeholder:text-gray-400 outline-none text-black font-medium"
+            maxLength={6}
           />
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={handleResendOtp}
+              disabled={resending}
+              className="text-sm text-red-600 hover:text-red-700 underline"
+            >
+              {resending ? "Sending..." : "Resend OTP"}
+            </button>
+          </div>
 
           {/* Password Input */}
           <input
             type="password"
-            placeholder="Password"
+            placeholder="Enter Password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setError("");
+            }}
             className="w-full border border-gray-300 rounded-md p-3.5 placeholder:text-gray-400 outline-none text-black font-medium"
           />
 
+          {error && (
+            <p className="text-red-600 text-sm">{error}</p>
+          )}
+
           {/* Next Button */}
           <button
-            onClick={savePassword}
+            onClick={handleVerifyAndSave}
             disabled={saving}
             className={`w-full bg-red-700 text-white py-4 rounded-lg font-semibold shadow-md transition ${
               saving ? "opacity-60 cursor-not-allowed" : "hover:bg-red-800"
             }`}
           >
-            {saving ? "Saving..." : "Next"}
+            {saving ? "Verifying..." : "Next"}
           </button>
         </div>
       </div>

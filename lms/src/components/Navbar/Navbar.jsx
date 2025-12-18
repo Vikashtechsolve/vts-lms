@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useState, useRef } from "react";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
+import { useAuth } from "../../context/AuthContext";
 
 const MENU = [
   { id: 1, title: "Home", to: "/app" },
@@ -36,16 +37,26 @@ export default function Navbar() {
   const [showSearch, setShowSearch] = useState(false);
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const dropdownRef = useRef(null);
   useOnClickOutside(dropdownRef, () => setDropdownOpen(false));
+
+  const handleLogoClick = () => {
+    // If logged in, go to LMS home, otherwise go to landing page
+    if (isAuthenticated) {
+      navigate("/app");
+    } else {
+      navigate("/");
+    }
+  };
 
   return (
     <header className="w-full bg-[#0F0F0F] h-20 flex items-center justify-between px-3 lg:px-12">
       {/* LOGO */}
       <div
         className="flex  cursor-pointer"
-        onClick={() => navigate("/app")}
+        onClick={handleLogoClick}
       >
         <img src="/logo.png" className="w-35" />
       </div>

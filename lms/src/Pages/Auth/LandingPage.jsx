@@ -1,9 +1,11 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LandingPageNavbar from "../../components/Navbar/NoNavbarLayout";
 import TrendingCarousel from "./TrendingCarousel";
 import { useNavigate } from "react-router-dom";
 import { Languages } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { authAPI } from "../../utils/api";
 
 const reasonData = [
   {
@@ -67,8 +69,60 @@ const faqData = [
 export default function LandingPage() {
   const [openId, setOpenId] = useState(null);
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { register, isAuthenticated, loading: authLoading } = useAuth();
   const toggle = (id) => setOpenId((prev) => (prev === id ? null : id));
+
+  // Redirect to LMS if user is already logged in
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      navigate("/app");
+    }
+  }, [isAuthenticated, authLoading, navigate]);
+
+  const handleGetStarted = async () => {
+    if (!email || !email.includes("@")) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      // For new users, we'll register with a temporary name and password
+      // The name will be updated in Step 1, password will be set in Step 1
+      const tempName = email.split("@")[0]; // Use email prefix as temp name
+      const tempPassword = "Temp123!@#"; // Temporary password, will be changed in Step 1
+      
+      const response = await register(tempName, email, tempPassword);
+      
+      if (response.success) {
+        // Navigate to Auth page (Step 1) with email and userId
+        navigate("/auth", { 
+          state: { 
+            email, 
+            userId: response.userId,
+            isNewUser: true 
+          } 
+        });
+      } else {
+        setError(response.error || response.message || "Failed to register. Please try again.");
+      }
+    } catch (err) {
+      console.error("Registration error:", err);
+      // Provide more helpful error messages
+      if (err.message.includes("Cannot connect to server") || err.message.includes("Failed to fetch")) {
+        setError("Cannot connect to backend server. Please make sure the backend is running on http://localhost:8000");
+      } else {
+        setError(err.message || "Something went wrong. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="bg-gray-900">
@@ -97,9 +151,16 @@ export default function LandingPage() {
 
           {/* Sign in button - smaller on mobile */}
           <button
-          onClick={() => navigate("/app/signin")}
+          onClick={() => {
+            // If already logged in, go to LMS, otherwise go to sign in
+            if (isAuthenticated) {
+              navigate("/app");
+            } else {
+              navigate("/app/signin");
+            }
+          }}
            className="bg-[#c72b2b] hover:bg-[#b32626] cursor-pointer text-white font-medium px-4 md:px-5 py-2 md:py-2.5 rounded-md text-sm md:text-base">
-            Sign in
+            {isAuthenticated ? "Go to LMS" : "Sign in"}
           </button>
         </div>
       </nav>
@@ -133,31 +194,42 @@ export default function LandingPage() {
             <input
               type="email"
               placeholder="rohan singh2209@gmail.com"
-              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setError("");
+              }}
+              onKeyPress={(e) => e.key === "Enter" && handleGetStarted()}
               className="w-full max-w-md px-4 sm:px-6 py-3 rounded-md bg-black/50 border border-gray-700 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-red-600"
             />
 
             <button
-              onClick={() => navigate("/auth", { state: { email } })}
-              className="flex items-center gap-2 bg-[#c72b2b] hover:bg-[#b32626] text-white font-semibold px-5 cursor-pointer py-3 rounded-md"
+              onClick={handleGetStarted}
+              disabled={loading}
+              className={`flex items-center gap-2 bg-[#c72b2b] hover:bg-[#b32626] text-white font-semibold px-5 cursor-pointer py-3 rounded-md ${loading ? "opacity-60 cursor-not-allowed" : ""}`}
             >
-              <span className="">Get Started</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
+              <span className="">{loading ? "Processing..." : "Get Started"}</span>
+              {!loading && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              )}
             </button>
           </div>
+          {error && (
+            <p className="mt-3 text-red-400 text-sm text-center">{error}</p>
+          )}
         </main>
 
         {/* subtle bottom gradient like screenshot */}
@@ -275,24 +347,36 @@ export default function LandingPage() {
               <input
                 type="email"
                 placeholder="Email address"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setError("");
+                }}
+                onKeyPress={(e) => e.key === "Enter" && handleGetStarted()}
                 className="w-full md:flex-1 px-5 py-4 rounded-md bg-transparent border border-[#3a3a3a] placeholder:text-gray-500 text-white focus:outline-none focus:ring-2 focus:ring-red-600"
               />
-              <button className="px-8 py-4 bg-[#c72b2b] hover:bg-[#b32626] rounded-md text-white font-semibold flex items-center gap-3">
-                Get Started
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
+              <button 
+                onClick={handleGetStarted}
+                disabled={loading}
+                className={`px-8 py-4 bg-[#c72b2b] hover:bg-[#b32626] rounded-md text-white font-semibold flex items-center gap-3 ${loading ? "opacity-60 cursor-not-allowed" : ""}`}
+              >
+                {loading ? "Processing..." : "Get Started"}
+                {!loading && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                )}
               </button>
             </div>
           </div>

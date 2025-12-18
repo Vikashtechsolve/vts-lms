@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const SignIn = () => {
   const [form, setForm] = useState({
@@ -6,16 +8,65 @@ const SignIn = () => {
     password: "",
     remember: false,
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((s) => ({ ...s, [name]: type === "checkbox" ? checked : value }));
+    setError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Sign In data:", form);
-    // call API here
+    
+    if (!form.identifier || !form.password) {
+      setError("Please enter both email and password");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      // Extract email from identifier (could be email or phone)
+      const email = form.identifier.includes("@") 
+        ? form.identifier 
+        : form.identifier; // If phone, backend will handle it
+
+      const result = await login(email, form.password);
+      
+      if (result.success) {
+        // Check subscription status before redirecting
+        try {
+          const subscriptionResponse = await subscriptionAPI.getStatus();
+          const hasActiveSubscription = 
+            subscriptionResponse.status === "active" && 
+            subscriptionResponse.endAt && 
+            new Date(subscriptionResponse.endAt) > new Date();
+
+          if (hasActiveSubscription) {
+            // User has active subscription - redirect to LMS
+            navigate("/app");
+          } else {
+            // User doesn't have subscription - redirect to plan chooser
+            navigate("/planChooser");
+          }
+        } catch (err) {
+          console.error("Subscription check error:", err);
+          // If subscription check fails, redirect to plan chooser to be safe
+          navigate("/planChooser");
+        }
+      } else {
+        setError(result.error || "Invalid email or password");
+      }
+    } catch (err) {
+      setError(err.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -31,24 +82,28 @@ const SignIn = () => {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="bg-red-900/20 border border-red-500 rounded-lg p-3 text-red-400 text-sm">
+              {error}
+            </div>
+          )}
 
           {/* Email / Phone */}
           <div>
-           
             <input
               name="identifier"
               value={form.identifier}
               onChange={handleChange}
               type="text"
-              placeholder="Email or Phone Number"
+              placeholder="Email"
               className="w-full bg-[#181818] border border-[#2b2b2b] rounded-lg px-4 py-3 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2f2f2f]"
               required
+              disabled={loading}
             />
           </div>
 
           {/* Password */}
           <div>
-            
             <div className="relative">
               <input
                 name="password"
@@ -58,8 +113,8 @@ const SignIn = () => {
                 placeholder="Password"
                 className="w-full bg-[#181818] border border-[#2b2b2b] rounded-lg px-4 py-3 pr-12 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2f2f2f]"
                 required
+                disabled={loading}
               />
-             
             </div>
           </div>
 
@@ -72,6 +127,7 @@ const SignIn = () => {
                 checked={form.remember}
                 onChange={handleChange}
                 className="w-3 h-3 bg-transparent border border-gray-500 rounded-sm"
+                disabled={loading}
               />
               <span className="ml-1 text-gray-300">Remember Me</span>
             </label>
@@ -84,9 +140,12 @@ const SignIn = () => {
           {/* Sign In button */}
           <button
             type="submit"
-            className="w-full bg-[#B11C20] hover:bg-[#991219] rounded-lg py-3 mt-1 text-white font-semibold transition"
+            disabled={loading}
+            className={`w-full bg-[#B11C20] hover:bg-[#991219] rounded-lg py-3 mt-1 text-white font-semibold transition ${
+              loading ? "opacity-60 cursor-not-allowed" : ""
+            }`}
           >
-            Sign In
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
 
