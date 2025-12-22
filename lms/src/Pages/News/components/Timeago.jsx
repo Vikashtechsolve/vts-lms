@@ -1,8 +1,9 @@
 const TimeAgo = (dateString) => {
-  if (!dateString || typeof dateString !== "string") {
+  if (!dateString) {
     return "";
   }
-  let date = new Date(dateString);
+  // Handle both string and Date objects
+  let date = dateString instanceof Date ? dateString : new Date(dateString);
   if (isNaN(date.getTime())) {
     const parts = dateString.replace(",", "").split(" ");
     if (parts.length === 3) {

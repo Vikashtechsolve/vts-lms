@@ -10,7 +10,10 @@ const BlogsCard = ({ item }) => {
 
   const handleCardClick = () => {
     // navigate to detail page
-    navigate(`/app/Blogs/${item.id}`);
+    const blogId = item.id || item._id;
+    if (blogId) {
+      navigate(`/app/Blogs/${blogId}`);
+    }
   };
 
   const addToWatchlist = (item) => {
@@ -84,7 +87,10 @@ const BlogsCard = ({ item }) => {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/app/blogs/${item.id}`);
+                const blogId = item.id || item._id;
+                if (blogId) {
+                  navigate(`/app/Blogs/${blogId}`);
+                }
               }}
               className="bg-white text-black font-semibold px-5 py-2 rounded-md flex items-center gap-2 text-sm w-full"
             >
