@@ -8,7 +8,10 @@ const NewsCard = ({ item }) => {
 
   const handleCardClick = () => {
     // navigate to detail page
-    navigate(`/app/News/${item.id}`);
+    const newsId = item.id || item._id;
+    if (newsId) {
+      navigate(`/app/News/${newsId}`);
+    }
   };
 
   const handleAddClick = (e) => {
@@ -76,7 +79,10 @@ const NewsCard = ({ item }) => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`/app/News/${item.id}`);
+                  const newsId = item.id || item._id;
+                  if (newsId) {
+                    navigate(`/app/News/${newsId}`);
+                  }
                 }}
                 className="mt-2 bg-white text-black font-semibold px-5 py-2 rounded-md flex items-center gap-2 text-sm w-full cursor-pointer"
               >

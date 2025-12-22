@@ -76,6 +76,11 @@ const apiRequest = async (endpoint, options = {}) => {
     }
 
     if (!response.ok) {
+      // Include validation errors if present
+      if (data.errors && Array.isArray(data.errors)) {
+        const errorMessages = data.errors.map(e => e.msg || e.message || JSON.stringify(e)).join(", ");
+        throw new Error(data.message || errorMessages || data.error || `Request failed with status ${response.status}`);
+      }
       throw new Error(data.message || data.error || `Request failed with status ${response.status}`);
     }
 
@@ -224,6 +229,280 @@ export const subscriptionAPI = {
   getStatus: async () => {
     return apiRequest("/subscription/status", {
       method: "GET",
+    });
+  },
+};
+
+// Blogs API calls
+export const blogsAPI = {
+  // Get all blogs with optional pagination and filtering
+  getBlogs: async (params = {}) => {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append("page", params.page);
+    if (params.limit) queryParams.append("limit", params.limit);
+    if (params.search) queryParams.append("search", params.search);
+    if (params.category) queryParams.append("category", params.category);
+    if (params.author) queryParams.append("author", params.author);
+    if (params.tags) queryParams.append("tags", params.tags);
+    if (params.sortBy) queryParams.append("sortBy", params.sortBy);
+    if (params.sortOrder) queryParams.append("sortOrder", params.sortOrder);
+
+    const queryString = queryParams.toString();
+    return apiRequest(`/api/blogs${queryString ? `?${queryString}` : ""}`, {
+      method: "GET",
+    });
+  },
+
+  // Get blog by ID
+  getBlogById: async (id) => {
+    return apiRequest(`/api/blogs/${id}`, {
+      method: "GET",
+    });
+  },
+
+  // Create blog (with optional image file)
+  createBlog: async (blogData, imageFile = null) => {
+    const token = getAccessToken();
+    const url = `${API_BASE_URL}/api/blogs`;
+    const formData = new FormData();
+
+    // Add text fields
+    Object.keys(blogData).forEach((key) => {
+      if (key !== "image" && blogData[key] !== undefined && blogData[key] !== null) {
+        if (Array.isArray(blogData[key])) {
+          blogData[key].forEach((item) => formData.append(key, item));
+        } else {
+          formData.append(key, blogData[key]);
+        }
+      }
+    });
+
+    // Add image file if provided
+    if (imageFile) {
+      formData.append("image", imageFile);
+    } else if (blogData.image) {
+      // If image URL provided, add it
+      formData.append("image", blogData.image);
+    }
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || data.error || "Failed to create blog");
+    }
+    return data;
+  },
+
+  // Update blog
+  updateBlog: async (id, blogData, imageFile = null) => {
+    const token = getAccessToken();
+    const url = `${API_BASE_URL}/api/blogs/${id}`;
+    const formData = new FormData();
+
+    // Add text fields
+    Object.keys(blogData).forEach((key) => {
+      if (key !== "image" && blogData[key] !== undefined && blogData[key] !== null) {
+        if (Array.isArray(blogData[key])) {
+          blogData[key].forEach((item) => formData.append(key, item));
+        } else {
+          formData.append(key, blogData[key]);
+        }
+      }
+    });
+
+    // Add image file if provided
+    if (imageFile) {
+      formData.append("image", imageFile);
+    } else if (blogData.image) {
+      formData.append("image", blogData.image);
+    }
+
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || data.error || "Failed to update blog");
+    }
+    return data;
+  },
+
+  // Delete blog
+  deleteBlog: async (id) => {
+    return apiRequest(`/api/blogs/${id}`, {
+      method: "DELETE",
+    });
+  },
+
+  // Toggle watchlist
+  toggleWatchlist: async (id) => {
+    return apiRequest(`/api/blogs/${id}/watchlist`, {
+      method: "POST",
+    });
+  },
+};
+
+// News API calls
+export const newsAPI = {
+  // Get all news with optional pagination and filtering
+  getNews: async (params = {}) => {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append("page", params.page);
+    if (params.limit) queryParams.append("limit", params.limit);
+    if (params.search) queryParams.append("search", params.search);
+    if (params.category) queryParams.append("category", params.category);
+    if (params.author) queryParams.append("author", params.author);
+    if (params.tags) queryParams.append("tags", params.tags);
+    if (params.sortBy) queryParams.append("sortBy", params.sortBy);
+    if (params.sortOrder) queryParams.append("sortOrder", params.sortOrder);
+
+    const queryString = queryParams.toString();
+    return apiRequest(`/api/news${queryString ? `?${queryString}` : ""}`, {
+      method: "GET",
+    });
+  },
+
+  // Get news by ID
+  getNewsById: async (id) => {
+    return apiRequest(`/api/news/${id}`, {
+      method: "GET",
+    });
+  },
+
+  // Create news (with optional image file)
+  createNews: async (newsData, imageFile = null) => {
+    const token = getAccessToken();
+    const url = `${API_BASE_URL}/api/news`;
+    const formData = new FormData();
+
+    // Add text fields
+    Object.keys(newsData).forEach((key) => {
+      if (key !== "image" && newsData[key] !== undefined && newsData[key] !== null) {
+        if (Array.isArray(newsData[key])) {
+          newsData[key].forEach((item) => formData.append(key, item));
+        } else {
+          formData.append(key, newsData[key]);
+        }
+      }
+    });
+
+    // Add image file if provided
+    if (imageFile) {
+      formData.append("image", imageFile);
+    } else if (newsData.image) {
+      formData.append("image", newsData.image);
+    }
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || data.error || "Failed to create news");
+    }
+    return data;
+  },
+
+  // Update news
+  updateNews: async (id, newsData, imageFile = null) => {
+    const token = getAccessToken();
+    const url = `${API_BASE_URL}/api/news/${id}`;
+    const formData = new FormData();
+
+    // Add text fields
+    Object.keys(newsData).forEach((key) => {
+      if (key !== "image" && newsData[key] !== undefined && newsData[key] !== null) {
+        if (Array.isArray(newsData[key])) {
+          newsData[key].forEach((item) => formData.append(key, item));
+        } else {
+          formData.append(key, newsData[key]);
+        }
+      }
+    });
+
+    // Add image file if provided
+    if (imageFile) {
+      formData.append("image", imageFile);
+    } else if (newsData.image) {
+      formData.append("image", newsData.image);
+    }
+
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || data.error || "Failed to update news");
+    }
+    return data;
+  },
+
+  // Delete news
+  deleteNews: async (id) => {
+    return apiRequest(`/api/news/${id}`, {
+      method: "DELETE",
+    });
+  },
+
+  // Toggle watchlist
+  toggleWatchlist: async (id) => {
+    return apiRequest(`/api/news/${id}/watchlist`, {
+      method: "POST",
+    });
+  },
+};
+
+// Comments API calls
+export const commentsAPI = {
+  // Get comments for a blog or news
+  getComments: async (contentType, contentId) => {
+    return apiRequest(`/api/comments/${contentType}/${contentId}`, {
+      method: "GET",
+    });
+  },
+
+  // Create a comment
+  createComment: async (commentData) => {
+    return apiRequest("/api/comments", {
+      method: "POST",
+      body: JSON.stringify(commentData),
+    });
+  },
+
+  // Update a comment
+  updateComment: async (commentId, text) => {
+    return apiRequest(`/api/comments/${commentId}`, {
+      method: "PUT",
+      body: JSON.stringify({ text }),
+    });
+  },
+
+  // Delete a comment
+  deleteComment: async (commentId) => {
+    return apiRequest(`/api/comments/${commentId}`, {
+      method: "DELETE",
     });
   },
 };

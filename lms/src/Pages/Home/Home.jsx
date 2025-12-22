@@ -138,8 +138,33 @@ function LandingPage() {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await axios.get("/blogs.json");
-        setBlogs(Array.isArray(res.data) ? res.data : []);
+        const { blogsAPI } = await import("../../utils/api");
+        const response = await blogsAPI.getBlogs({ page: 1, limit: 6 });
+        if (response.success && response.data) {
+          const blogsArray = Array.isArray(response.data.blogs) ? response.data.blogs : [];
+          // Map API data to match card component expectations
+          const mappedBlogs = blogsArray.map(blog => ({
+            ...blog,
+            id: blog._id || blog.id,
+            publishedBy: blog.author || "Unknown",
+            date: blog.date 
+              ? new Date(blog.date).toLocaleDateString('en-US', { 
+                  year: 'numeric', 
+                  month: 'short', 
+                  day: 'numeric' 
+                })
+              : blog.createdAt 
+                ? new Date(blog.createdAt).toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                  })
+                : ""
+          }));
+          setBlogs(mappedBlogs);
+        } else {
+          setBlogs([]);
+        }
       } catch (err) {
         console.error("Failed to load blogs data:", err);
         setBlogs([]);
@@ -153,10 +178,35 @@ function LandingPage() {
   useEffect(() => {
     const fetchnews = async () => {
       try {
-        const res = await axios.get("/news.json");
-        setNews(Array.isArray(res.data) ? res.data : []);
+        const { newsAPI } = await import("../../utils/api");
+        const response = await newsAPI.getNews({ page: 1, limit: 6 });
+        if (response.success && response.data) {
+          const newsArray = Array.isArray(response.data.news) ? response.data.news : [];
+          // Map API data to match card component expectations
+          const mappedNews = newsArray.map(newsItem => ({
+            ...newsItem,
+            id: newsItem._id || newsItem.id,
+            publishedBy: newsItem.author || "Unknown",
+            date: newsItem.date 
+              ? new Date(newsItem.date).toLocaleDateString('en-US', { 
+                  year: 'numeric', 
+                  month: 'short', 
+                  day: 'numeric' 
+                })
+              : newsItem.createdAt 
+                ? new Date(newsItem.createdAt).toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                  })
+                : ""
+          }));
+          setNews(mappedNews);
+        } else {
+          setNews([]);
+        }
       } catch (err) {
-        console.error("Failed to load blogs data:", err);
+        console.error("Failed to load news data:", err);
         setNews([]);
       } finally {
         setLoadingNews(false);
