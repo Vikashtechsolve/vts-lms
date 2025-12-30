@@ -1,6 +1,6 @@
 // src/components/Playlist.jsx
 import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
+import { playlistAPI } from "../../utils/api";
 import PlaylistCard from "../../components/Cards/PlaylistCard";
 
 function Playlist() {
@@ -9,17 +9,20 @@ function Playlist() {
   const containerRef = useRef(null);
 
   useEffect(() => {
-    const url = "/dummy.json"; // Update with actual API endpoint
-
     const fetchData = async () => {
       try {
-        const res = await axios.get(url);
-        const data = Array.isArray(res.data)
-          ? res.data
-          : Array.isArray(res.data.playlists)
-          ? res.data.playlists
+        const response = await playlistAPI.getPlaylists();
+        if (response.success && response.data) {
+          // Backend returns data.items, not data.playlists
+          const playlists = Array.isArray(response.data.items)
+            ? response.data.items
+            : Array.isArray(response.data)
+            ? response.data
           : [];
-        setItems(data);
+          setItems(playlists);
+        } else {
+          setItems([]);
+        }
       } catch (err) {
         console.error("Failed to load playlists:", err);
         setItems([]);
@@ -59,12 +62,18 @@ function Playlist() {
             ref={containerRef}
             className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-2"
           >
-            {items.map((item) => (
-              <div key={item.id} className="w-full">
+            {items.length === 0 ? (
+              <div className="col-span-full text-center text-gray-400 py-8">
+                No playlists available
+              </div>
+            ) : (
+              items.map((item) => (
+                <div key={item._id || item.id} className="w-full">
                 {/* ensure each card fills its grid cell */}
                 <PlaylistCard item={item} />
               </div>
-            ))}
+              ))
+            )}
           </div>
 
           <div className="mt-12" />

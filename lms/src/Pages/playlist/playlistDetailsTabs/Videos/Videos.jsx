@@ -1,36 +1,47 @@
 import React from "react";
+import HLSVideoPlayer from "../../../../components/HLSVideoPlayer";
 
-// 1. We now accept 'data' as a prop
-const Video = ({ data }) => {
-  if (!data) return <div>No video available.</div>;
+/**
+ * Videos component for playlist sessions
+ * Uses HLS streaming with download prevention
+ */
+const Videos = ({ data, title, playlistName, moduleName, sessionName, sessionDescription }) => {
+  if (!data || !data.url) {
+    return (
+      <div className="text-gray-300">
+        <div className="aspect-video w-full bg-black rounded-lg flex items-center justify-center">
+          <div className="text-center text-gray-400">
+            <p className="text-lg font-semibold mb-2">No Video Available</p>
+            <p className="text-sm">This session does not have a video yet.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Format title: Playlist name | Module name | Session name
+  const displayTitle = title || (playlistName && moduleName && sessionName 
+    ? `${playlistName} | ${moduleName} | ${sessionName}`
+    : data.title || "Video");
 
   return (
     <div className="text-gray-300">
-      {/* <hr className="border-gray-700 my-6" /> */}
+      <div className="mb-4 text-left">
+        {sessionDescription && (
+          <p className="mb-6 text-gray-400">{sessionDescription}</p>
+        )}
+      </div> 
 
-      {/* 2. Content Body (Now data-driven) */}
-      <div>
-        <div className="flex">
-        <p className="text-xl font-semibold text-gray-200 mb-4">
-          {/* Topic : {data.title} */}
-        </p><p className="mb-6 text-gray-400">
-          {data.descriptio}</p>
-        </div>
-
-        {/* 3. YouTube Embed */}
-        <div className="aspect-video w-full">
-          <iframe
-            src={data.url}
-            title={data.title}
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="w-full h-full rounded-lg"
-          ></iframe>
-        </div>
-      </div>
+      {/* HLS Video Player */}
+      <HLSVideoPlayer
+        src={data.url}
+        title={data.title || "Video"}
+        onError={(error) => {
+          console.error("Video playback error:", error);
+        }}
+      />
     </div>
   );
 };
 
-export default Video;
+export default Videos;

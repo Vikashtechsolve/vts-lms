@@ -4,12 +4,25 @@ import { useNavigate } from "react-router-dom";
 
 const WATCHLIST_KEY = "watchlistItems";
 
+// Helper function to format duration in seconds to readable format
+const formatDuration = (seconds) => {
+  if (!seconds) return "0m";
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  if (hours > 0) {
+    return `${hours}h ${minutes}m`;
+  }
+  return `${minutes}m`;
+};
+
 const PlaylistCard = ({ item }) => {
   const navigate = useNavigate();
   const [added, setAdded] = useState(false);
 
   const handleCardClick = () => {
-    navigate(`/app/playlist/${item.id}`);
+    // Use slug if available, otherwise fallback to _id
+    const playlistIdentifier = item.slug || item._id || item.id;
+    navigate(`/app/playlist/${playlistIdentifier}`);
   };
 
   const addToWatchlist = (item) => {
@@ -17,7 +30,8 @@ const PlaylistCard = ({ item }) => {
       const raw = localStorage.getItem(WATCHLIST_KEY);
       const list = raw ? JSON.parse(raw) : [];
 
-      const exists = list.some((i) => i.id === item.id);
+      const itemId = item._id || item.id;
+      const exists = list.some((i) => (i._id || i.id) === itemId);
       if (!exists) {
         list.push(item);
         localStorage.setItem(WATCHLIST_KEY, JSON.stringify(list));
@@ -49,7 +63,7 @@ const PlaylistCard = ({ item }) => {
         {/* NORMAL CARD */}
         <div className="rounded-2xl overflow-hidden">
           <img
-            src={item.thumbnail}
+            src={item.thumbnailUrl || item.thumbnail || "/logo.png"}
             alt={item.title}
             className="w-full h-52 object-cover transition-transform duration-500 hover:scale-110"
           />
@@ -57,7 +71,9 @@ const PlaylistCard = ({ item }) => {
 
         {/* BADGES */}
         <div className="absolute bottom-9 right-3 text-white text-xs px-3 py-1 rounded-full">
-          {item.duration || "1h 45m"}
+          {item.totalDurationSeconds
+            ? formatDuration(item.totalDurationSeconds)
+            : item.duration || "1h 45m"}
         </div>
         <div className="absolute bottom-8 left-3 p-2 rounded-full">
           <Play size={18} fill="white" />
@@ -81,7 +97,7 @@ const PlaylistCard = ({ item }) => {
           {/* TOP HALF */}
           <div className="h-40 rounded-t-xl overflow-hidden">
             <img
-              src={item.thumbnail}
+              src={item.thumbnailUrl || item.thumbnail || "/logo.png"}
               alt={item.title}
               className="w-full h-full object-cover"
             />
@@ -95,7 +111,8 @@ const PlaylistCard = ({ item }) => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`/app/playlist/${item.id}`);
+                  const playlistIdentifier = item.slug || item._id || item.id;
+                  navigate(`/app/playlist/${playlistIdentifier}`);
                 }}
                 className="bg-white text-black font-semibold px-5 py-2 rounded-md flex items-center gap-2 text-sm w-full cursor-pointer"
               >
@@ -147,8 +164,8 @@ const PlaylistCard = ({ item }) => {
 
             {/* YEAR + MODULES */}
             <div className="flex justify-between text-sm font-medium">
-              <span>{item.year || "2025"}</span>
-              <span>{item.modules || "6 Modules"}</span>
+              <span>{new Date(item.createdAt || Date.now()).getFullYear()}</span>
+              <span>{item.modulesCount || item.modules || "0 Modules"}</span>
             </div>
 
             {/* DESCRIPTION */}

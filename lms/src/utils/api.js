@@ -507,5 +507,109 @@ export const commentsAPI = {
   },
 };
 
+// Quiz API calls
+export const quizAPI = {
+  // Get quiz by ID (public endpoint)
+  getQuizById: async (quizId) => {
+    return apiRequest(`/api/quizzes/${quizId}`, {
+      method: "GET",
+    });
+  },
+
+  // Start quiz attempt (requires sessionId in body)
+  startQuizAttempt: async (quizId, sessionId) => {
+    return apiRequest(`/quizzes/${quizId}/attempts`, {
+      method: "POST",
+      body: JSON.stringify({ sessionId }),
+    });
+  },
+
+  // Submit quiz attempt
+  submitQuizAttempt: async (quizId, attemptId, answers) => {
+    return apiRequest(`/quizzes/${quizId}/attempts/${attemptId}/submit`, {
+      method: "POST",
+      body: JSON.stringify({ answers }),
+    });
+  },
+
+  // Get my quiz attempts
+  getMyQuizAttempts: async (quizId) => {
+    return apiRequest(`/quizzes/${quizId}/my-attempts`, {
+      method: "GET",
+    });
+  },
+
+  // Get quiz attempt by ID (full details)
+  getQuizAttemptById: async (attemptId) => {
+    return apiRequest(`/quiz-attempts/${attemptId}`, {
+      method: "GET",
+    });
+  },
+};
+
+// Playlist API calls
+export const playlistAPI = {
+  // Get all playlists (public)
+  getPlaylists: async (params = {}) => {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append("page", params.page);
+    if (params.limit) queryParams.append("limit", params.limit);
+    if (params.search) queryParams.append("search", params.search);
+    if (params.tag) queryParams.append("tag", params.tag);
+    if (params.tags) queryParams.append("tags", params.tags);
+    if (params.difficulty) queryParams.append("difficulty", params.difficulty);
+    if (params.category) queryParams.append("category", params.category);
+    if (params.sortBy) queryParams.append("sortBy", params.sortBy);
+    if (params.sortOrder) queryParams.append("sortOrder", params.sortOrder);
+
+    const queryString = queryParams.toString();
+    return apiRequest(`/playlists${queryString ? `?${queryString}` : ""}`, {
+      method: "GET",
+    });
+  },
+
+  // Get playlist by ID (public) - uses slug or ID
+  getPlaylistById: async (id) => {
+    return apiRequest(`/playlists/${id}`, {
+      method: "GET",
+    });
+  },
+
+  // Get playlist modules (authenticated)
+  getPlaylistModules: async (playlistId) => {
+    return apiRequest(`/playlists/${playlistId}/modules`, {
+      method: "GET",
+    });
+  },
+
+  // Get session details (authenticated)
+  getSessionById: async (sessionId) => {
+    return apiRequest(`/sessions/${sessionId}`, {
+      method: "GET",
+    });
+  },
+
+  // Get session resources with signed URLs (authenticated)
+  getSessionResources: async (sessionId) => {
+    return apiRequest(`/api/sessions/${sessionId}/resources`, {
+      method: "GET",
+    });
+  },
+
+  // Get quiz for a session (public endpoint)
+  getSessionQuiz: async (sessionId) => {
+    return apiRequest(`/sessions/${sessionId}/quiz`, {
+      method: "GET",
+    });
+  },
+
+  // Get media asset signed URL (authenticated)
+  getMediaAssetSignedUrl: async (assetId) => {
+    return apiRequest(`/media-assets/${assetId}/signed-url`, {
+      method: "GET",
+    });
+  },
+};
+
 export default apiRequest;
 
