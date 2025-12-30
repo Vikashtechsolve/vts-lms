@@ -2,17 +2,36 @@ import React from "react";
 import { FaCheck, FaTimes } from "react-icons/fa";
 
 // --- Reusable Read-Only Option Component ---
-// (This component remains the same, no changes needed)
-const ReviewOption = ({ option, question, optionIndex, userAnswer }) => {
-  const isCorrect = optionIndex === question.correctAnswer;
-  const isSelected = optionIndex === userAnswer;
+const ReviewOption = ({ option, question, optionIndex, userAnswer, answerResult }) => {
+  // Get option ID (either from option.id or generate from index)
+  const optionId = option.id || String.fromCharCode(97 + optionIndex); // 'a', 'b', 'c', 'd'
+  
+  // Check if user selected this option
+  const isSelected = userAnswer === optionIndex;
+  
+  // Check if this option was the correct one (if user got it right, selectedOptionId is the correct answer)
+  // If user got it wrong, we can't determine the correct answer from API (security feature)
+  // But we can show: if selected and correct=true, this is correct; if selected and correct=false, this is wrong
+  const isUserCorrect = answerResult?.correct && answerResult?.selectedOptionId === optionId;
+  const isUserWrong = !answerResult?.correct && answerResult?.selectedOptionId === optionId;
+  
+  // If user got it right, the selected option is the correct one
+  // If user got it wrong, we don't know which is correct (backend doesn't reveal it)
+  const isCorrectAnswer = answerResult?.correct && answerResult?.selectedOptionId === optionId;
+  
   let borderColor = "border-transparent";
   let icon = null;
 
-  if (isCorrect) {
+  if (isCorrectAnswer) {
+    // User selected this and it's correct
     borderColor = "border-green-500";
-    if (isSelected) icon = <FaCheck className="text-green-500" />;
-  } else if (isSelected) {
+    icon = <FaCheck className="text-green-500" />;
+  } else if (isUserWrong) {
+    // User selected this but it's wrong
+    borderColor = "border-red-500";
+    icon = <FaTimes className="text-red-500" />;
+  } else if (isSelected && answerResult && !answerResult.correct) {
+    // User selected this option but answer was wrong (fallback)
     borderColor = "border-red-500";
     icon = <FaTimes className="text-red-500" />;
   }
@@ -28,12 +47,12 @@ const ReviewOption = ({ option, question, optionIndex, userAnswer }) => {
         </div>
         {icon}
       </div>
-      {(isCorrect || isSelected) && (
+      {(isCorrectAnswer || isUserWrong || (isSelected && answerResult)) && (
         <div className="mt-3 pl-8 text-sm">
-          <p className={isCorrect ? "text-green-400" : "text-red-400"}>
-            {isCorrect ? "That's Right" : "Not quite"}
+          <p className={isCorrectAnswer ? "text-green-400" : "text-red-400"}>
+            {isCorrectAnswer ? "That's Right" : "Not quite"}
           </p>
-          <p className="text-gray-400">{option.explanation}</p>
+          <p className="text-gray-400">{answerResult?.hint || option.explanation || ""}</p>
         </div>
       )}
     </div>
@@ -42,7 +61,15 @@ const ReviewOption = ({ option, question, optionIndex, userAnswer }) => {
 
 // --- Main Review Component ---
 // 1. Receive 'onBackToResult' and 'onRetake'
-const TestReview = ({ data, answers, onRetake, onBackToResult }) => {
+const TestReview = ({ data, answers, quizResult, onRetake, onBackToResult }) => {
+  // Create a map of questionId to answer result for quick lookup
+  const answerResultMap = {};
+  if (quizResult?.answers) {
+    quizResult.answers.forEach((ans) => {
+      answerResultMap[ans.questionId] = ans;
+    });
+  }
+
   return (
     <div className="bg-gray-800 p-6 md:p-8 rounded-lg shadow-xl max-w-4xl mx-auto">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
@@ -53,7 +80,7 @@ const TestReview = ({ data, answers, onRetake, onBackToResult }) => {
         {/* 2. Add button controls */}
         <div className="flex space-x-4">
           <button
-            onClick={onBackToResult} // <-- USE THE CORRECT FUNCTION
+            onClick={onBackToResult}
             className="bg-gray-700 hover:bg-gray-600 text-gray-300 font-medium py-2 px-4 rounded-lg"
           >
             Back to Result
@@ -69,24 +96,28 @@ const TestReview = ({ data, answers, onRetake, onBackToResult }) => {
 
       {/* Map over all questions */}
       <div className="space-y-8">
-        {data.questions.map((question, index) => (
-          <div key={index}>
-            <p className="text-lg text-gray-200 mb-4">
-              Ques {index + 1}. {question.text}
-            </p>
-            <div className="space-y-4">
-              {question.options.map((option, optionIndex) => (
-                <ReviewOption
-                  key={optionIndex}
-                  option={option}
-                  question={question}
-                  optionIndex={optionIndex}
-                  userAnswer={answers[index]}
-                />
-              ))}
+        {data.questions?.map((question, index) => {
+          const answerResult = answerResultMap[question._id];
+          return (
+            <div key={question._id || index}>
+              <p className="text-lg text-gray-200 mb-4">
+                Ques {index + 1}. {question.text}
+              </p>
+              <div className="space-y-4">
+                {question.options.map((option, optionIndex) => (
+                  <ReviewOption
+                    key={optionIndex}
+                    option={option}
+                    question={question}
+                    optionIndex={optionIndex}
+                    userAnswer={answers[index]}
+                    answerResult={answerResult}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

@@ -1,103 +1,113 @@
 // src/components/playlistDetailsTabs/Notes/Notes.jsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FaRegCopy, FaRegLightbulb } from "react-icons/fa";
+import { playlistAPI } from "../../../../utils/api";
 
-// --- Reusable CodeBlock ---
-const CodeBlock = ({ code }) => {
-  return (
-    <div className="bg-zinc-900 rounded-lg overflow-hidden my-6">
-      <div className="flex justify-between items-center bg-gray-700 px-4 py-2">
-        <span className="text-gray-300 text-sm">Example Code</span>
-        <div className="flex space-x-3">
-          <button className="text-gray-400 hover:text-white">
-            <FaRegLightbulb size={16} />
-          </button>
-          <button
-            className="text-gray-400 hover:text-white flex items-center"
-            onClick={() => navigator.clipboard.writeText(code)}
-          >
-            <FaRegCopy size={16} />
-            <span className="ml-2 text-sm">Copy</span>
-          </button>
-        </div>
+/**
+ * Notes component - displays PDF resources securely
+ * Prevents direct downloads by using iframe with security headers
+ */
+const Notes = ({ data, title, playlistName, moduleName, sessionName, sessionDescription }) => {
+  const [pdfUrls, setPdfUrls] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPdfUrls = async () => {
+      if (!data || !Array.isArray(data) || data.length === 0) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Data should already contain signed URLs from getSessionResources
+        // But we can also fetch individual signed URLs if needed
+        const urls = await Promise.all(
+          data.map(async (resource) => {
+            if (resource.url) {
+              return {
+                label: resource.label || "PDF Notes",
+                url: resource.url,
+                assetId: resource.assetId,
+              };
+            }
+            // If URL not present, fetch signed URL
+            if (resource.assetId) {
+              try {
+                const response = await playlistAPI.getMediaAssetSignedUrl(resource.assetId);
+                if (response.success && response.data?.url) {
+                  return {
+                    label: resource.label || "PDF Notes",
+                    url: response.data.url,
+                    assetId: resource.assetId,
+                  };
+                }
+              } catch (err) {
+                console.error("Failed to fetch signed URL for asset:", resource.assetId, err);
+              }
+            }
+            return null;
+          })
+        );
+
+        setPdfUrls(urls.filter((url) => url !== null));
+      } catch (err) {
+        console.error("Failed to fetch PDF URLs:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPdfUrls();
+  }, [data]);
+
+  if (loading) {
+    return (
+      <div className="text-gray-400">
+        <div className="animate-pulse">Loading notes...</div>
       </div>
-      <pre className="p-4 text-sm text-left text-gray-200 overflow-x-auto">
-        <code>{code}</code>
-      </pre>
-    </div>
-  );
-};
-
-// --- Helper to render different content blocks ---
-const ContentBlock = ({ block }) => {
-  if (!block) return null;
-  switch (block.type) {
-    case "p":
-      return <p className="text-left mb-4">{block.text}</p>;
-    case "h4":
-      return <h4 className="font-semibold text-left text-white mb-2">{block.text}</h4>;
-    case "ul":
-      return (
-        <ul className="text-left list-disc list-inside space-y-1 mb-4">
-          {(block.items || []).map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
-      );
-    case "code":
-      return <CodeBlock code={block.text} />;
-    default:
-      // fallback: if block is a string or has text property
-      if (typeof block === "string") return <p className="mb-4">{block}</p>;
-      if (block.text) return <p className=" mb-4">{block.text}</p>;
-      return null;
-  }
-};
-
-// Notes now accepts either `data` or legacy `notes` prop
-const Notes = ({ data, notes }) => {
-  const d = data ?? notes;
-
-  if (!d) {
-    console.warn("Notes: no data provided (expected { topic, content }).");
-    return <div className="text-gray-400">No notes available.</div>;
+    );
   }
 
-  // Normalize d.content to an array of blocks
-  const content = d.content ?? d.blocks ?? (Array.isArray(d) ? d : null);
-
-  if (!content || !Array.isArray(content)) {
-    console.warn("Notes: data.content is missing or not an array. Received:", d);
-    // If content is a string, render it as a single paragraph
-    if (typeof d === "string") {
-      return (
-        <div className="text-gray-300">
-          <h2 className="text-2xl font-bold text-white mb-1">{d.title ?? "Notes"}</h2>
-          <p className="text-sm text-gray-400 mb-2">{d}</p>
-        </div>
-      );
-    }
-    return <div className="text-gray-400">No notes available.</div>;
+  if (!pdfUrls || pdfUrls.length === 0) {
+    return <div className="text-gray-400">No notes available for this session.</div>;
   }
+
+  // Format title: Playlist name | Module name | Session name
+  const displayTitle = title || (playlistName && moduleName && sessionName 
+    ? `${playlistName} | ${moduleName} | ${sessionName}`
+    : "Notes");
 
   return (
     <div className="text-gray-300">
-      {/* Header */}
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <h2 className="text-2xl font-bold text-white mb-1">{d.topic ?? "Notes"}</h2>
-          {d.released && <p className="text-xs text-gray-400">Released on: {d.released}</p>}
-        </div>
-        <div className="flex space-x-3">{/* icons if needed */}</div>
+      <div className="mb-4 text-left">
+        {sessionDescription && (
+          <p className="mb-6 text-gray-400">{sessionDescription}</p>
+        )}
       </div>
-
-      <p className="text-sm text-gray-400 mb-2">This section is structured and concise study notes...</p>
 
       <hr className="border-gray-700 my-6" />
 
-      <div>
-        {content.map((block, index) => (
-          <ContentBlock key={index} block={block} />
+      {/* PDF Viewers */}
+      <div className="space-y-6">
+        {pdfUrls.map((pdf, index) => (
+          <div key={index} className="bg-zinc-900 rounded-lg overflow-hidden">
+            <div className="bg-gray-700 px-4 py-2 flex justify-between items-center">
+              <span className="text-gray-300 text-sm font-medium">{pdf.label}</span>
+            </div>
+            <div className="w-full" style={{ height: "800px" }}>
+              <iframe
+                src={`${pdf.url}#toolbar=0&navpanes=0&scrollbar=0`}
+                title={pdf.label}
+                className="w-full h-full"
+                style={{
+                  border: "none",
+                  pointerEvents: "auto",
+                }}
+                onContextMenu={(e) => e.preventDefault()}
+                onDragStart={(e) => e.preventDefault()}
+              />
+            </div>
+          </div>
         ))}
       </div>
     </div>

@@ -108,8 +108,26 @@ function LandingPage() {
   useEffect(() => {
     const fetchPlaylists = async () => {
       try {
-        const res = await axios.get("/dummy.json");
-        setPlaylists(Array.isArray(res.data) ? res.data : []);
+        const { playlistAPI } = await import("../../utils/api");
+        const response = await playlistAPI.getPlaylists({ limit: 10 });
+        if (response.success && response.data) {
+          // Backend returns { success: true, data: { items: [...], page, limit, total } }
+          const playlistsArray = Array.isArray(response.data.items)
+            ? response.data.items
+            : Array.isArray(response.data.playlists)
+            ? response.data.playlists
+            : Array.isArray(response.data)
+            ? response.data
+            : [];
+          // Ensure each playlist has an id property for consistency
+          const mappedPlaylists = playlistsArray.map(playlist => ({
+            ...playlist,
+            id: playlist._id || playlist.id
+          }));
+          setPlaylists(mappedPlaylists);
+        } else {
+          setPlaylists([]);
+        }
       } catch (err) {
         console.error("Failed to load playlist data:", err);
         setPlaylists([]);
@@ -141,7 +159,13 @@ function LandingPage() {
         const { blogsAPI } = await import("../../utils/api");
         const response = await blogsAPI.getBlogs({ page: 1, limit: 6 });
         if (response.success && response.data) {
-          const blogsArray = Array.isArray(response.data.blogs) ? response.data.blogs : [];
+          // Backend returns { success: true, data: [...], pagination: {...} }
+          // response.data is already an array
+          const blogsArray = Array.isArray(response.data) 
+            ? response.data 
+            : Array.isArray(response.data.blogs) 
+            ? response.data.blogs 
+            : [];
           // Map API data to match card component expectations
           const mappedBlogs = blogsArray.map(blog => ({
             ...blog,
@@ -181,7 +205,13 @@ function LandingPage() {
         const { newsAPI } = await import("../../utils/api");
         const response = await newsAPI.getNews({ page: 1, limit: 6 });
         if (response.success && response.data) {
-          const newsArray = Array.isArray(response.data.news) ? response.data.news : [];
+          // Backend returns { success: true, data: [...], pagination: {...} }
+          // response.data is already an array
+          const newsArray = Array.isArray(response.data) 
+            ? response.data 
+            : Array.isArray(response.data.news) 
+            ? response.data.news 
+            : [];
           // Map API data to match card component expectations
           const mappedNews = newsArray.map(newsItem => ({
             ...newsItem,
@@ -377,7 +407,7 @@ function LandingPage() {
               className="flex space-x-4 h-96 z-50 overflow-x-auto overflow-y-visible no-scrollbar lg:px-6 py-2 lg:py-8"
             >
               {playlists.map((item) => (
-                <PlaylistCard key={item.id} item={item} />
+                <PlaylistCard key={item.id || item._id} item={item} />
               ))}
             </div>
 
@@ -443,7 +473,7 @@ function LandingPage() {
               className="flex space-x-4 h-96 z-50 overflow-x-auto overflow-y-visible no-scrollbar lg:px-6 py-2 lg:py-8"
             >
               {masterClasses.map((item) => (
-                <MasterClassCard item={item} />
+                <MasterClassCard key={item.id || item._id || Math.random()} item={item} />
               ))}
             </div>
 
@@ -506,7 +536,7 @@ function LandingPage() {
               className="flex space-x-4 h-96 z-50 overflow-x-auto overflow-y-visible no-scrollbar lg:px-6 py-2 lg:py-8"
             >
               {blogs.map((item) => (
-                <BlogsCard item={item} />
+                <BlogsCard key={item.id || item._id} item={item} />
               ))}
             </div>
 
@@ -571,7 +601,7 @@ function LandingPage() {
               className="flex space-x-4 h-96 z-50 overflow-x-auto overflow-y-visible no-scrollbar lg:px-6 py-2 lg:py-8"
             >
               {news.map((item) => (
-                <NewsCard item={item} />
+                <NewsCard key={item.id || item._id} item={item} />
               ))}
             </div>
 

@@ -1,17 +1,26 @@
 import React from "react";
 
 // 1. Accept the new 'onReview' prop
-const TestResult = ({ data, answers, onRetake, onReview }) => {
-  // --- Calculate Score ---
+const TestResult = ({ data, answers, quizResult, onRetake, onReview }) => {
+  // --- Calculate Score from API result if available, otherwise calculate locally ---
   let correctCount = 0;
-  data.questions.forEach((question, index) => {
-    if (answers[index] === question.correctAnswer) {
-      correctCount++;
-    }
-  });
+  let total = data.questions?.length || 0;
+  let percentage = 0;
 
-  const total = data.questions.length;
-  const percentage = Math.round((correctCount / total) * 100);
+  if (quizResult) {
+    // Use API result
+    correctCount = quizResult.answers?.filter(a => a.correct).length || 0;
+    total = quizResult.answers?.length || total;
+    percentage = quizResult.score || 0;
+  } else if (data.questions && answers) {
+    // Fallback: calculate from answers (for backward compatibility)
+    data.questions.forEach((question, index) => {
+      if (answers[index] === question.correctAnswer) {
+        correctCount++;
+      }
+    });
+    percentage = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+  }
 
   let resultColor = "text-green-500";
   if (percentage < 70) resultColor = "text-yellow-500";

@@ -10,16 +10,18 @@ const Option = ({
   onSelect,
   optionIndex,
 }) => {
-  const isCorrect = optionIndex === question.correctAnswer;
+  // Check if this option is the correct answer
+  const isCorrect = question.correctOptionId === option.id;
   let borderColor = "border-transparent"; // Default border
   let icon = null;
 
-  if (isAnswered) {
+  if (isSelected) {
+    // Show immediate feedback when option is selected
     if (isCorrect) {
-      borderColor = "border-green-500"; // Always show correct answer
-      if (isSelected) icon = <FaCheck className="text-green-500" />;
-    } else if (isSelected) {
-      borderColor = "border-red-500"; // Show user's wrong choice
+      borderColor = "border-green-500"; // Green for correct answer
+      icon = <FaCheck className="text-green-500" />;
+    } else {
+      borderColor = "border-red-500"; // Red for wrong answer
       icon = <FaTimes className="text-red-500" />;
     }
   }
@@ -28,12 +30,13 @@ const Option = ({
     <div
       onClick={onSelect}
       className={`
-        bg-gray-700 p-4 rounded-lg border-2 transition-all
+        p-4 rounded-lg border-2 transition-all
         ${
-          isAnswered ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-600"
+          isAnswered ? "cursor-not-allowed" : "cursor-pointer hover:opacity-80"
         }
         ${borderColor}
       `}
+      style={{ backgroundColor: '#212121' }}
     >
       <div className="flex justify-between items-start">
         <div className="flex">
@@ -45,12 +48,9 @@ const Option = ({
         {icon}
       </div>
 
-      {/* Show explanation if this option was selected OR if it's the correct one */}
-      {isAnswered && (isCorrect || isSelected) && (
+      {/* Show explanation if this option was selected during quiz */}
+      {isSelected && option.explanation && (
         <div className="mt-3 pl-8 text-sm">
-          <p className={isCorrect ? "text-green-400" : "text-red-400"}>
-            {isCorrect ? "That's Right" : "Not quite"}
-          </p>
           <p className="text-gray-400">{option.explanation}</p>
         </div>
       )}
@@ -59,15 +59,19 @@ const Option = ({
 };
 
 // --- Main Quiz Question Component ---
-const QuizQuestions = ({ data, onFinishQuiz }) => {
+const QuizQuestions = ({ data, onFinishQuiz, isSubmitting }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
   const [showHint, setShowHint] = useState(false);
 
-  const totalQuestions = data.questions.length;
-  const question = data.questions[currentQuestion];
+  const totalQuestions = data.questions?.length || 0;
+  const question = data.questions?.[currentQuestion];
   const selectedAnswer = answers[currentQuestion];
   const isAnswered = selectedAnswer !== undefined;
+
+  if (!question) {
+    return <div className="text-gray-400">No questions available.</div>;
+  }
 
   const handleSelectAnswer = (optionIndex) => {
     if (isAnswered) return; // Don't allow changing answer
@@ -157,7 +161,7 @@ const QuizQuestions = ({ data, onFinishQuiz }) => {
               />
             </button>
             {showHint && (
-              <div className="bg-gray-700 text-left p-4 rounded-lg mt-3 text-gray-300">
+              <div className="text-left p-4 rounded-lg mt-3 text-gray-200" style={{ backgroundColor: '#212121' }}>
                 {question.hint}
               </div>
             )}
@@ -168,7 +172,8 @@ const QuizQuestions = ({ data, onFinishQuiz }) => {
             <button
               onClick={handlePrev}
               disabled={currentQuestion === 0}
-              className="bg-gray-700 hover:bg-gray-600 text-gray-300 py-2 px-6 rounded-md disabled:opacity-50"
+              className="hover:opacity-80 text-gray-100 py-2 px-6 rounded-md disabled:opacity-50 transition-all"
+              style={{ backgroundColor: '#212121' }}
             >
               Previous
             </button>
@@ -176,15 +181,17 @@ const QuizQuestions = ({ data, onFinishQuiz }) => {
             {currentQuestion === totalQuestions - 1 ? (
               <button
                 onClick={handleFinish}
-                className=" bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-md"
+                disabled={isSubmitting || !isAnswered}
+                className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Finish
+                {isSubmitting ? "Submitting..." : "Finish"}
               </button>
             ) : (
               <button
                 onClick={handleNext}
                 disabled={!isAnswered} // User must answer to proceed
-                className="bg-zinc-800 hover:bg-gray-600 text-white py-2 px-6 rounded-md disabled:opacity-50"
+                className="hover:opacity-80 text-gray-100 py-2 px-6 rounded-md disabled:opacity-50 transition-all"
+                style={{ backgroundColor: '#212121' }}
               >
                 Next
               </button>

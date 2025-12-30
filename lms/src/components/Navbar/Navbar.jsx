@@ -22,22 +22,27 @@ const MENU = [
   { id: 8, title: "Reels", to: "/app/reels" },
 ];
 
-// Figma style icons + labels
-const userMenu = [
-  { id: 1, label: "Profile", icon: <User size={18} />, route: "/app/profile" },
-  { id: 2, label: "Certification", icon: <FileBadge size={18} />,  route: "/app/profile/certifications", },
-  { id: 3, label: "Badges", icon: <Award size={18} />,  route: "/app/profile/badges"  },
-  { id: 4, label: "Dashboard", icon: <LayoutDashboard size={18} />, route: "/app/dashboard", },
-
-  { id: 5, label: "Sign In", icon: <LogOut size={18} />, route: "/app/signin" },
-];
-
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
+
+  // Figma style icons + labels - dynamic based on auth status
+  const userMenu = [
+    { id: 1, label: "Profile", icon: <User size={18} />, route: "/app/profile" },
+    { id: 2, label: "Certification", icon: <FileBadge size={18} />,  route: "/app/profile/certifications", },
+    { id: 3, label: "Badges", icon: <Award size={18} />,  route: "/app/profile/badges"  },
+    { id: 4, label: "Dashboard", icon: <LayoutDashboard size={18} />, route: "/app/dashboard", },
+    { 
+      id: 5, 
+      label: isAuthenticated ? "Sign Out" : "Sign In", 
+      icon: <LogOut size={18} />, 
+      route: isAuthenticated ? null : "/app/signin",
+      isSignOut: isAuthenticated
+    },
+  ];
 
   const dropdownRef = useRef(null);
   useOnClickOutside(dropdownRef, () => setDropdownOpen(false));
@@ -127,8 +132,22 @@ export default function Navbar() {
               {userMenu.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => {
-                    if (item.route) navigate(item.route);
+                  onClick={async () => {
+                    if (item.isSignOut) {
+                      // Handle sign out
+                      setDropdownOpen(false);
+                      try {
+                        await logout();
+                        navigate("/");
+                      } catch (error) {
+                        console.error("Logout error:", error);
+                        // Still navigate even if logout fails
+                        navigate("/");
+                      }
+                    } else if (item.route) {
+                      navigate(item.route);
+                      setDropdownOpen(false);
+                    }
                   }}
                   className="w-full flex cursor-pointer hover:underline items-center gap-3 px-4 py-3  transition text-left"
                 >
