@@ -7,11 +7,11 @@ import React from "react";
 const BaseSkeleton = ({ className = "", children, ...props }) => {
   return (
     <div
-      className={`relative overflow-hidden bg-gray-800 rounded ${className}`}
+      className={`relative overflow-hidden bg-[#121212] rounded ${className}`}
       {...props}
     >
       {/* Shimmer animation overlay */}
-      <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/5 to-transparent" />
       {children}
     </div>
   );
