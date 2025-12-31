@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { blogsAPI } from "../../utils/api";
 import BlogsCardH from "../../components/Cards/BlogsCardH";
+import { BlogsPageSkeleton, BlogsCardHSkeleton } from "../../components/skeletons";
 
 const Blogs = () => {
   const [blogs, setBlogs] = useState([]);
@@ -91,9 +92,7 @@ const Blogs = () => {
       {/* Blog List Container */}
       <div className="px-4 md:px-0 max-w-[1110px] mx-auto space-y-6">
         {loading && blogs.length === 0 ? (
-          <div className="text-center text-gray-500 py-20">
-            Loading articles...
-          </div>
+          <BlogsPageSkeleton />
         ) : error ? (
           <div className="text-center text-red-500 py-20">
             {error}
@@ -103,13 +102,18 @@ const Blogs = () => {
             No blogs found
           </div>
         ) : (
-          blogs.map((item) => (
-            <BlogsCardH
-              key={item._id || item.id}
-              data={item}
-              onClick={() => handleBlogClick(item)}
-            />
-          ))
+          <>
+            {blogs.map((item) => (
+              <BlogsCardH
+                key={item._id || item.id}
+                data={item}
+                onClick={() => handleBlogClick(item)}
+              />
+            ))}
+            {loading && blogs.length > 0 && (
+              <BlogsCardHSkeleton />
+            )}
+          </>
         )}
       </div>
 

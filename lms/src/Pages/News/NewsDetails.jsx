@@ -7,6 +7,7 @@ import { Plus, Check, MessageCircle, Share2 } from "lucide-react";
 import TimeAgo from "./components/Timeago";
 import Comments from "../../components/Comments";
 import FormatDate from "./components/FormatDate";
+import { NewsDetailsSkeleton } from "../../components/skeletons";
 
 const NewsDetails = () => {
   const { id } = useParams();
@@ -131,11 +132,7 @@ const NewsDetails = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-gray-400">Loading news...</div>
-      </div>
-    );
+    return <NewsDetailsSkeleton />;
   }
 
   if (!news) {

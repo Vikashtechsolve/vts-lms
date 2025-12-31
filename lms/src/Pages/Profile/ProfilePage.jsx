@@ -5,10 +5,11 @@ import userGrey from "../../assets/user-grey.png";
 import Header from "../Header/Header";
 import { useAuth } from "../../context/AuthContext";
 import { authAPI } from "../../utils/api";
+import { ProfilePageSkeleton } from "../../components/skeletons";
 
 export default function ProfilePage() {
   const fileInputRef = useRef(null);
-  const { user, setUser } = useAuth();
+  const { user, setUser, loading: authLoading } = useAuth();
   const [profile, setProfile] = useState(userGrey);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -26,6 +27,11 @@ export default function ProfilePage() {
     }
   }, [user]);
 
+  // Show skeleton while loading user data
+  if (authLoading || !user) {
+    return <ProfilePageSkeleton />;
+  }
+
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -42,32 +48,56 @@ export default function ProfilePage() {
       return;
     }
 
-    // For now, we'll use a data URL. In production, upload to cloud storage first
-    const url = URL.createObjectURL(file);
-    setProfile(url);
-    
-    // Convert to base64 for now (in production, upload to S3/Cloudinary)
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const base64String = reader.result;
-      await handleSave(base64String);
-    };
-    reader.readAsDataURL(file);
+    // Show preview immediately
+    const previewUrl = URL.createObjectURL(file);
+    setProfile(previewUrl);
+    setLoading(true);
+    setMessage({ type: "", text: "" });
+
+    try {
+      // Upload to Cloudinary via backend
+      const response = await authAPI.uploadAvatar(file);
+      
+      if (response.success) {
+        // Update profile with Cloudinary URL
+        setProfile(response.avatarUrl);
+        // Update user context
+        if (response.user) {
+          setUser(response.user);
+        }
+        setMessage({ type: "success", text: "Avatar uploaded successfully!" });
+        const timeout = parseInt(import.meta.env.VITE_SUCCESS_MESSAGE_TIMEOUT || "3000", 10);
+        setTimeout(() => setMessage({ type: "", text: "" }), timeout);
+      }
+    } catch (error) {
+      // Revert to previous avatar on error
+      setProfile(user?.avatarUrl || userGrey);
+      setMessage({ type: "error", text: error.message || "Failed to upload avatar" });
+    } finally {
+      setLoading(false);
+      // Clean up preview URL
+      URL.revokeObjectURL(previewUrl);
+    }
   };
 
-  const handleSave = async (avatarUrl = null) => {
+  const handleSave = async () => {
     setSaving(true);
     setMessage({ type: "", text: "" });
     
     try {
+      // Allow empty phone number or any format
+      const phoneValue = phone.trim() || "";
+      
       const response = await authAPI.updateProfile(
         name.trim(),
-        phone.trim(),
-        avatarUrl || profile !== userGrey ? profile : undefined
+        phoneValue,
+        undefined // Avatar is handled separately via uploadAvatar
       );
 
       if (response.success) {
         setUser(response.user);
+        // Update local phone state to match server response
+        setPhone(response.user?.phone || "");
         setMessage({ type: "success", text: "Profile updated successfully!" });
         const timeout = parseInt(import.meta.env.VITE_SUCCESS_MESSAGE_TIMEOUT || "3000", 10);
         setTimeout(() => setMessage({ type: "", text: "" }), timeout);
@@ -80,13 +110,19 @@ export default function ProfilePage() {
   };
 
   const handleNameBlur = () => {
-    if (name.trim() !== user?.name) {
+    const trimmedName = name.trim();
+    const currentName = (user?.name || "").trim();
+    if (trimmedName !== currentName) {
       handleSave();
     }
   };
 
   const handlePhoneBlur = () => {
-    if (phone.trim() !== user?.phone) {
+    const trimmedPhone = phone.trim();
+    const currentPhone = (user?.phone || "").trim();
+    // Update if phone has changed (including empty to non-empty or vice versa)
+    // Allow any format - with/without country code, spaces, dashes, etc.
+    if (trimmedPhone !== currentPhone) {
       handleSave();
     }
   };
@@ -111,17 +147,26 @@ export default function ProfilePage() {
 
           {/* PROFILE IMAGE */}
           <div className="relative mb-14 flex flex-col items-center lg:w-3xl">
-            <img
-              src={profile}
-              alt="User"
-              className="w-32 h-32 rounded-full bg-[#d9d9d9] object-contain p-2 shadow-md"
-            />
+            <div className="relative">
+              <img
+                src={profile}
+                alt="User"
+                className="w-48 h-48 md:w-56 md:h-56 rounded-full bg-[#d9d9d9] object-cover p-2 shadow-lg"
+              />
+              {loading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full">
+                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-white"></div>
+                </div>
+              )}
+            </div>
 
             <button
-              onClick={() => fileInputRef.current.click()}
-              className="absolute bottom-0 ml-18 bg-black p-1.5 rounded-full border border-white/25 hover:scale-110 transition"
+              onClick={() => !loading && fileInputRef.current?.click()}
+              disabled={loading}
+              className="absolute bottom-2 right-0 md:bottom-4 md:right-4 bg-black p-2 rounded-full border border-white/25 hover:scale-110 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              title="Upload avatar"
             >
-              <Pencil size={14} />
+              <Pencil size={16} />
             </button>
 
             <input
@@ -130,6 +175,7 @@ export default function ProfilePage() {
               ref={fileInputRef}
               onChange={handleImageChange}
               className="hidden"
+              disabled={loading}
             />
           </div>
 
@@ -164,12 +210,13 @@ export default function ProfilePage() {
 
             {/* PHONE */}
             <input
+              type="tel"
               className="block w-full bg-transparent text-lg py-2 border-b border-white/20 outline-none text-white/60 focus:text-white focus:border-white/40 transition"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               onBlur={handlePhoneBlur}
-              placeholder="Phone"
-              disabled={saving}
+              placeholder="Phone Number"
+              disabled={saving || loading}
             />
           </div>
         </div>

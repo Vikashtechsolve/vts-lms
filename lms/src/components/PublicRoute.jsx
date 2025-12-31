@@ -1,5 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { PageLoader } from "./skeletons";
 
 /**
  * PublicRoute - Redirects authenticated users away from public pages
@@ -10,14 +11,7 @@ const PublicRoute = ({ children }) => {
 
   // Show loading while checking auth
   if (loading) {
-    return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading...</p>
-        </div>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   // If authenticated, redirect to LMS home

@@ -10,6 +10,7 @@ import {
   Layers,
 } from "lucide-react";
 import Header from "../Header/Header";
+import { ProfileProgressSkeleton } from "../../components/skeletons";
 
 export default function StudentProgress() {
   return (
