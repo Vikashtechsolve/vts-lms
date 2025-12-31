@@ -22,7 +22,7 @@ const BlogsPageSkeleton = () => {
 
       {/* Load More Button */}
       <div className="mt-12 text-center">
-        <div className="inline-block w-32 h-8 bg-gray-800 rounded"></div>
+        <div className="inline-block w-32 h-8 bg-[#121212] rounded"></div>
       </div>
     </div>
   );

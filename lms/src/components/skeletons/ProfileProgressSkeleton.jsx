@@ -19,7 +19,7 @@ const ProfileProgressSkeleton = () => {
         
         {/* Heading */}
         <div className="flex items-center gap-3 mb-1">
-          <div className="w-6 h-6 bg-gray-800 rounded"></div>
+          <div className="w-6 h-6 bg-[#121212] rounded"></div>
           <TextSkeleton lines={1} width="1/4" height="h-6" />
         </div>
         <TextSkeleton lines={1} width="1/2" height="h-4" className="mb-8" />

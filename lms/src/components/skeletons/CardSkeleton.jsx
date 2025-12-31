@@ -14,7 +14,7 @@ const CardSkeleton = ({
   imageAspectRatio = "aspect-video"
 }) => {
   return (
-    <div className={`bg-gray-900 rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-[#121212] rounded-xl overflow-hidden ${className}`}>
       {showImage && (
         <ImageSkeleton 
           className="w-full"

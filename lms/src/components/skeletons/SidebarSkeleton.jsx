@@ -7,7 +7,7 @@ import TextSkeleton from "./TextSkeleton";
  */
 const SidebarSkeleton = ({ className = "" }) => {
   return (
-    <div className={`w-full md:w-80 bg-[#141414] rounded-lg p-4 space-y-4 ${className}`}>
+    <div className={`w-full bg-[#121212] border border-[#232323] rounded-xl p-4 space-y-4 ${className}`}>
       {/* Module items */}
       {Array.from({ length: 3 }).map((_, moduleIndex) => (
         <div key={moduleIndex} className="space-y-2">

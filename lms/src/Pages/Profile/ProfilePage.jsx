@@ -5,7 +5,7 @@ import userGrey from "../../assets/user-grey.png";
 import Header from "../Header/Header";
 import { useAuth } from "../../context/AuthContext";
 import { authAPI } from "../../utils/api";
-import { ProfilePageSkeleton } from "../../components/skeletons";
+import { AvatarSkeleton, FormSkeleton, TextSkeleton } from "../../components/skeletons";
 
 export default function ProfilePage() {
   const fileInputRef = useRef(null);
@@ -26,11 +26,6 @@ export default function ProfilePage() {
       setProfile(user.avatarUrl || userGrey);
     }
   }, [user]);
-
-  // Show skeleton while loading user data
-  if (authLoading || !user) {
-    return <ProfilePageSkeleton />;
-  }
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -140,85 +135,108 @@ export default function ProfilePage() {
 
         {/* Center Column */}
         <div className="flex-1 flex flex-col items-cente px-4 pt-8">
-          {/* Title */}
-          <h1 className="text-4xl font-light font-serif text-left mb-8 ">
-            Profile
-          </h1>
+          {/* Show skeleton only in profile section while loading */}
+          {authLoading || !user ? (
+            <>
+              {/* Title */}
+              <TextSkeleton lines={1} width="1/6" height="h-10" className="mb-8" />
 
-          {/* PROFILE IMAGE */}
-          <div className="relative mb-14 flex flex-col items-center lg:w-3xl">
-            <div className="relative">
-              <img
-                src={profile}
-                alt="User"
-                className="w-48 h-48 md:w-56 md:h-56 rounded-full bg-[#d9d9d9] object-cover p-2 shadow-lg"
-              />
-              {loading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full">
-                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-white"></div>
+              {/* Avatar */}
+              <div className="relative mb-14 flex flex-col items-center lg:w-3xl">
+                <AvatarSkeleton size="w-48 h-48 md:w-56 md:h-56" />
+                <div className="absolute bottom-2 right-0 md:bottom-4 md:right-4">
+                  <div className="bg-black p-2 rounded-full border border-white/25 w-8 h-8"></div>
+                </div>
+              </div>
+
+              {/* Form */}
+              <div className="w-full max-w-[650px] flex flex-col px-4 gap-6 ml-0 lg:ml-16">
+                <FormSkeleton fields={3} />
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Title */}
+              <h1 className="text-4xl font-light font-serif text-left mb-8 ">
+                Profile
+              </h1>
+
+              {/* PROFILE IMAGE */}
+              <div className="relative mb-14 flex flex-col items-center lg:w-3xl">
+                <div className="relative">
+                  <img
+                    src={profile}
+                    alt="User"
+                    className="w-48 h-48 md:w-56 md:h-56 rounded-full bg-[#d9d9d9] object-cover p-2 shadow-lg"
+                  />
+                  {loading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full">
+                      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-white"></div>
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  onClick={() => !loading && fileInputRef.current?.click()}
+                  disabled={loading}
+                  className="absolute bottom-2 right-0 md:bottom-4 md:right-4 bg-black p-2 rounded-full border border-white/25 hover:scale-110 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                  title="Upload avatar"
+                >
+                  <Pencil size={16} />
+                </button>
+
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  onChange={handleImageChange}
+                  className="hidden"
+                  disabled={loading}
+                />
+              </div>
+
+              {/* MESSAGE */}
+              {message.text && (
+                <div className={`w-full max-w-[650px] px-4 ml-0 lg:ml-16 mb-4 ${
+                  message.type === "success" ? "text-green-400" : "text-red-400"
+                }`}>
+                  {message.text}
                 </div>
               )}
-            </div>
 
-            <button
-              onClick={() => !loading && fileInputRef.current?.click()}
-              disabled={loading}
-              className="absolute bottom-2 right-0 md:bottom-4 md:right-4 bg-black p-2 rounded-full border border-white/25 hover:scale-110 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-              title="Upload avatar"
-            >
-              <Pencil size={16} />
-            </button>
+              {/* FORM SECTION */}
+              <div className="w-full max-w-[650px] flex flex-col px-4  gap-6 ml-0 lg:ml-16">
+                {/* NAME */}
+                <input
+                  className="block w-full bg-transparent text-lg py-2 border-b border-white/20 outline-none text-white/60 focus:text-white focus:border-white/40 transition"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  onBlur={handleNameBlur}
+                  placeholder="Name"
+                  disabled={saving}
+                />
 
-            <input
-              type="file"
-              accept="image/*"
-              ref={fileInputRef}
-              onChange={handleImageChange}
-              className="hidden"
-              disabled={loading}
-            />
-          </div>
+                {/* EMAIL */}
+                <input
+                  className="block w-full bg-transparent text-lg py-2 border-b border-white/20 outline-none text-white/60 cursor-not-allowed"
+                  value={email}
+                  disabled
+                  placeholder="Email"
+                />
 
-          {/* MESSAGE */}
-          {message.text && (
-            <div className={`w-full max-w-[650px] px-4 ml-0 lg:ml-16 mb-4 ${
-              message.type === "success" ? "text-green-400" : "text-red-400"
-            }`}>
-              {message.text}
-            </div>
+                {/* PHONE */}
+                <input
+                  type="tel"
+                  className="block w-full bg-transparent text-lg py-2 border-b border-white/20 outline-none text-white/60 focus:text-white focus:border-white/40 transition"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  onBlur={handlePhoneBlur}
+                  placeholder="Phone Number"
+                  disabled={saving || loading}
+                />
+              </div>
+            </>
           )}
-
-          {/* FORM SECTION */}
-          <div className="w-full max-w-[650px] flex flex-col px-4  gap-6 ml-0 lg:ml-16">
-            {/* NAME */}
-            <input
-              className="block w-full bg-transparent text-lg py-2 border-b border-white/20 outline-none text-white/60 focus:text-white focus:border-white/40 transition"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onBlur={handleNameBlur}
-              placeholder="Name"
-              disabled={saving}
-            />
-
-            {/* EMAIL */}
-            <input
-              className="block w-full bg-transparent text-lg py-2 border-b border-white/20 outline-none text-white/60 cursor-not-allowed"
-              value={email}
-              disabled
-              placeholder="Email"
-            />
-
-            {/* PHONE */}
-            <input
-              type="tel"
-              className="block w-full bg-transparent text-lg py-2 border-b border-white/20 outline-none text-white/60 focus:text-white focus:border-white/40 transition"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              onBlur={handlePhoneBlur}
-              placeholder="Phone Number"
-              disabled={saving || loading}
-            />
-          </div>
         </div>
       </div>
     </>
