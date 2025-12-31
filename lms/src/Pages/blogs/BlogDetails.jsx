@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import { FaArrowLeft, FaPaperPlane } from "react-icons/fa";
 import { Plus, Check, MessageCircle, Share2 } from "lucide-react";
 import Comments from "../../components/Comments";
+import { BlogDetailsSkeleton } from "../../components/skeletons";
 
 const BlogDetails = () => {
   const { id } = useParams();
@@ -134,11 +135,7 @@ const BlogDetails = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-gray-400">Loading blog...</div>
-      </div>
-    );
+    return <BlogDetailsSkeleton />;
   }
 
   if (!blog) {

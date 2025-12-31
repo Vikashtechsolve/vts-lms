@@ -6,6 +6,7 @@ import { Share2, MessageCircle, Pencil, ChevronDown, ChevronUp, Video as VideoIc
 
 import Sidebar from "./playlistDetailsTabs/SideBar/SideBar";
 import { courseData } from "../../../courseData";
+import { PlaylistDetailsSkeleton, SidebarSkeleton, VideoSkeleton } from "../../components/skeletons";
 
 const Videos = React.lazy(() => import("./playlistDetailsTabs/Videos/Videos"));
 const PPT = React.lazy(() => import("./playlistDetailsTabs/PPT/PPT"));
@@ -25,6 +26,7 @@ export default function PlaylistDetail() {
   const [currentSession, setCurrentSession] = useState(null);
   const [currentModule, setCurrentModule] = useState(null);
   const [sessionResources, setSessionResources] = useState(null);
+  const [loadingResources, setLoadingResources] = useState(false);
   const [quizData, setQuizData] = useState(null);
 
   const tabs = ["Videos", "Notes", "PPT", "Test"];
@@ -52,10 +54,13 @@ export default function PlaylistDetail() {
     }
   }, [id]);
 
+  const [loadingModules, setLoadingModules] = useState(true);
+
   // Fetch modules for the playlist
   useEffect(() => {
     const fetchModules = async () => {
       try {
+        setLoadingModules(true);
         console.log("🔍 Fetching modules for playlist ID:", id);
         const response = await playlistAPI.getPlaylistModules(id);
         console.log("📦 Full API Response:", JSON.stringify(response, null, 2));
@@ -74,8 +79,10 @@ export default function PlaylistDetail() {
           setModules([]);
         }
       } catch (err) {
-     
+        console.error("Failed to fetch modules:", err);
         setModules([]);
+      } finally {
+        setLoadingModules(false);
       }
     };
 
@@ -110,10 +117,11 @@ export default function PlaylistDetail() {
       const sessionId = currentSession?._id || currentSession?.sessionId;
       if (!sessionId) {
         console.log("⚠️ [PlaylistDetails] No sessionId available:", currentSession);
+        setLoadingResources(false);
         return;
       }
 
-      
+      setLoadingResources(true);
       try {
         const response = await playlistAPI.getSessionResources(sessionId);
         console.log("📦 [PlaylistDetails] Session resources response:", response);
@@ -134,6 +142,8 @@ export default function PlaylistDetail() {
         console.error("❌ [PlaylistDetails] Failed to fetch session resources:", err);
         console.error("❌ [PlaylistDetails] Error details:", err.message);
         setSessionResources(null);
+      } finally {
+        setLoadingResources(false);
       }
     };
 
@@ -197,11 +207,7 @@ export default function PlaylistDetail() {
   }, [currentSession]);
 
   if (loading)
-    return (
-      <div className="min-h-screen flex items-center justify-center text-gray-400">
-        Loading...
-      </div>
-    );
+    return <PlaylistDetailsSkeleton />;
 
   if (!playlist)
     return (
@@ -309,27 +315,35 @@ export default function PlaylistDetail() {
 
           {mobileSidebarOpen && (
             <div className="mt-3 bg-[#121212] border border-[#232323] rounded-xl">
-              <Sidebar
-                modules={modules}
-                activeSessionKey={activeSessionKey}
-                onSelectSession={(key) => {
-                  handleSelectSession(key);
-                  setMobileSidebarOpen(false);
-                }}
-                playlistTitle={playlist.title}
-              />
+              {loadingModules ? (
+                <SidebarSkeleton />
+              ) : (
+                <Sidebar
+                  modules={modules}
+                  activeSessionKey={activeSessionKey}
+                  onSelectSession={(key) => {
+                    handleSelectSession(key);
+                    setMobileSidebarOpen(false);
+                  }}
+                  playlistTitle={playlist.title}
+                />
+              )}
             </div>
           )}
         </div>
 
         {/* 🖥 DESKTOP SIDEBAR */}
         <div className="hidden md:block col-span-3">
-          <Sidebar
-            modules={modules}
-            activeSessionKey={activeSessionKey}
-            onSelectSession={handleSelectSession}
-            playlistTitle={playlist.title}
-          />
+          {loadingModules ? (
+            <SidebarSkeleton />
+          ) : (
+            <Sidebar
+              modules={modules}
+              activeSessionKey={activeSessionKey}
+              onSelectSession={handleSelectSession}
+              playlistTitle={playlist.title}
+            />
+          )}
         </div>
 
         {/* MAIN */}
@@ -390,16 +404,20 @@ export default function PlaylistDetail() {
 
             <div className="px-6">
               {activeTab === "Videos" && (
-                <Suspense fallback={<div className="text-center text-gray-400">Loading video...</div>}>
-                  <Videos 
-                    data={videoData} 
-                    title={getTitleFormat()}
-                    playlistName={playlist?.title}
-                    moduleName={currentModule?.title}
-                    sessionName={currentSession?.title}
-                    sessionDescription={currentSession?.description}
-                  />
-                </Suspense>
+                loadingResources ? (
+                  <VideoSkeleton />
+                ) : (
+                  <Suspense fallback={<VideoSkeleton />}>
+                    <Videos 
+                      data={videoData} 
+                      title={getTitleFormat()}
+                      playlistName={playlist?.title}
+                      moduleName={currentModule?.title}
+                      sessionName={currentSession?.title}
+                      sessionDescription={currentSession?.description}
+                    />
+                  </Suspense>
+                )
               )}
 
               {activeTab === "Notes" && (
@@ -414,7 +432,7 @@ export default function PlaylistDetail() {
               )}
 
               {activeTab === "PPT" && (
-                <Suspense fallback={<div className="text-center text-gray-400">Loading presentation...</div>}>
+                <Suspense fallback={<VideoSkeleton />}>
                   <PPT 
                     pptData={pptData}
                     title={getTitleFormat()}

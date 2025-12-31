@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { newsAPI } from "../../utils/api";
 import NewsCardH from "../../components/Cards/NewsCardH";
+import { NewsPageSkeleton, NewsCardHSkeleton } from "../../components/skeletons";
 
 const News = () => {
   const [news, setNews] = useState([]);
@@ -76,9 +77,7 @@ const News = () => {
       {/* News List Container */}
       <div className="px-4 md:px-0 max-w-[1110px] mx-auto space-y-6">
         {loading && news.length === 0 ? (
-          <div className="text-center text-gray-500 py-20">
-            Loading articles...
-          </div>
+          <NewsPageSkeleton />
         ) : error ? (
           <div className="text-center text-red-500 py-20">
             {error}
@@ -88,13 +87,18 @@ const News = () => {
             No news found
           </div>
         ) : (
-          news.map((item) => (
-            <NewsCardH
-              key={item._id || item.id}
-              data={item}
-              onClick={() => handleNewsClick(item)}
-            />
-          ))
+          <>
+            {news.map((item) => (
+              <NewsCardH
+                key={item._id || item.id}
+                data={item}
+                onClick={() => handleNewsClick(item)}
+              />
+            ))}
+            {loading && news.length > 0 && (
+              <NewsCardHSkeleton />
+            )}
+          </>
         )}
       </div>
 

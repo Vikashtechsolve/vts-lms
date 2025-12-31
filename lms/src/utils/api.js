@@ -189,10 +189,39 @@ export const authAPI = {
   },
 
   updateProfile: async (name, phone, avatarUrl) => {
+    const payload = { name };
+    // Always include phone, even if empty string
+    if (phone !== undefined) {
+      payload.phone = phone;
+    }
+    if (avatarUrl !== undefined) {
+      payload.avatarUrl = avatarUrl;
+    }
     return apiRequest("/auth/update-profile", {
       method: "PATCH",
-      body: JSON.stringify({ name, phone, avatarUrl }),
+      body: JSON.stringify(payload),
     });
+  },
+
+  uploadAvatar: async (imageFile) => {
+    const token = getAccessToken();
+    const url = `${API_BASE_URL}/auth/upload-avatar`;
+    const formData = new FormData();
+    formData.append("image", imageFile);
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || data.error || "Failed to upload avatar");
+    }
+    return data;
   },
 };
 

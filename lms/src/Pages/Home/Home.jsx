@@ -21,6 +21,7 @@ import PlaylistCard from "../../components/Cards/PlaylistCard.jsx";
 import MasterClassCard from "../../components/Cards/MasterClassCard.jsx";
 import BlogsCard from "../../components/Cards/BlogsCard.jsx";
 import NewsCard from "../../components/Cards/NewsCard.jsx";
+import { HomePageSkeleton, PlaylistCardSkeleton, MasterClassCardSkeleton, BlogsCardSkeleton, NewsCardSkeleton } from "../../components/skeletons";
 
 const INTERVAL_MS = 3500; // 3.5 seconds
 
@@ -258,12 +259,9 @@ function LandingPage() {
     });
   };
 
-  if (loading) {
-    return (
-      <div className="bg-black text-white py-8 px-6">
-        <div className="text-sm text-gray-400">Loading content...</div>
-      </div>
-    );
+  // Show skeleton loader while initial load
+  if (loading && playlists.length === 0 && masterClasses.length === 0 && blogs.length === 0 && news.length === 0) {
+    return <HomePageSkeleton />;
   }
 
   const active = slides[current];
@@ -406,9 +404,15 @@ function LandingPage() {
               onTouchMove={(e) => e.preventDefault()}
               className="flex space-x-4 h-96 z-50 overflow-x-auto overflow-y-visible no-scrollbar lg:px-6 py-2 lg:py-8"
             >
-              {playlists.map((item) => (
-                <PlaylistCard key={item.id || item._id} item={item} />
-              ))}
+              {loadingPlaylists && playlists.length === 0 ? (
+                Array.from({ length: 6 }).map((_, i) => (
+                  <PlaylistCardSkeleton key={i} />
+                ))
+              ) : (
+                playlists.map((item) => (
+                  <PlaylistCard key={item.id || item._id} item={item} />
+                ))
+              )}
             </div>
 
             {/* Left arrow */}
@@ -472,9 +476,15 @@ function LandingPage() {
               onTouchMove={(e) => e.preventDefault()}
               className="flex space-x-4 h-96 z-50 overflow-x-auto overflow-y-visible no-scrollbar lg:px-6 py-2 lg:py-8"
             >
-              {masterClasses.map((item) => (
-                <MasterClassCard key={item.id || item._id || Math.random()} item={item} />
-              ))}
+              {loadingMaster && masterClasses.length === 0 ? (
+                Array.from({ length: 6 }).map((_, i) => (
+                  <MasterClassCardSkeleton key={i} />
+                ))
+              ) : (
+                masterClasses.map((item) => (
+                  <MasterClassCard key={item.id || item._id || Math.random()} item={item} />
+                ))
+              )}
             </div>
 
             {masterScrolled && (
@@ -535,9 +545,15 @@ function LandingPage() {
               onTouchMove={(e) => e.preventDefault()}
               className="flex space-x-4 h-96 z-50 overflow-x-auto overflow-y-visible no-scrollbar lg:px-6 py-2 lg:py-8"
             >
-              {blogs.map((item) => (
-                <BlogsCard key={item.id || item._id} item={item} />
-              ))}
+              {loadingBlogs && blogs.length === 0 ? (
+                Array.from({ length: 6 }).map((_, i) => (
+                  <BlogsCardSkeleton key={i} />
+                ))
+              ) : (
+                blogs.map((item) => (
+                  <BlogsCard key={item.id || item._id} item={item} />
+                ))
+              )}
             </div>
 
             {/* overlay arrows: show when playlist wrapper hovered (state-based) */}
@@ -600,9 +616,15 @@ function LandingPage() {
               onTouchMove={(e) => e.preventDefault()}
               className="flex space-x-4 h-96 z-50 overflow-x-auto overflow-y-visible no-scrollbar lg:px-6 py-2 lg:py-8"
             >
-              {news.map((item) => (
-                <NewsCard key={item.id || item._id} item={item} />
-              ))}
+              {loadingNews && news.length === 0 ? (
+                Array.from({ length: 6 }).map((_, i) => (
+                  <NewsCardSkeleton key={i} />
+                ))
+              ) : (
+                news.map((item) => (
+                  <NewsCard key={item.id || item._id} item={item} />
+                ))
+              )}
             </div>
 
             {/* overlay arrows: show when playlist wrapper hovered (state-based) */}
