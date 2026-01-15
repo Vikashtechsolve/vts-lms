@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import LandingPageNavbar from "../../components/Navbar/NoNavbarLayout";
 import TrendingCarousel from "./TrendingCarousel";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Languages } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { authAPI } from "../../utils/api";
@@ -72,15 +72,18 @@ export default function LandingPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
   const { register, isAuthenticated, loading: authLoading } = useAuth();
   const toggle = (id) => setOpenId((prev) => (prev === id ? null : id));
 
   // Redirect to LMS if user is already logged in
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
-      navigate("/app");
+      // Redirect to original location if available, otherwise go to /app
+      const from = location.state?.from || "/app";
+      navigate(from);
     }
-  }, [isAuthenticated, authLoading, navigate]);
+  }, [isAuthenticated, authLoading, navigate, location]);
 
   const handleGetStarted = async () => {
     if (!email || !email.includes("@")) {

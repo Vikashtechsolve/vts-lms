@@ -12,6 +12,7 @@ const Videos = React.lazy(() => import("./playlistDetailsTabs/Videos/Videos"));
 const PPT = React.lazy(() => import("./playlistDetailsTabs/PPT/PPT"));
 
 import Notes from "./playlistDetailsTabs/Notes/Notes";
+import Assignment from "./playlistDetailsTabs/Assignment/Assignment";
 import Test from "./playlistDetailsTabs/Test/Test";
 
 export default function PlaylistDetail() {
@@ -29,7 +30,7 @@ export default function PlaylistDetail() {
   const [loadingResources, setLoadingResources] = useState(false);
   const [quizData, setQuizData] = useState(null);
 
-  const tabs = ["Videos", "Notes", "PPT", "Test"];
+  const tabs = ["Videos", "Notes", "PPT", "Assignment", "Test"];
 
   // Fetch playlist details
   useEffect(() => {
@@ -234,6 +235,17 @@ export default function PlaylistDetail() {
   // Prepare PPT data - filter out errors
   const pptData = sessionResources?.resources?.filter((r) => r && r.type === "ppt" && r.url && !r.error) || null;
 
+  // Prepare assignment data - filter by type "zip" or label contains "assignment"
+  const assignmentData = sessionResources?.resources?.filter((r) => 
+    r && 
+    r.url && 
+    !r.error && 
+    (r.type === "zip" || 
+     r.label?.toLowerCase().includes("assignment") ||
+     r.label?.toLowerCase().includes("homework") ||
+     r.label?.toLowerCase().includes("task"))
+  ) || null;
+
   // Debug logging
   console.log("🎬 [PlaylistDetails] Video data:", videoData);
   console.log("📄 [PlaylistDetails] Notes data:", notesData);
@@ -415,6 +427,7 @@ export default function PlaylistDetail() {
                       moduleName={currentModule?.title}
                       sessionName={currentSession?.title}
                       sessionDescription={currentSession?.description}
+                      sessionId={currentSession?._id || currentSession?.sessionId}
                     />
                   </Suspense>
                 )
@@ -442,6 +455,17 @@ export default function PlaylistDetail() {
                     sessionDescription={currentSession?.description}
                   />
                 </Suspense>
+              )}
+
+              {activeTab === "Assignment" && (
+                <Assignment 
+                  data={assignmentData}
+                  title={getTitleFormat()}
+                  playlistName={playlist?.title}
+                  moduleName={currentModule?.title}
+                  sessionName={currentSession?.title}
+                  sessionDescription={currentSession?.description}
+                />
               )}
 
               {activeTab === "Test" && (

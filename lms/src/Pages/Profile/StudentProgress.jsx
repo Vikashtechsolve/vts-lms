@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "./ProfileSidebar";
 
 import {
@@ -11,8 +11,66 @@ import {
 } from "lucide-react";
 import Header from "../Header/Header";
 import { ProfileProgressSkeleton } from "../../components/skeletons";
+import { progressAPI } from "../../utils/api";
 
 export default function StudentProgress() {
+  const [loading, setLoading] = useState(true);
+  const [progressData, setProgressData] = useState({
+    overallProgress: { percent: 0, description: "" },
+    modulesCompleted: { count: 0, description: "" },
+    masterClassesAttended: { count: 0, lastAttended: null },
+    quizAttempts: { count: 0, lastAttempt: null },
+    badgesEarned: { count: 0 },
+  });
+
+  useEffect(() => {
+    const fetchProgressSummary = async () => {
+      try {
+        setLoading(true);
+        const response = await progressAPI.getProgressSummary();
+        if (response.success && response.data) {
+          setProgressData(response.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch progress summary:", error);
+        // Keep default values on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProgressSummary();
+  }, []);
+
+  if (loading) {
+    return (
+      <>
+        <div className="fixed top-0 left-0 w-full z-40">
+          <Header />
+        </div>
+
+        <div className="flex bg-[#141414] pt-16 min-h-screen text-left">
+          <div className="mt-0 px-0 md:mt-8 md:px-12">
+            <Sidebar />
+          </div>
+
+          <div className="flex-1 text-white px-6 py-8">
+            <h1 className="text-[34px] font-semibold mb-6">Profile</h1>
+            <div className="flex items-center gap-3 mb-1">
+              <GraduationCap size={22} className="text-gray-200" />
+              <h1 className="text-[22px] font-semibold">Student Progress</h1>
+            </div>
+            <p className="text-gray-400 text-[14px] mb-8">
+              Track your course completion, quiz performance, and overall learning
+              milestones
+            </p>
+            <ProfileProgressSkeleton />
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <div className="fixed top-0 left-0 w-full z-40">
@@ -54,18 +112,18 @@ export default function StudentProgress() {
               </div>
 
               <p className="text-gray-300 text-[14px] mb-2">
-                Your Progress Bar : 92%
+                Your Progress Bar : {progressData.overallProgress.percent}%
               </p>
 
               <div className="w-full bg-gray-700 h-3 rounded-full">
                 <div
                   className="bg-red-500 h-3 rounded-full"
-                  style={{ width: "92%" }}
+                  style={{ width: `${progressData.overallProgress.percent}%` }}
                 ></div>
               </div>
 
               <p className="text-gray-400 text-[13px] mt-3">
-                You have completed almost 90% of your Enrolled Courses
+                {progressData.overallProgress.description}
               </p>
             </div>
 
@@ -77,10 +135,10 @@ export default function StudentProgress() {
               </div>
 
               <h1 className="text-[22px] font-semibold mb-1">
-                12 Modules Completed
+                {progressData.modulesCompleted.count} Modules Completed
               </h1>
               <p className="text-gray-400 text-[13px]">
-                12 Modules Classes Completed
+                {progressData.modulesCompleted.description}
               </p>
             </div>
 
@@ -94,10 +152,12 @@ export default function StudentProgress() {
               </div>
 
               <h1 className="text-[22px] font-semibold mb-1">
-                5 Master Classes Done
+                {progressData.masterClassesAttended.count} Master Classes Done
               </h1>
               <p className="text-gray-400 text-[13px]">
-                Last Master Class : 3 Days ago
+                {progressData.masterClassesAttended.lastAttended
+                  ? `Last Master Class : ${progressData.masterClassesAttended.lastAttended}`
+                  : "No master classes attended yet"}
               </p>
             </div>
           </div>
@@ -114,10 +174,12 @@ export default function StudentProgress() {
               </div>
 
               <h1 className="text-[22px] font-semibold mb-1">
-                12 Quizzes Attempted
+                {progressData.quizAttempts.count} Quizzes Attempted
               </h1>
               <p className="text-gray-400 text-[13px]">
-                Last Quiz : 3 Days ago
+                {progressData.quizAttempts.lastAttempt
+                  ? `Last Quiz : ${progressData.quizAttempts.lastAttempt}`
+                  : "No quizzes attempted yet"}
               </p>
             </div>
 
@@ -129,7 +191,7 @@ export default function StudentProgress() {
               </div>
 
               <h1 className="text-[22px] font-semibold mb-1">
-                8 Badges Earned
+                {progressData.badgesEarned.count} Badges Earned
               </h1>
               <p className="text-[13px] text-gray-300 cursor-pointer hover:underline">
                 View all Badges

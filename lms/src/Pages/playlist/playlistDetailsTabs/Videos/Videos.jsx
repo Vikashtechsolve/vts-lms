@@ -5,7 +5,7 @@ import HLSVideoPlayer from "../../../../components/HLSVideoPlayer";
  * Videos component for playlist sessions
  * Uses HLS streaming with download prevention
  */
-const Videos = ({ data, title, playlistName, moduleName, sessionName, sessionDescription }) => {
+const Videos = ({ data, title, playlistName, moduleName, sessionName, sessionDescription, sessionId }) => {
   if (!data || !data.url) {
     return (
       <div className="text-gray-300">
@@ -36,6 +36,7 @@ const Videos = ({ data, title, playlistName, moduleName, sessionName, sessionDes
       <HLSVideoPlayer
         src={data.url}
         title={data.title || "Video"}
+        sessionId={sessionId}
         onError={(error) => {
           console.error("Video playback error:", error);
         }}

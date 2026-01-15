@@ -1,4 +1,16 @@
 @import "tailwindcss";
+
+/* Ensure black background throughout */
+body, html {
+  background-color: #000000;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  background-color: #000000;
+}
+
 /* hide native scrollbar for horizontal scroller */
 .tc-scroller::-webkit-scrollbar {
   display: none;

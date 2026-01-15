@@ -16,7 +16,6 @@ import Programs from "./Pages/Programs/Programs.jsx";
 import News from "./Pages/News/News.jsx";
 import NewsDetails from "./Pages/News/NewsDetails.jsx";
 import Interview from "./Pages/Interviews/Interview.jsx";
-import Reels from "./Pages/Reels/Reels.jsx";
 import SignIn from "./Pages/SignIn.jsx";
 import LiveClass from "./Pages/MasterClass/LiveClass.jsx";
 import RecordedClass from "./Pages/MasterClass/RecordedClass.jsx";
@@ -149,14 +148,6 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Interview />
-          </ProtectedRoute>
-        ) 
-      },
-      { 
-        path: "Reels", 
-        element: (
-          <ProtectedRoute>
-            <Reels />
           </ProtectedRoute>
         ) 
       },

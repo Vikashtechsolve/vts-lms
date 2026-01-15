@@ -1,3 +1,6 @@
+// Import tokenStorage for expiration checks
+import { tokenStorage } from "./auth";
+
 // API Base URL - Update this to match your backend URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -19,14 +22,14 @@ if (import.meta.env.PROD && API_BASE_URL === "http://localhost:8000") {
  * Get stored access token
  */
 const getAccessToken = () => {
-  return localStorage.getItem("accessToken");
+  return tokenStorage.getAccessToken();
 };
 
 /**
  * Get stored refresh token
  */
 const getRefreshToken = () => {
-  return localStorage.getItem("refreshToken");
+  return tokenStorage.getRefreshToken();
 };
 
 /**
@@ -108,6 +111,12 @@ const refreshAccessToken = async () => {
     return false;
   }
 
+  // Check if session is expired (1 week)
+  if (tokenStorage.isExpired()) {
+    tokenStorage.clear();
+    return false;
+  }
+
   try {
     const response = await fetch(`${API_BASE_URL}/auth/refresh-token`, {
       method: "POST",
@@ -118,8 +127,8 @@ const refreshAccessToken = async () => {
     const data = await response.json();
 
     if (response.ok && data.success) {
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("refreshToken", data.refreshToken);
+      // Update tokens while preserving expiration
+      tokenStorage.updateTokens(data.accessToken, data.refreshToken);
       return true;
     }
     return false;
@@ -170,9 +179,7 @@ export const authAPI = {
         console.error("Logout error:", error);
       }
     }
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("user");
+    tokenStorage.clear();
   },
 
   getMe: async () => {
@@ -635,6 +642,116 @@ export const playlistAPI = {
   // Get media asset signed URL (authenticated)
   getMediaAssetSignedUrl: async (assetId) => {
     return apiRequest(`/media-assets/${assetId}/signed-url`, {
+      method: "GET",
+    });
+  },
+};
+
+// Progress API calls
+export const progressAPI = {
+  // Get comprehensive progress summary
+  getProgressSummary: async () => {
+    return apiRequest("/api/progress/summary", {
+      method: "GET",
+    });
+  },
+  // Get continue watching data
+  getContinueWatching: async (params = {}) => {
+    const queryParams = new URLSearchParams();
+    if (params.limit) queryParams.append("limit", params.limit);
+    const queryString = queryParams.toString();
+    return apiRequest(`/api/progress/continue-watching${queryString ? `?${queryString}` : ""}`, {
+      method: "GET",
+    });
+  },
+  // Update session progress
+  updateSessionProgress: async (sessionId, progressData) => {
+    return apiRequest(`/sessions/${sessionId}/progress`, {
+      method: "POST",
+      body: JSON.stringify(progressData),
+    });
+  },
+};
+
+// Notification API calls
+export const notificationAPI = {
+  // Get user notifications with pagination
+  getNotifications: async (params = {}) => {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append("page", params.page);
+    if (params.limit) queryParams.append("limit", params.limit);
+    if (params.read !== undefined) queryParams.append("read", params.read);
+    if (params.type) queryParams.append("type", params.type);
+
+    const queryString = queryParams.toString();
+    return apiRequest(`/api/notifications${queryString ? `?${queryString}` : ""}`, {
+      method: "GET",
+    });
+  },
+
+  // Get unread notification count
+  getUnreadCount: async () => {
+    return apiRequest("/api/notifications/unread-count", {
+      method: "GET",
+    });
+  },
+
+  // Mark notification as read
+  markAsRead: async (notificationId) => {
+    return apiRequest(`/api/notifications/${notificationId}/read`, {
+      method: "PUT",
+    });
+  },
+
+  // Mark all notifications as read
+  markAllAsRead: async () => {
+    return apiRequest("/api/notifications/read-all", {
+      method: "PUT",
+    });
+  },
+
+  // Delete a notification
+  deleteNotification: async (notificationId) => {
+    return apiRequest(`/api/notifications/${notificationId}`, {
+      method: "DELETE",
+    });
+  },
+};
+
+// Masterclass API calls
+export const masterclassAPI = {
+  // Get all masterclasses with filtering
+  getMasterclasses: async (params = {}) => {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append("page", params.page);
+    if (params.limit) queryParams.append("limit", params.limit);
+    if (params.status) queryParams.append("status", params.status);
+    if (params.category) queryParams.append("category", params.category);
+    if (params.search) queryParams.append("search", params.search);
+
+    const queryString = queryParams.toString();
+    return apiRequest(`/api/masterclasses${queryString ? `?${queryString}` : ""}`, {
+      method: "GET",
+    });
+  },
+
+  // Get masterclass by slug
+  getMasterclassBySlug: async (slug) => {
+    return apiRequest(`/api/masterclasses/${slug}`, {
+      method: "GET",
+    });
+  },
+
+  // Get video URL for recorded masterclass
+  getMasterclassVideoUrl: async (slug) => {
+    return apiRequest(`/api/masterclasses/${slug}/video-url`, {
+      method: "GET",
+    });
+  },
+
+  // Get notes download URL
+  getMasterclassNotesUrl: async (slug) => {
+    return apiRequest(`/api/masterclasses/${slug}/notes-url`, {
       method: "GET",
     });
   },

@@ -19,7 +19,7 @@ const MENU = [
   { id: 5, title: "Blogs", to: "/app/Blogs" },
   { id: 6, title: "News", to: "/app/News" },
   { id: 7, title: "Interviews", to: "/app/interviews" },
-  { id: 8, title: "Reels", to: "/app/reels" },
+  { id: 8, title: "Test", to: "https://test.vikashtechsolution.com/", external: true },
 ];
 
 export default function Navbar() {
@@ -68,19 +68,34 @@ export default function Navbar() {
 
       {/* CENTER MENU */}
       <nav className="hidden md:flex items-center gap-10 mx-auto">
-        {MENU.map((item) => (
-          <NavLink
-            key={item.id}
-            to={item.to}
-            end
-            className={({ isActive }) =>
-              `text-[15px] font-medium transition 
-                ${isActive ? "text-red-500" : "text-white hover:text-red-500"}`
-            }
-          >
-            {item.title}
-          </NavLink>
-        ))}
+        {MENU.map((item) => {
+          if (item.external) {
+            return (
+              <a
+                key={item.id}
+                href={item.to}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[15px] font-medium transition text-white hover:text-red-500"
+              >
+                {item.title}
+              </a>
+            );
+          }
+          return (
+            <NavLink
+              key={item.id}
+              to={item.to}
+              end
+              className={({ isActive }) =>
+                `text-[15px] font-medium transition 
+                  ${isActive ? "text-red-500" : "text-white hover:text-red-500"}`
+              }
+            >
+              {item.title}
+            </NavLink>
+          );
+        })}
       </nav>
 
       {/* RIGHT SIDE */}

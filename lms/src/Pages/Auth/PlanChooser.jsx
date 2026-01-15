@@ -58,9 +58,10 @@ export default function PlanChooser({ onNext }) {
         new Date(response.endAt) > new Date();
 
       if (hasActiveSubscription) {
-        // User already has subscription, redirect to LMS
+        // User already has subscription, redirect to original location or LMS
         console.log("User already has active subscription, redirecting to LMS");
-        navigate("/app");
+        const from = location.state?.from || "/app";
+        navigate(from);
       }
     } catch (error) {
       console.error("Subscription check error:", error);
@@ -138,11 +139,13 @@ export default function PlanChooser({ onNext }) {
           // Complete login process
           completeLogin(updatedUser);
           
-          // Redirect to LMS
-          navigate("/app");
+          // Redirect to original location or LMS
+          const from = location.state?.from || "/app";
+          navigate(from);
           return;
         }
-        navigate("/app");
+        const from = location.state?.from || "/app";
+        navigate(from);
         return;
       }
 
@@ -171,10 +174,12 @@ export default function PlanChooser({ onNext }) {
           // Complete login process
           completeLogin(updatedUser);
           
-          // Redirect to LMS
-          navigate("/app");
+          // Redirect to original location or LMS
+          const from = location.state?.from || "/app";
+          navigate(from);
         } else {
-          navigate("/app");
+          const from = location.state?.from || "/app";
+          navigate(from);
         }
       } else {
         setError("Payment verification failed. Please contact support.");
