@@ -53,7 +53,7 @@ const PlaylistCard = ({ item }) => {
   return (
     <div
       onClick={handleCardClick}
-      className="relative w-[90%] sm:w-[45%] md:w-70 flex-shrink-0 cursor-pointer "
+      className="relative w-[90%] sm:w-[45%] md:w-70 shrink-0 cursor-pointer "
     >
       {/* NOTE: parent no longer uses the "group" class */}
       <div
@@ -104,9 +104,9 @@ const PlaylistCard = ({ item }) => {
           </div>
 
           {/* BOTTOM CONTENT */}
-          <div className="flex flex-col gap-3 text-white px-2">
+          <div className="flex flex-col gap-3 text-white px-4 py-2">
             {/* BUTTONS */}
-            <div className="flex items-center gap-1 mt-2">
+            <div className="flex items-center gap-2 mt-2">
               {/* WATCH NOW BTN */}
               <button
                 onClick={(e) => {
@@ -162,14 +162,26 @@ const PlaylistCard = ({ item }) => {
               </button>
             </div>
 
-            {/* YEAR + MODULES */}
-            <div className="flex justify-between text-sm font-medium">
-              <span>{new Date(item.createdAt || Date.now()).getFullYear()}</span>
-              <span>{item.modulesCount || item.modules || "0 Modules"}</span>
+            {/* DURATION + MODULES */}
+            <div className="flex items-center justify-between text-sm font-medium gap-4 px-1">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400 text-xs">Duration:</span>
+                <span className="text-white font-semibold">
+                  {item.totalDurationSeconds
+                    ? formatDuration(item.totalDurationSeconds)
+                    : item.duration || "0m"}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400 text-xs">Modules:</span>
+                <span className="text-white font-semibold">
+                  {item.modulesCount || item.modules || 0}
+                </span>
+              </div>
             </div>
 
             {/* DESCRIPTION */}
-            <p className="text-gray-300 text-xs text-left mb-2 leading-relaxed">
+            <p className="text-gray-300 text-xs text-left mb-2 leading-relaxed px-1 line-clamp-2">
               {item.description ||
                 "Create stunning web apps with React. Learn components, hooks, APIs, and deployment with real-world projects."}
             </p>

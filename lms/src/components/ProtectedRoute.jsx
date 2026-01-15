@@ -46,18 +46,20 @@ const ProtectedRoute = ({ children }) => {
   }, [isAuthenticated, user]);
 
   // Show loading while checking auth/subscription
-  if (loading || checkingSubscription) {
+  // Keep loading until we have a definitive subscription status (not null)
+  if (loading || checkingSubscription || (isAuthenticated && subscriptionStatus === null)) {
     return <PageLoader />;
   }
 
-  // Not authenticated - redirect to landing page
+  // Not authenticated - redirect to landing page with original location preserved
   if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/" state={{ from: location.pathname }} replace />;
   }
 
-  // Authenticated but no active subscription - redirect to plan chooser
-  if (!subscriptionStatus) {
-    return <Navigate to="/planChooser" replace />;
+  // Authenticated but no active subscription - redirect to plan chooser with original location preserved
+  // Only redirect if we've confirmed subscriptionStatus is false (not null)
+  if (subscriptionStatus === false) {
+    return <Navigate to="/planChooser" state={{ from: location.pathname }} replace />;
   }
 
   // User is authenticated and has active subscription - allow access

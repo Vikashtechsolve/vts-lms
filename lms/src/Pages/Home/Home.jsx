@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import LandingPageImageg from "../../assets/pic1.jpg";
 import Machinelearning from "../../assets/MachineLearning.jpg";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import DSA from "../../assets/DSA.png";
 import pic2 from "../../assets/pic2.png";
@@ -21,7 +20,9 @@ import PlaylistCard from "../../components/Cards/PlaylistCard.jsx";
 import MasterClassCard from "../../components/Cards/MasterClassCard.jsx";
 import BlogsCard from "../../components/Cards/BlogsCard.jsx";
 import NewsCard from "../../components/Cards/NewsCard.jsx";
+import ContinueWatchingCard from "../../components/Cards/ContinueWatchingCard.jsx";
 import { HomePageSkeleton, PlaylistCardSkeleton, MasterClassCardSkeleton, BlogsCardSkeleton, NewsCardSkeleton } from "../../components/skeletons";
+import CardSkeleton from "../../components/skeletons/CardSkeleton";
 
 const INTERVAL_MS = 3500; // 3.5 seconds
 
@@ -67,10 +68,12 @@ function LandingPage() {
   const [masterClasses, setMasterClasses] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const [news, setNews] = useState([]);
+  const [continueWatching, setContinueWatching] = useState([]);
   const [loadingPlaylists, setLoadingPlaylists] = useState(true);
   const [loadingMaster, setLoadingMaster] = useState(true);
   const [loadingBlogs, setLoadingBlogs] = useState(true);
   const [loadingNews, setLoadingNews] = useState(true);
+  const [loadingContinueWatching, setLoadingContinueWatching] = useState(true);
 
   // refs for scrolling
   const playlistRef = useRef(null);
@@ -142,8 +145,33 @@ function LandingPage() {
   useEffect(() => {
     const fetchMaster = async () => {
       try {
-        const res = await axios.get("/masterClass.json");
-        setMasterClasses(Array.isArray(res.data) ? res.data : []);
+        const { masterclassAPI } = await import("../../utils/api");
+        const response = await masterclassAPI.getMasterclasses({ limit: 10 });
+        if (response.success && response.data) {
+          // Transform API data to match card component expectations
+          const transformed = response.data.items.map((item) => ({
+            id: item._id,
+            title: item.title,
+            thumbnail: item.thumbnailUrl || "/pic1.jpg",
+            duration: item.duration || "",
+            category: item.category || "",
+            description: item.description || "",
+            instructor: item.instructor || "",
+            status: item.status === "upcoming" ? "Upcoming" : item.status === "live" ? "Live" : "Recorded",
+            badge: item.badge || (item.status === "upcoming" ? "Upcoming Master Class" : item.status === "live" ? "Live Now" : "Recorded"),
+            startAt: item.startAt,
+            joinUrl: item.joinUrl,
+            recordingUrl: item.recordingUrl,
+            notes: item.notes,
+            whatThisSessionCovers: item.whatThisSessionCovers || [],
+            keyTakeaways: item.keyTakeaways || [],
+            whyMatters: item.whyMatters || "",
+            slug: item.slug
+          }));
+          setMasterClasses(transformed);
+        } else {
+          setMasterClasses([]);
+        }
       } catch (err) {
         console.error("Failed to load master class data:", err);
         setMasterClasses([]);
@@ -246,6 +274,39 @@ function LandingPage() {
     fetchnews();
   }, []);
 
+  useEffect(() => {
+    const fetchContinueWatching = async () => {
+      try {
+        // Check if user is authenticated before fetching
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          console.log("[ContinueWatching] User not authenticated, skipping fetch");
+          setLoadingContinueWatching(false);
+          return;
+        }
+
+        const { progressAPI } = await import("../../utils/api");
+        const response = await progressAPI.getContinueWatching({ limit: 8 });
+        
+        console.log("[ContinueWatching] Response:", response);
+        
+        if (response.success && response.data) {
+          console.log(`[ContinueWatching] Found ${response.data.length} items`);
+          setContinueWatching(response.data || []);
+        } else {
+          console.log("[ContinueWatching] No data in response");
+          setContinueWatching([]);
+        }
+      } catch (err) {
+        console.error("[ContinueWatching] Failed to load continue watching data:", err);
+        setContinueWatching([]);
+      } finally {
+        setLoadingContinueWatching(false);
+      }
+    };
+    fetchContinueWatching();
+  }, []);
+
   const loading =
     loadingPlaylists || loadingMaster || loadingBlogs || loadingNews;
 
@@ -338,40 +399,35 @@ function LandingPage() {
       </section>
 
       {/* Continue Watching */}
-     <section className="px-4 md:px-16 py-10 bg-black">
-  <h2 className="text-xl text-left font-semibold mb-6">
-    Continue Watching
-  </h2>
+      <section className="px-4 md:px-16 py-10 bg-black">
+        <h2 className="text-xl text-left font-semibold mb-6">
+          Continue Watching
+        </h2>
 
-  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
-    
-    {/* CARD COMPONENT */}
-    {[ 
-      { img: Machinelearning, title: "Machine Learning Basics" },
-      { img: DSA, title: "DSA Mastery" }
-    ].map((item, index) => (
-      <div
-        key={index}
-        className="bg-gray-900 rounded-xl overflow-hidden
-        hover:scale-[1.03] transition duration-300 w-full"
-      >
-        {/* IMAGE CONTAINER WITH FIXED ASPECT RATIO */}
-        <div className="aspect-video w-full overflow-hidden">
-          <img
-            src={item.img}
-            alt={item.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
-
-        <div className="p-3">
-          <p className="text-sm font-semibold">{item.title}</p>
-        </div>
-      </div>
-    ))}
-
-  </div>
-</section>
+        {loadingContinueWatching && continueWatching.length === 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <CardSkeleton
+                key={i}
+                showImage={true}
+                showTitle={true}
+                showDescription={false}
+                imageAspectRatio="aspect-video"
+              />
+            ))}
+          </div>
+        ) : continueWatching.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
+            {continueWatching.map((item, index) => (
+              <ContinueWatchingCard key={item.playlist._id || index} item={item} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-gray-400 text-center py-8">
+            <p>No continue watching items. Start watching a playlist to see it here!</p>
+          </div>
+        )}
+      </section>
 
 
 

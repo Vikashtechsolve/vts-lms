@@ -31,15 +31,16 @@ const MasterClassCard = ({ item }) => {
   const handleOpen = (e) => {
     e?.stopPropagation?.();
     const status = (item.status || "").toLowerCase();
+    const identifier = item.slug || item.id; // Use slug if available, fallback to id
 
     if (status === "live") {
-      navigate(`/app/LiveClass/${item.id}`, { state: { item } });
+      navigate(`/app/LiveClass/${identifier}`, { state: { item } });
     } else if (status === "recorded") {
-      navigate(`/app/recorded/${item.id}`, { state: { item } });
+      navigate(`/app/recorded/${identifier}`, { state: { item } });
     } else if (status === "upcoming") {
-      navigate(`/app/upcoming/${item.id}`, { state: { item } });
+      navigate(`/app/upcoming/${identifier}`, { state: { item } });
     } else {
-      navigate(`/app/master-class/${item.id}`, { state: { item } });
+      navigate(`/app/master-class/${identifier}`, { state: { item } });
     }
   };
 

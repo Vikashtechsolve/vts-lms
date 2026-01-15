@@ -77,13 +77,16 @@ export default function Auth() {
 
       // Store tokens temporarily for API calls but don't set auth state
       // Navigate to plan chooser - user will be logged in after plan selection
+      // Preserve original location if available
+      const from = location.state?.from || "/app";
       navigate("/planChooser", { 
         state: { 
           email, 
           userId,
           accessToken: verifyResponse.accessToken,
           refreshToken: verifyResponse.refreshToken,
-          user: verifyResponse.user
+          user: verifyResponse.user,
+          from // Preserve original location
         } 
       });
     } catch (err) {

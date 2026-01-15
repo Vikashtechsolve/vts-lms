@@ -12,6 +12,13 @@ export const AuthProvider = ({ children }) => {
   // Check if user is logged in on mount - persists across browser sessions
   useEffect(() => {
     const checkAuth = async () => {
+      // First check if session is expired (1 week)
+      if (tokenStorage.isExpired()) {
+        tokenStorage.clear();
+        setLoading(false);
+        return;
+      }
+
       const token = tokenStorage.getAccessToken();
       if (token) {
         try {
@@ -19,10 +26,13 @@ export const AuthProvider = ({ children }) => {
           const response = await authAPI.getMe();
           if (response.success) {
             setUser(response.user);
+            // Preserve existing tokens and expiration
+            const existingUser = tokenStorage.getUser() || response.user;
             tokenStorage.setTokens(
               tokenStorage.getAccessToken(),
               tokenStorage.getRefreshToken(),
-              response.user
+              response.user,
+              !!localStorage.getItem("tokenExpiry") // Preserve remember me status
             );
             setIsAuthenticated(true);
           } else {
@@ -31,6 +41,31 @@ export const AuthProvider = ({ children }) => {
           }
         } catch (error) {
           console.error("Auth check failed:", error);
+          // Try to refresh token if expired
+          if (error.message?.includes("401") || error.message?.includes("expired")) {
+            try {
+              const refreshResponse = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8000"}/auth/refresh-token`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ refreshToken: tokenStorage.getRefreshToken() }),
+              });
+              const refreshData = await refreshResponse.json();
+              
+              if (refreshResponse.ok && refreshData.success) {
+                tokenStorage.updateTokens(refreshData.accessToken, refreshData.refreshToken);
+                // Retry getMe
+                const retryResponse = await authAPI.getMe();
+                if (retryResponse.success) {
+                  setUser(retryResponse.user);
+                  setIsAuthenticated(true);
+                  setLoading(false);
+                  return;
+                }
+              }
+            } catch (refreshError) {
+              console.error("Token refresh failed:", refreshError);
+            }
+          }
           // Token expired or invalid, clear storage
           tokenStorage.clear();
         }
@@ -39,16 +74,42 @@ export const AuthProvider = ({ children }) => {
     };
 
     checkAuth();
+
+    // Set up periodic token refresh (every 30 minutes)
+    const refreshInterval = setInterval(async () => {
+      if (tokenStorage.isAuthenticated() && !tokenStorage.isExpired()) {
+        const refreshToken = tokenStorage.getRefreshToken();
+        if (refreshToken) {
+          try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8000"}/auth/refresh-token`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ refreshToken }),
+            });
+            const data = await response.json();
+            if (response.ok && data.success) {
+              tokenStorage.updateTokens(data.accessToken, data.refreshToken);
+            }
+          } catch (error) {
+            console.error("Periodic token refresh failed:", error);
+          }
+        }
+      }
+    }, 30 * 60 * 1000); // 30 minutes
+
+    return () => clearInterval(refreshInterval);
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (email, password, rememberMe = true) => {
     try {
       const response = await authAPI.login(email, password);
       if (response.success) {
+        // Store tokens with rememberMe flag (defaults to true for 1-week persistence)
         tokenStorage.setTokens(
           response.accessToken,
           response.refreshToken,
-          response.user
+          response.user,
+          rememberMe
         );
         setUser(response.user);
         setIsAuthenticated(true);
@@ -73,7 +134,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const verifyOtp = async (email, otp, skipLogin = false) => {
+  const verifyOtp = async (email, otp, skipLogin = false, rememberMe = true) => {
     try {
       const response = await authAPI.verifyOtp(email, otp);
       if (response.success) {
@@ -82,7 +143,8 @@ export const AuthProvider = ({ children }) => {
           tokenStorage.setTokens(
             response.accessToken,
             response.refreshToken,
-            response.user
+            response.user,
+            rememberMe
           );
           setUser(response.user);
           setIsAuthenticated(true);
@@ -92,7 +154,8 @@ export const AuthProvider = ({ children }) => {
           tokenStorage.setTokens(
             response.accessToken,
             response.refreshToken,
-            response.user
+            response.user,
+            rememberMe
           );
         }
         return { success: true, user: response.user, accessToken: response.accessToken, refreshToken: response.refreshToken };

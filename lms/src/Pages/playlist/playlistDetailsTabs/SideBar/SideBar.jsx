@@ -31,8 +31,8 @@ const Sidebar = ({ modules = [], activeSessionKey, onSelectSession, playlistTitl
     bg-zinc-900 flex flex-col flex-shrink-0
     transition-all duration-300 ease-in-out relative
     w-full
-    md:w-60
-    lg:${isSidebarOpen ? "w-80" : "w-20"}
+    md:w-[90%]
+    lg:${isSidebarOpen ? "w-[90%]" : "w-20"}
   `}
 >
       {/* <button

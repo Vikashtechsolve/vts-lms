@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { subscriptionAPI } from "../utils/api";
 
@@ -12,6 +12,7 @@ const SignIn = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
 
   const handleChange = (e) => {
@@ -37,7 +38,7 @@ const SignIn = () => {
         ? form.identifier 
         : form.identifier; // If phone, backend will handle it
 
-      const result = await login(email, form.password);
+      const result = await login(email, form.password, form.remember);
       
       if (result.success) {
         // Check subscription status before redirecting
@@ -49,16 +50,19 @@ const SignIn = () => {
             new Date(subscriptionResponse.endAt) > new Date();
 
           if (hasActiveSubscription) {
-            // User has active subscription - redirect to LMS
-            navigate("/app");
+            // User has active subscription - redirect to original location or LMS
+            const from = location.state?.from || "/app";
+            navigate(from);
           } else {
-            // User doesn't have subscription - redirect to plan chooser
-            navigate("/planChooser");
+            // User doesn't have subscription - redirect to plan chooser with original location preserved
+            const from = location.state?.from || "/app";
+            navigate("/planChooser", { state: { from } });
           }
         } catch (err) {
           console.error("Subscription check error:", err);
-          // If subscription check fails, redirect to plan chooser to be safe
-          navigate("/planChooser");
+          // If subscription check fails, redirect to plan chooser with original location preserved
+          const from = location.state?.from || "/app";
+          navigate("/planChooser", { state: { from } });
         }
       } else {
         setError(result.error || "Invalid email or password");

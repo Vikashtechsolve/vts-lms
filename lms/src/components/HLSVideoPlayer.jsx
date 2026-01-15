@@ -4,12 +4,15 @@ import Hls from "hls.js";
 /**
  * HLS Video Player Component
  * Prevents downloads and ensures secure streaming
+ * Tracks progress and updates backend
  */
-const HLSVideoPlayer = ({ src, title, onError }) => {
+const HLSVideoPlayer = ({ src, title, onError, sessionId }) => {
   const videoRef = useRef(null);
   const hlsRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const progressUpdateIntervalRef = useRef(null);
+  const lastProgressUpdateRef = useRef({ watchedSeconds: 0, playbackPositionSeconds: 0 });
 
   useEffect(() => {
     const video = videoRef.current;
@@ -190,6 +193,76 @@ const HLSVideoPlayer = ({ src, title, onError }) => {
       if (onError) onError(new Error("HLS not supported"));
     }
 
+    // Progress tracking - update every 10 seconds
+    const updateProgress = async () => {
+      if (!sessionId || !video || video.readyState < 2) return; // Need at least HAVE_CURRENT_DATA
+
+      const watchedSeconds = Math.floor(video.currentTime);
+      const playbackPositionSeconds = Math.floor(video.currentTime);
+      
+      // Only update if there's meaningful change (at least 5 seconds)
+      const timeDiff = Math.abs(watchedSeconds - lastProgressUpdateRef.current.watchedSeconds);
+      if (timeDiff < 5 && lastProgressUpdateRef.current.watchedSeconds > 0) {
+        return; // Skip if less than 5 seconds difference
+      }
+
+      try {
+        const { progressAPI } = await import("../utils/api");
+        await progressAPI.updateSessionProgress(sessionId, {
+          watchedSeconds,
+          playbackPositionSeconds,
+          completed: false,
+          deviceInfo: navigator.userAgent
+        });
+        
+        lastProgressUpdateRef.current = { watchedSeconds, playbackPositionSeconds };
+        console.log(`📊 [HLSPlayer] Progress updated: ${watchedSeconds}s`);
+      } catch (err) {
+        console.error("❌ [HLSPlayer] Failed to update progress:", err);
+      }
+    };
+
+    // Set up progress tracking interval (every 10 seconds)
+    let timeupdateTimeout;
+    const handleTimeUpdate = () => {
+      if (!sessionId) return;
+      clearTimeout(timeupdateTimeout);
+      timeupdateTimeout = setTimeout(() => {
+        updateProgress();
+      }, 5000); // Throttle to every 5 seconds
+    };
+
+    const handleEnded = () => {
+      if (sessionId && video) {
+        const watchedSeconds = Math.floor(video.duration || video.currentTime);
+        const playbackPositionSeconds = Math.floor(video.duration || video.currentTime);
+        
+        (async () => {
+          try {
+            const { progressAPI } = await import("../utils/api");
+            await progressAPI.updateSessionProgress(sessionId, {
+              watchedSeconds,
+              playbackPositionSeconds,
+              completed: true,
+              deviceInfo: navigator.userAgent
+            });
+            console.log(`✅ [HLSPlayer] Video ended, progress marked as complete`);
+          } catch (err) {
+            console.error("❌ [HLSPlayer] Failed to update progress on end:", err);
+          }
+        })();
+      }
+    };
+
+    if (sessionId) {
+      progressUpdateIntervalRef.current = setInterval(() => {
+        updateProgress();
+      }, 10000); // Update every 10 seconds
+
+      video.addEventListener("timeupdate", handleTimeUpdate);
+      video.addEventListener("ended", handleEnded);
+    }
+
     // Cleanup
     return () => {
       video.removeEventListener("contextmenu", handleContextMenu);
@@ -197,12 +270,25 @@ const HLSVideoPlayer = ({ src, title, onError }) => {
       video.removeEventListener("selectstart", handleSelectStart);
       document.removeEventListener("keydown", handleKeyDown);
 
+      if (sessionId) {
+        video.removeEventListener("timeupdate", handleTimeUpdate);
+        video.removeEventListener("ended", handleEnded);
+        if (timeupdateTimeout) {
+          clearTimeout(timeupdateTimeout);
+        }
+      }
+
+      if (progressUpdateIntervalRef.current) {
+        clearInterval(progressUpdateIntervalRef.current);
+        progressUpdateIntervalRef.current = null;
+      }
+
       if (hlsRef.current) {
         hlsRef.current.destroy();
         hlsRef.current = null;
       }
     };
-  }, [src, onError]);
+  }, [src, onError, sessionId]);
 
   if (error) {
     return (

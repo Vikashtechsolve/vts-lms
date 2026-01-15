@@ -6,10 +6,10 @@ import { Outlet } from "react-router-dom";
 
 function App() {
   return (
-    <div>
+    <div className="min-h-screen bg-black">
       <ScrollToTop />
       <Navbar />
-      <main>
+      <main className="min-h-screen bg-black">
         <Outlet />
       </main>
     </div>
